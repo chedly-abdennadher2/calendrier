@@ -2,25 +2,38 @@
 
 namespace App\Controller;
 
+use App\Form\EmployeformType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use function Symfony\Component\Finder\contains;
+use App\Entity\Employe;
 
 class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_profile')]
-    public function index(): Response
+    public function index(Request $request,EntityManagerInterface $entityManager) :Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = $this->getUser();
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
+    $emp =new Employe();
+    $form = $this->createForm(EmployeformType::class,$emp);
 
-       return $this->render('profile/index.html.twig', [
-            'controller_name' => 'ProfileController',
-        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+        $emp= $form->getData();
+        $entityManager->persist($emp);
+        $entityManager->flush();
+
+        }
+    return $this->renderForm('profile/index.html.twig', [
+     'form' => $form,
+ ]);
 
     }
 

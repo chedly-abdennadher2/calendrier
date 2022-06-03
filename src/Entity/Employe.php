@@ -25,7 +25,7 @@ class Employe
     #[ORM\Column(type: 'float', nullable: true)]
     private $salaire;
 
-    #[ORM\OneToOne(inversedBy: 'employe', targetEntity: conge::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'employe', targetEntity: Conge::class, cascade: ['persist', 'remove'])]
     private $conge;
 
     public function getId(): ?int
