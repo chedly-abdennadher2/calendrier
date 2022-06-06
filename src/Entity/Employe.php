@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EmployeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EmployeRepository::class)]
@@ -25,8 +27,15 @@ class Employe
     #[ORM\Column(type: 'float', nullable: true)]
     private $salaire;
 
-    #[ORM\OneToOne(inversedBy: 'employe', targetEntity: Conge::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Conge::class, orphanRemoval: true)]
     private $conge;
+
+
+    public function __construct()
+    {
+        $this->conge = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -81,15 +90,35 @@ class Employe
         return $this;
     }
 
-    public function getConge(): ?conge
+    /**
+     * @return Collection<int, Conge>
+     */
+    public function getConge(): Collection
     {
         return $this->conge;
     }
 
-    public function setConge(?conge $conge): self
+    public function addConge(Conge $conge): self
     {
-        $this->conge = $conge;
+        if (!$this->conge->contains($conge)) {
+            $this->conge[] = $conge;
+            $conge->setEmploye($this);
+        }
 
         return $this;
     }
+
+    public function removeConge(Conge $conge): self
+    {
+        if ($this->conge->removeElement($conge)) {
+            // set the owning side to null (unless already changed)
+            if ($conge->getEmploye() === $this) {
+                $conge->setEmploye(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

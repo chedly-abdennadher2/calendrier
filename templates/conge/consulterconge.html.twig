@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} consulter conge {% endblock %}
+
+{% block body %}
+<h1> conge </h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">conge id  </th>
+            <th scope="col">date de debut </th>
+            <th scope="col"> date de fin </th>
+            <th scope="col"> state  </th>
+            <th scope="col"> employe id  </th>
+
+
+
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {%  for conge in conges %}
+            <tr>
+                <th scope="row"> {{ conge.id }} </th>
+                <td>  {{ conge.datedebut|date("d/m/Y") }} </td>
+                <td> {{ conge.datefin|date("d/m/Y") }} </td>
+                <td> {{ conge.state }} </td>
+                <td> {{ conge.employe.id }} </td>
+
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h1> employes ayant des conges </h1>
+
+    <table class="table table-striped">
+    <thead>
+    <th scope="col"> conge id </th>
+    <th scope="col"> employe id </th>
+
+    <th scope="col">nom</th>
+    <th scope="col">prenom</th>
+    <th scope="col">quota</th>
+    <th scope="col">salaire</th>
+
+    </thead>
+        <tbody>
+
+        {%  for conge in conges %}
+            <tr>
+                <td> {{ conge.id }} </td>
+
+        <td> {{ conge.employe.id }} </td>
+
+
+                <td> {{ conge.employe.nom }} </td>
+        <td> {{ conge.employe.prenom }} </td>
+        <td> {{ conge.employe.quota }} </td>
+        <td> {{ conge.employe.salaire }} </td>
+
+    </tr>
+
+        {% endfor %}
+</tbody>
+</table>
+{% endblock %}

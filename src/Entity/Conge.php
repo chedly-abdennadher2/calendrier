@@ -22,11 +22,13 @@ class Conge
     #[ORM\Column(type: 'string', length: 10)]
     private $state;
 
-    #[ORM\OneToOne(mappedBy: 'conge', targetEntity: Employe::class, cascade: ['persist', 'remove'])]
+
+
+
+    #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'conge')]
+    #[ORM\JoinColumn(nullable: false)]
     private $employe;
 
-    #[ORM\ManyToOne(targetEntity: Administrateur::class, inversedBy: 'listeconge')]
-    private $administrateur;
 
     public function getId(): ?int
     {
@@ -69,6 +71,8 @@ class Conge
         return $this;
     }
 
+
+
     public function getEmploye(): ?Employe
     {
         return $this->employe;
@@ -76,29 +80,7 @@ class Conge
 
     public function setEmploye(?Employe $employe): self
     {
-        // unset the owning side of the relation if necessary
-        if ($employe === null && $this->employe !== null) {
-            $this->employe->setConge(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($employe !== null && $employe->getConge() !== $this) {
-            $employe->setConge($this);
-        }
-
         $this->employe = $employe;
-
-        return $this;
-    }
-
-    public function getAdministrateur(): ?Administrateur
-    {
-        return $this->administrateur;
-    }
-
-    public function setAdministrateur(?Administrateur $administrateur): self
-    {
-        $this->administrateur = $administrateur;
 
         return $this;
     }

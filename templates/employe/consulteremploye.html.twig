@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} consulter employe {% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">nom</th>
+            <th scope="col">prenom</th>
+            <th scope="col">quota</th>
+            <th scope="col">salaire</th>
+
+        </tr>
+        </thead>
+        <tbody>
+
+
+{%  for employe in employes %}
+    <tr>
+        <th scope="row"> {{ employe.id }} </th>
+        <td>  {{ employe.nom }} </td>
+        <td> {{ employe.prenom }} </td>
+        <td> {{ employe.quota }} </td>
+        <td> {{ employe.salaire }} </td>
+
+    </tr>
+
+{% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
