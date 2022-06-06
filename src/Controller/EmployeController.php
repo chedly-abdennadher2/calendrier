@@ -32,7 +32,7 @@ class EmployeController extends AbstractController
         $entityManager->flush();
 
         }
-    return $this->renderForm('employe/index.html.twig', [
+    return $this->renderForm('employe/ajouteremploye.html.twig', [
      'form' => $form,
  ]);
 
