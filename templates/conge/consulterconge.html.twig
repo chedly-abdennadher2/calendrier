@@ -21,12 +21,22 @@
 
 
         {%  for conge in conges %}
-            <tr>
-                <th scope="row"> {{ conge.id }} </th>
-                <td>  {{ conge.datedebut|date("d/m/Y") }} </td>
-                <td> {{ conge.datefin|date("d/m/Y") }} </td>
-                <td> {{ conge.state }} </td>
-                <td> {{ conge.employe.id }} </td>
+  {% if conge.state=='invalide' %}
+            <tr class="table table-danger">
+{% endif %}
+            {% if conge.state=='no check' %}
+                <tr class="table-dark">
+            {% endif %}
+
+            {% if conge.state=='valide' %}
+                <tr class="table-info">
+            {% endif %}
+
+            <th scope="row"> {{ conge.id }} </th>
+            <td>  {{ conge.datedebut|date("d/m/Y") }} </td>
+            <td> {{ conge.datefin|date("d/m/Y") }} </td>
+            <td> {{ conge.state }} </td>
+            <td> {{ conge.employe.id }} </td>
 
             </tr>
 
@@ -50,7 +60,16 @@
         <tbody>
 
         {%  for conge in conges %}
-            <tr>
+            {% if conge.state=='invalide' %}
+                <tr class="table table-danger">
+            {% endif %}
+            {% if conge.state=='no check' %}
+                <tr class="table-dark">
+            {% endif %}
+
+            {% if conge.state=='valide' %}
+                <tr class="table-info">
+            {% endif %}
                 <td> {{ conge.id }} </td>
 
         <td> {{ conge.employe.id }} </td>

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\EmployeformType;
+use App\Form\SuppressionType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,11 +15,10 @@ use App\Entity\Employe;
 
 class EmployeController extends AbstractController
 {
-    #[Route('/ajouteremploye', name: 'app_profile')]
+    #[Route('/ajouteremploye', name: 'ajouteremploye')]
     public function ajouter(Request $request,EntityManagerInterface $entityManager) :Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user = $this->getUser();
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
@@ -48,4 +48,45 @@ $employes= $rep->findAll();
             'employes' => $employes,
         ]);
     }
+    #[Route('/mettreajouremploye/{id}', name: 'app_profile')]
+
+public function mettreajour(string $id, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+    $rep=$doctrine->getRepository(Employe::class);
+    $emp=$rep->find($id);
+    $form = $this->createForm(EmployeformType::class,$emp);
+
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $emp= $form->getData();
+        $entityManager->persist($emp);
+        $entityManager->flush();
+
+    }
+    return $this->renderForm('employe/modifieremploye.html.twig', [
+        'form' => $form,
+    ]);
+}
+    #[Route('/supprimeremploye', name: 'app_profile')]
+public function supprimer (Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
+{
+    $form = $this->createForm(SuppressionType::class);
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $id=$form->get('id')->getData();
+
+        $rep=$doctrine->getRepository(Employe::class);
+        $emp=$rep->find($id);
+
+        $entityManager->remove($emp);
+        $entityManager->flush();
+    }
+
+    return $this->renderForm('employe/supprimeremploye.html.twig', [
+        'form' => $form,
+    ]);
+
+}
 }
