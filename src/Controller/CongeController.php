@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CongeController extends AbstractController
 {
-    #[Route('/ajouterconge', name: 'app_conge')]
+    #[Route('/ajouterconge', name: 'ajouterconge')]
     public function ajouter(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -48,7 +48,10 @@ class CongeController extends AbstractController
     {
         $rep = $doctrine->getRepository(Conge::class);
         $conges = $rep->findAll();
-
+    foreach ($conges as $key=>$value)
+    {
+        $value->calculernbjour($value->getId(), $doctrine);
+    }
         return $this->render('conge/consulterconge.html.twig', [
             'conges' => $conges,
         ]);
@@ -77,11 +80,13 @@ class CongeController extends AbstractController
         ]);
     }
 
-    #[Route('/supprimerconge', name: 'supprimerconge')]
-    public function supprimer(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
+    #[Route('/supprimerconge/{id}', name: 'supprimerconge')]
+    public function supprimer(String $id,Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
         $form = $this->createForm(SuppressionType::class);
         $form->handleRequest($request);
+        $id = $form->get('id')->setData($id);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $id = $form->get('id')->getData();
 
@@ -98,19 +103,6 @@ class CongeController extends AbstractController
 
     }
 
-    #[Route('/nbjourconge/{id}', name: 'nbjourconge')]
-    public function nbjour(string $id, ManagerRegistry $doctrine)
-    {
-        $rep = $doctrine->getRepository(Conge::class);
-        $conge = $rep->find($id);
-        $nbjour = $conge->getDateFin()->diff($conge->getDateDebut());
 
-     $diff['jour']= $nbjour->d;
-     $diff['mois']= $nbjour->m;
-        $diff['annee']= $nbjour->y;
-$nbjour= $diff['jour']+$diff['mois'] *30 +$diff['annee']*365;
-        return $this->render('conge/voir.html.twig', [
-        ]);
 
-    }
 }

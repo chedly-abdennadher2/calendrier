@@ -48,7 +48,7 @@ $employes= $rep->findAll();
             'employes' => $employes,
         ]);
     }
-    #[Route('/mettreajouremploye/{id}', name: 'app_profile')]
+    #[Route('/mettreajouremploye/{id}', name: 'mettreajouremploye')]
 
 public function mettreajour(string $id, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
 {
@@ -69,11 +69,13 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
         'form' => $form,
     ]);
 }
-    #[Route('/supprimeremploye', name: 'app_profile')]
-public function supprimer (Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
+    #[Route('/supprimeremploye/{id}', name: 'supprimeremploye')]
+public function supprimer (string $id, Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
 {
     $form = $this->createForm(SuppressionType::class);
     $form->handleRequest($request);
+    $form->get('id')->setData($id);
+
     if ($form->isSubmitted() && $form->isValid()) {
         $id=$form->get('id')->getData();
 

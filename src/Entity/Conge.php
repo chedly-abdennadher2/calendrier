@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CongeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Persistence\ManagerRegistry;
 
 #[ORM\Entity(repositoryClass: CongeRepository::class)]
 class Conge
@@ -29,6 +30,7 @@ class Conge
     #[ORM\JoinColumn(nullable: false)]
     private $employe;
 
+    private $nbjour;
 
     public function getId(): ?int
     {
@@ -84,4 +86,32 @@ class Conge
 
         return $this;
     }
-}
+
+    /**
+     * @return mixed
+     */
+    public function getNbjour()
+    {
+        return $this->nbjour;
+    }
+
+    /**
+     * @param mixed $nbjour
+     */
+    public function setNbjour($nbjour)
+    {
+        $this->nbjour = $nbjour;
+    }
+
+    public function calculernbjour(string $id, ManagerRegistry $doctrine)
+    {
+        $rep = $doctrine->getRepository(Conge::class);
+        $conge = $rep->find($id);
+        $nbjour = $conge->getDateFin()->diff($conge->getDateDebut());
+
+        $diff['jour']= $nbjour->d;
+        $diff['mois']= $nbjour->m;
+        $diff['annee']= $nbjour->y;
+        $nbjour= $diff['jour']+$diff['mois'] *30 +$diff['annee']*365;
+$this->setNbjour($nbjour);
+    }}

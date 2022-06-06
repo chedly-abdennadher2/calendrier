@@ -1,9 +1,9 @@
-{% extends 'base.html.twig' %}
 
 {% block title %} consulter employe {% endblock %}
+    {% extends 'base.html.twig' %}
 
 {% block body %}
-
+    {{ parent() }}
     <table class="table table-striped">
         <thead>
         <tr>
@@ -12,6 +12,7 @@
             <th scope="col">prenom</th>
             <th scope="col">quota</th>
             <th scope="col">salaire</th>
+            <th scope="col" colspan="2"> actions  </th>
 
         </tr>
         </thead>
@@ -25,11 +26,21 @@
         <td> {{ employe.prenom }} </td>
         <td> {{ employe.quota }} </td>
         <td> {{ employe.salaire }} </td>
+        <td>    <a href ="{{ path ('mettreajouremploye',{'id':employe.id}) }}"
+            > modifier employé</a>
+        </td>
+        <td>    <a href ="{{ path ('supprimeremploye',{'id':employe.id}) }}"
+            > supprimer employé</a>
+        </td>
 
     </tr>
 
 {% endfor %}
         </tbody>
     </table>
+    <a href ="{{ path ('ajouteremploye') }}"
+    > ajouter employe</a>
+    <a href ="{{ path ('/') }}"
+    > retour page d'accueil</a>
 
 {% endblock %}

@@ -13,8 +13,8 @@ class SuppressionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('id')
-            ->add ('supprimer',SubmitType::class )
+            ->add('id',null,array('disabled'=>true))
+                ->add ('supprimer',SubmitType::class )
 
         ;
     }
