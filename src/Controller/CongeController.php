@@ -29,7 +29,7 @@ class CongeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $conge = $form->getData();
             $id = $form->get('id')->getData();
-            $conge->setState('valide');
+            $conge->setState('no check');
             $rep = $doctrine->getRepository(Employe::class);
             $conge->setEmploye($rep->find($id));
             $entityManager->persist($conge);
@@ -81,14 +81,12 @@ class CongeController extends AbstractController
     }
 
     #[Route('/supprimerconge/{id}', name: 'supprimerconge')]
-    public function supprimer(String $id,Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
+    public function supprimer(String $id,Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager )
     {
         $form = $this->createForm(SuppressionType::class);
         $form->handleRequest($request);
-        $id = $form->get('id')->setData($id);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $id = $form->get('id')->getData();
 
             $rep = $doctrine->getRepository(Conge::class);
             $conge = $rep->find($id);
@@ -96,13 +94,41 @@ class CongeController extends AbstractController
             $entityManager->remove($conge);
             $entityManager->flush();
         }
+else {
+    $id = $form->get('id')->setData($id);
 
+}
         return $this->renderForm('conge/supprimerconge.html.twig', [
             'form' => $form,
         ]);
 
     }
 
+public function validerconge (string $id,ManagerRegistry $doctrine, EntityManagerInterface $entityManager,EmployeRepository $repository)
+{
+    $rep = $doctrine->getRepository(Conge::class);
+    $conge = $rep->find($id);
+    $emp=$conge->getEmploye();
+    $conge->calculernbjour($conge->getId(),$doctrine);
+    $nbjour=$conge->getNbjour();
+    if (($nbjour <= $emp->getQuota()) and ($conge->getState()=='no check')) {
+
+        $emp->setQuota($emp->getQuota()-$nbjour);
+        var_dump("hello valide");
+        $conge->setState('valide');
+
+    }
+else if ($conge->getState()=='no check') {
+    $conge->setState('invalide');
+    var_dump("hello invalide");
+
+
+}
+    $conge->setEmploye($emp);
+    $entityManager->persist($conge);
+    $entityManager->flush();
+    $repository->add($emp);
+}
 
 
 }

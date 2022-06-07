@@ -30,6 +30,9 @@ class Employe
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Conge::class, orphanRemoval: true)]
     private $conge;
 
+    #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
+    private $login;
+
 
     public function __construct()
     {
@@ -120,5 +123,15 @@ class Employe
         return $this;
     }
 
+    public function getLogin(): ?User
+    {
+        return $this->login;
+    }
 
+    public function setLogin(?User $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
 }

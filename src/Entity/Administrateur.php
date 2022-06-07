@@ -27,8 +27,12 @@ class Administrateur
     #[ORM\Column(type: 'json')]
     private $role = [];
 
-    #[ORM\OneToMany(mappedBy: 'administrateur', targetEntity: conge::class)]
+    #[ORM\OneToMany(mappedBy: 'administrateur', targetEntity: Conge::class)]
     private $listeconge;
+
+    #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private $login;
 
     public function __construct()
     {
@@ -114,6 +118,18 @@ class Administrateur
                 $listeconge->setAdministrateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLogin(): ?User
+    {
+        return $this->login;
+    }
+
+    public function setLogin(User $login): self
+    {
+        $this->login = $login;
 
         return $this;
     }

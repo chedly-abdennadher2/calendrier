@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,11 +37,24 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('/');
         }
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }
+
+    public function deveniradmin (string $id,ManagerRegistry $doctrine,UserRepository $repository)
+{
+    $rep=$doctrine->getRepository(User::class);
+    $user=$rep->find($id);
+    $rep=$doctrine->getRepository(User::class);
+    $user=$rep->findOneBy(["nomutilisateur"=>$user->getNomutilisateur()]);
+    if ($user !=null)
+    {    $user->setRoles(['ROLE_ADMIN']);
+         $repository->add($user,true);
+    }
+
+}
 }

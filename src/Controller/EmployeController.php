@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@ use App\Entity\Employe;
 class EmployeController extends AbstractController
 {
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
-    public function ajouter(Request $request,EntityManagerInterface $entityManager) :Response
+    public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -26,8 +28,15 @@ class EmployeController extends AbstractController
     $form = $this->createForm(EmployeformType::class,$emp);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-        $emp= $form->getData();
+
+            $nomlogin = $form->get('nom')->getData();
+            $rep=$doctrine->getRepository(User::class);
+            $user=$rep->findOneBy(["nomutilisateur"=>$nomlogin]);
+            $emp= $form->getData();
+            $emp->setLogin($user);
+
         $entityManager->persist($emp);
         $entityManager->flush();
 
@@ -56,11 +65,16 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
 
     $rep=$doctrine->getRepository(Employe::class);
     $emp=$rep->find($id);
+
     $form = $this->createForm(EmployeformType::class,$emp);
 
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
         $emp= $form->getData();
+        $nomlogin = $form->get('nom')->getData();
+        $rep=$doctrine->getRepository(User::class);
+        $user=$rep->findOneBy(["nomutilisateur"=>$nomlogin]);
+        $emp->setLogin($user);
         $entityManager->persist($emp);
         $entityManager->flush();
 
@@ -74,10 +88,8 @@ public function supprimer (string $id, Request $request,ManagerRegistry $doctrin
 {
     $form = $this->createForm(SuppressionType::class);
     $form->handleRequest($request);
-    $form->get('id')->setData($id);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        $id=$form->get('id')->getData();
 
         $rep=$doctrine->getRepository(Employe::class);
         $emp=$rep->find($id);
@@ -85,6 +97,8 @@ public function supprimer (string $id, Request $request,ManagerRegistry $doctrin
         $entityManager->remove($emp);
         $entityManager->flush();
     }
+else {
+    $form->get('id')->setData($id);}
 
     return $this->renderForm('employe/supprimeremploye.html.twig', [
         'form' => $form,
