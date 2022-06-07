@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use function Symfony\Component\Finder\contains;
 use App\Entity\Employe;
 
@@ -104,5 +105,16 @@ else {
         'form' => $form,
     ]);
 
+}
+
+public function  rechercheridparlogin (ManagerRegistry $doctrine,AuthenticationUtils $authenticationUtils
+)
+{
+    $login=$authenticationUtils->getLastUsername();
+    $rep=$doctrine->getRepository(User::class);
+    $user=$rep->findBy(['nomutilisateur'=>$login]);
+    $rep=$doctrine->getRepository(Employe::class);
+$emp=$rep->findOneBy(['login'=>$user]);
+return $emp->getId();
 }
 }

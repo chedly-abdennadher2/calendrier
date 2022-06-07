@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class CongeController extends AbstractController
 {
@@ -131,5 +132,25 @@ else if ($conge->getState()=='no check') {
     $repository->add($emp);
 }
 
+    #[Route('/consultercongeemp', name: 'consultercongeemp')]
 
+    public function consultercongerdeemployer(ManagerRegistry $doctrine,     AuthenticationUtils $authenticationUtils
+    )
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $employecontroller=new EmployeController();
+        $id= $employecontroller->rechercheridparlogin($doctrine,$authenticationUtils);
+        $rep = $doctrine->getRepository(Employe::class);
+        $employe = $rep->find($id);
+        $rep = $doctrine->getRepository(Conge::class);
+        $conges=$rep->findBy(['employe'=>$employe]);
+        foreach ($conges as $key=>$value)
+        {
+            $value->calculernbjour($value->getId(), $doctrine);
+        }
+        return $this->render('conge/consultercongeemp.html.twig', [
+            'conges' => $conges,
+        ]);
+    }
 }

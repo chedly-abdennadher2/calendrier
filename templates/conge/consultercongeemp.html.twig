@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} consulter conge {% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <h1> conge </h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">conge id  </th>
+            <th scope="col">date de debut </th>
+            <th scope="col"> date de fin </th>
+            <th scope="col"> nbjour </th>
+
+            <th scope="col"> state  </th>
+            <th scope="col"> employe id  </th>
+            <th scope="col" colspan="2"> actions  </th>
+
+
+
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {%  for conge in conges %}
+  {% if conge.state=='invalide' %}
+            <tr class="table table-danger">
+{% endif %}
+            {% if conge.state=='no check' %}
+                <tr class="table-dark">
+            {% endif %}
+
+            {% if conge.state=='valide' %}
+                <tr class="table-info">
+            {% endif %}
+
+            <th scope="row"> {{ conge.id }} </th>
+            <td>  {{ conge.datedebut|date("d/m/Y") }} </td>
+            <td> {{ conge.datefin|date("d/m/Y") }} </td>
+            <td> {{ conge.nbjour }} </td>
+
+            <td> {{ conge.state }} </td>
+            <td> {{ conge.employe.id }} </td>
+         <td>    <a href ="{{ path ('mettreajourconge',{'id':conge.id}) }}"
+            > modifier conge</a>
+         </td>
+            <td>    <a href ="{{ path ('supprimerconge',{'id':conge.id}) }}"
+                > supprimer conge</a>
+            </td>
+
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href ="{{ path ('ajouterconge') }}"
+    > ajouter conge</a>
+
+    <h1> employé concerné par ses congés </h1>
+
+    <table class="table table-striped">
+    <thead>
+    <th scope="col"> employe id </th>
+
+    <th scope="col">nom</th>
+    <th scope="col">prenom</th>
+    <th scope="col">quota</th>
+    <th scope="col">salaire</th>
+
+    </thead>
+        <tbody>
+
+            <tr class="table-info">
+
+
+        <td> {{ conges[0].employe.id }} </td>
+
+
+                <td> {{ conges[0].employe.nom }} </td>
+        <td> {{ conges[0].employe.prenom }} </td>
+        <td> {{ conges[0].employe.quota }} </td>
+        <td> {{ conges[0].employe.salaire }} </td>
+
+    </tr>
+
+</tbody>
+</table>
+
+{% endblock %}
