@@ -103,8 +103,9 @@ else {
         ]);
 
     }
+    #[Route('/validerconge/{id}', name: 'validerconge')]
 
-public function validerconge (string $id,ManagerRegistry $doctrine, EntityManagerInterface $entityManager,EmployeRepository $repository)
+    public function validerconge (string $id,ManagerRegistry $doctrine, EntityManagerInterface $entityManager,EmployeRepository $repository)
 {
     $rep = $doctrine->getRepository(Conge::class);
     $conge = $rep->find($id);

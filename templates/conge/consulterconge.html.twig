@@ -16,7 +16,7 @@
 
             <th scope="col"> state  </th>
             <th scope="col"> employe id  </th>
-            <th scope="col" colspan="2"> actions  </th>
+            <th scope="col" colspan="3"> actions  </th>
 
 
 
@@ -50,7 +50,11 @@
             <td>    <a href ="{{ path ('supprimerconge',{'id':conge.id}) }}"
                 > supprimer conge</a>
             </td>
-
+            {% if conge.state=='no check' %}
+            <td>            <a href ="{{ path ('validerconge',{'id':conge.id}) }}">valider conger</a> </td>
+{% else  %}
+                <td> verifié </td>
+      {% endif %}
             </tr>
 
         {% endfor %}
@@ -101,6 +105,5 @@
         {% endfor %}
 </tbody>
 </table>
-
 
 {% endblock %}
