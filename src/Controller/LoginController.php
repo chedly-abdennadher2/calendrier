@@ -14,7 +14,6 @@ class LoginController extends AbstractController
 
     public function index(AuthenticationUtils $authenticationUtils)
     {
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
@@ -23,31 +22,27 @@ class LoginController extends AbstractController
 
         return $this->render('login/index.html.twig', [
             'controller_name' => 'LoginController',
-            'last_username' => $lastUsername,
             'error' => $error,
         ]);
 
     }
+    #[Route('/logout', name: 'logout')]
+    public function logout()
+    {
+        return $this->render('base.html.twig');
+    }
 
-    /**
-     * Returns an array of service types required by such instances, optionally keyed by the service names used internally.
-     *
-     * For mandatory dependencies:
-     *
-     *  * ['logger' => 'Psr\Log\LoggerInterface'] means the objects use the "logger" name
-     *    internally to fetch a service which must implement Psr\Log\LoggerInterface.
-     *  * ['loggers' => 'Psr\Log\LoggerInterface[]'] means the objects use the "loggers" name
-     *    internally to fetch an iterable of Psr\Log\LoggerInterface instances.
-     *  * ['Psr\Log\LoggerInterface'] is a shortcut for
-     *  * ['Psr\Log\LoggerInterface' => 'Psr\Log\LoggerInterface']
-     *
-     * otherwise:
-     *
-     *  * ['logger' => '?Psr\Log\LoggerInterface'] denotes an optional dependency
-     *  * ['loggers' => '?Psr\Log\LoggerInterface[]'] denotes an optional iterable dependency
-     *  * ['?Psr\Log\LoggerInterface'] is a shortcut for
-     *  * ['Psr\Log\LoggerInterface' => '?Psr\Log\LoggerInterface']
-     *
-     * @return string[] The required service types, optionally keyed by service names
-     */
+public function index2(AuthenticationUtils $authenticationUtils,string $nomuser, string $password)
+    {
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
+
+        return $this->render('login/index.html.twig', [
+            'controller_name' => 'LoginController',
+            'last_username' => $nomuser,
+            'password'=>$password,
+            'error' => $error,
+        ]);
+    }
 }

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrat index{% endblock %}
+
+{% block body %}
+    <h1>Contrat index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id contrat</th>
+                <th>Datedebut</th>
+                <th>Datefin</th>
+                <th>Datearret</th>
+                <th>Typedecontrat</th>
+                <th>Quotaparmoisaccorde</th>
+                <th>Quotarestant</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for contrat in contrats %}
+            <tr>
+                <td>{{ contrat.id }}</td>
+                <td>{{ contrat.datedebut ? contrat.datedebut|date('Y-m-d') : '' }}</td>
+                <td>{{ contrat.datefin ? contrat.datefin|date('Y-m-d') : '' }}</td>
+                <td>{{ contrat.datearret ? contrat.datearret|date('Y-m-d') : '' }}</td>
+                <td>{{ contrat.typedecontrat }}</td>
+                <td>{{ contrat.quotaparmoisaccorde }}</td>
+                <td>{{ contrat.quotarestant }}</td>
+                <td>
+                    <a href="{{ path('app_contrat_show', {'id': contrat.id}) }}">show</a>
+                    <a href="{{ path('app_contrat_edit', {'id': contrat.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">id contrat</th>
+        <th scope="col">id employe</th>
+
+        <th scope="col">nom</th>
+        <th scope="col">prenom</th>
+        <th scope="col">quota</th>
+        <th scope="col">salaire</th>
+
+    </tr>
+    </thead>
+    <tbody>
+
+
+    {% for contrat in contrats %}
+    <tr>
+        <th scope="row"> {{ contrat.id }} </th>
+
+        <th scope="row"> {{ contrat.employe.id }} </th>
+        <td>  {{ contrat.employe.nom }} </td>
+        <td> {{ contrat.employe.prenom }} </td>
+        <td> {{ contrat.employe.quota }} </td>
+        <td> {{ contrat.employe.salaire }} </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    <a href="{{ path('app_contrat_new') }}">Create new contrat</a>
+{% endblock %}

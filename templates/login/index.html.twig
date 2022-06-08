@@ -10,14 +10,24 @@
 {% endif %}
 <form action ="{{  path('login')}}"  method="post" >
     <label for="username">nom utilisateur:</label>
+{% if lest_username is defined %}
     <input type="text" id="username" name="_username" value="{{ last_username }}"/>
-
+{% else %}
+    <input type="text" id="username" name="_username"   />
+{% endif %}
     <label for="password">Password:</label>
+{% if password is defined %}
+    <input type="password" id="password" name="_password" value="{{ password }}"/>
+{% else %}
     <input type="password" id="password" name="_password"/>
+{% endif %}
     <button type="submit">login</button>
 
 
 
 </form>
+    <a href ="{{ path ('register') }}" class="nav-link "
+    > vous n'avez pas de compte créer un compte </a>
+
 {% endblock %}
 

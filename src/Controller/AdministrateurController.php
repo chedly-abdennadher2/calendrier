@@ -85,7 +85,6 @@ class AdministrateurController extends AbstractController
             'form' => $form,
         ]);
     }
-
     #[Route('/{id}', name: 'app_administrateur_delete', methods: ['POST'])]
     public function delete(Request $request, Administrateur $administrateur, AdministrateurRepository $administrateurRepository): Response
     {
@@ -95,4 +94,6 @@ class AdministrateurController extends AbstractController
 
         return $this->redirectToRoute('app_administrateur_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
 }

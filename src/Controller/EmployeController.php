@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Conge;
 use App\Entity\User;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
@@ -21,7 +22,7 @@ class EmployeController extends AbstractController
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
     public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_USER');
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
@@ -35,12 +36,17 @@ class EmployeController extends AbstractController
             $nomlogin = $form->get('nom')->getData();
             $rep=$doctrine->getRepository(User::class);
             $user=$rep->findOneBy(["nomutilisateur"=>$nomlogin]);
+            if ($user ==null)
+            {
+                return $this->redirectToRoute('register');
+
+            }
             $emp= $form->getData();
             $emp->setLogin($user);
 
         $entityManager->persist($emp);
         $entityManager->flush();
-
+            return $this->redirectToRoute('login');
         }
     return $this->renderForm('employe/ajouteremploye.html.twig', [
      'form' => $form,
@@ -51,6 +57,8 @@ class EmployeController extends AbstractController
 
     public function consulter(ManagerRegistry $doctrine)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
  $rep=$doctrine->getRepository(Employe::class);
 $employes= $rep->findAll();
 
@@ -62,7 +70,7 @@ $employes= $rep->findAll();
 
 public function mettreajour(string $id, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
 {
-    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    $this->denyAccessUnlessGranted('ROLE_USER');
 
     $rep=$doctrine->getRepository(Employe::class);
     $emp=$rep->find($id);
@@ -87,6 +95,8 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
     #[Route('/supprimeremploye/{id}', name: 'supprimeremploye')]
 public function supprimer (string $id, Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
 {
+    $this->denyAccessUnlessGranted('ROLE_USER');
+
     $form = $this->createForm(SuppressionType::class);
     $form->handleRequest($request);
 
@@ -117,4 +127,19 @@ public function  rechercheridparlogin (ManagerRegistry $doctrine,AuthenticationU
 $emp=$rep->findOneBy(['login'=>$user]);
 return $emp->getId();
 }
+    #[Route('/consulteremp', name: 'consulteremp')]
+
+    public function consulteremployer(ManagerRegistry $doctrine,     AuthenticationUtils $authenticationUtils
+    )
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $id= $this->rechercheridparlogin($doctrine,$authenticationUtils);
+        $rep = $doctrine->getRepository(Employe::class);
+        $employe = $rep->find($id);
+
+        return $this->render('employe/consulteremployespecifiique.html.twig', [
+            'employe' => $employe,
+        ]);
+    }
 }

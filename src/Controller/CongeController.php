@@ -22,7 +22,8 @@ class CongeController extends AbstractController
     #[Route('/ajouterconge', name: 'ajouterconge')]
     public function ajouter(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $conge = new Conge();
         $form = $this->createForm(congeformulaireType::class, $conge);
 
@@ -47,6 +48,8 @@ class CongeController extends AbstractController
 
     public function consulter(ManagerRegistry $doctrine)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $rep = $doctrine->getRepository(Conge::class);
         $conges = $rep->findAll();
     foreach ($conges as $key=>$value)
@@ -62,8 +65,7 @@ class CongeController extends AbstractController
 
     public function mettreajour(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
         $form = $this->createForm(CongeformulaireUpdateType::class, $conge);
@@ -84,6 +86,8 @@ class CongeController extends AbstractController
     #[Route('/supprimerconge/{id}', name: 'supprimerconge')]
     public function supprimer(String $id,Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager )
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $form = $this->createForm(SuppressionType::class);
         $form->handleRequest($request);
 
@@ -108,6 +112,7 @@ else {
 
     public function validerconge (string $id,ManagerRegistry $doctrine, EntityManagerInterface $entityManager,EmployeRepository $repository)
 {
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
     $rep = $doctrine->getRepository(Conge::class);
     $conge = $rep->find($id);
     $emp=$conge->getEmploye();

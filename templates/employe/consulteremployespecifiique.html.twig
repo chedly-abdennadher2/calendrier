@@ -1,6 +1,6 @@
 
 {% block title %} consulter employe {% endblock %}
-    {% extends 'baseadmin.html.twig' %}
+    {% extends 'base.html.twig' %}
 
 {% block body %}
     {{ parent() }}
@@ -18,7 +18,6 @@
         </thead>
         <tbody>
 
-        {%  for employe in employes %}
 
     <tr>
         <th scope="row"> {{ employe.id }} </th>
@@ -34,7 +33,7 @@
         </td>
 
     </tr>
-{% endfor %}
+
         </tbody>
     </table>
     <table class="table table-striped">
@@ -51,27 +50,24 @@
         </tr>
         </thead>
         <tbody>
-        {%  for employe in employes %}
 
-        {% for contrat in employe.contrat %}
-            <tr>
-                <th scope="row"> {{ contrat.id }} </th>
-                <td>  {{ contrat.datedebut|date("d/m/Y") }} </td>
-                <td> {{ contrat.datefin|date("d/m/Y") }} </td>
-                <td> {{ contrat.datefin|date("d/m/Y") }} </td>
-                <td>
-                    {{ contrat.quotaparmoisaccorde}}
-                </td>
-                <td>
-                    {{ contrat.quotarestant }}
-                </td>
+ {% for contrat in employe.contrat %}
+        <tr>
+            <th scope="row"> {{ contrat.id }} </th>
+            <td>  {{ contrat.datedebut|date("d/m/Y") }} </td>
+            <td> {{ contrat.datefin|date("d/m/Y") }} </td>
+            <td> {{ contrat.datefin|date("d/m/Y") }} </td>
+            <td>
+                {{ contrat.quotaparmoisaccorde}}
+            </td>
+            <td>
+                {{ contrat.quotarestant }}
+            </td>
 
-            </tr>
-        {% endfor %}
-        {% endfor %}
+        </tr>
+{% endfor %}
         </tbody>
     </table>
-
     <a href ="{{ path ('ajouteremploye') }}"
     > ajouter employe</a>
 

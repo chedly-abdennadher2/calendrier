@@ -33,10 +33,18 @@ class Employe
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
     private $login;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $nbjourpris;
+
+    #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Contrat::class, orphanRemoval: true)]
+    private $contrat;
+
+
 
     public function __construct()
     {
         $this->conge = new ArrayCollection();
+        $this->contrat = new ArrayCollection();
     }
 
 
@@ -131,6 +139,48 @@ class Employe
     public function setLogin(?User $login): self
     {
         $this->login = $login;
+
+        return $this;
+    }
+
+    public function getNbjourpris(): ?int
+    {
+        return $this->nbjourpris;
+    }
+
+    public function setNbjourpris(?int $nbjourpris): self
+    {
+        $this->nbjourpris = $nbjourpris;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contrat>
+     */
+    public function getContrat(): Collection
+    {
+        return $this->contrat;
+    }
+
+    public function addContrat(Contrat $contrat): self
+    {
+        if (!$this->contrat->contains($contrat)) {
+            $this->contrat[] = $contrat;
+            $contrat->setEmploye($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContrat(Contrat $contrat): self
+    {
+        if ($this->contrat->removeElement($contrat)) {
+            // set the owning side to null (unless already changed)
+            if ($contrat->getEmploye() === $this) {
+                $contrat->setEmploye(null);
+            }
+        }
 
         return $this;
     }
