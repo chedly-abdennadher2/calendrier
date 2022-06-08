@@ -124,5 +124,15 @@ class Contrat
 
         return $this;
     }
+public function calculquotaparmoisaccorde ()
+{
+    if ($this->typedecontrat=='CDI')
+    {
+        $this->quotaparmoisaccorde=2.5;
+    }
+    if ($this->typedecontrat=='CDD')
+    {   $this->quotaparmoisaccorde=1.5;
+    }
 
+}
 }

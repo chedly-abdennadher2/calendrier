@@ -107,7 +107,7 @@ class Conge
     {
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
-        $nbjour = $conge->getDateFin()->diff($conge->getDateDebut());
+        $nbjour = $conge->getDatefin()->diff($conge->getDatedebut());
 
         $diff['jour']= $nbjour->d;
         $diff['mois']= $nbjour->m;

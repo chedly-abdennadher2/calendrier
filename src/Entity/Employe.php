@@ -184,4 +184,14 @@ class Employe
 
         return $this;
     }
+public function calculerquota ()
+{
+    $nbjour2 = $this->getContrat()->get(0)->getDatefin()->diff($this->getContrat()->get(0)->getDatedebut());
+    $diff['jour']= $nbjour2->d;
+    $diff['mois']= $nbjour2->m;
+    $diff['annee']= $nbjour2->y;
+    $this->quota=$this->getContrat()->get(0)->calculquotaparmoisaccorde();
+    $this->getContrat()->get(0)->setQuotarestant($this->quota-$this->nbjourpris);
+
+}
 }
