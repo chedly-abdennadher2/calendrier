@@ -190,7 +190,7 @@ public function calculerquota ()
     $diff['jour']= $nbjour2->d;
     $diff['mois']= $nbjour2->m;
     $diff['annee']= $nbjour2->y;
-    $this->quota=$this->getContrat()->get(0)->calculquotaparmoisaccorde();
+    $this->quota=$this->getContrat()->get(0)->calculquotaparmoisaccorde()*12;
     $this->getContrat()->get(0)->setQuotarestant($this->quota-$this->nbjourpris);
 
 }
