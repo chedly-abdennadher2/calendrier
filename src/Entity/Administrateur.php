@@ -31,7 +31,7 @@ class Administrateur
     private $listeconge;
 
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private $login;
 
     public function __construct()

@@ -25,8 +25,11 @@
                 <td>{{ administrateur.prenom }}</td>
                 <td>{{ administrateur.salaire }}</td>
                 <td>{{ administrateur.role ? administrateur.role|json_encode : '' }}</td>
+                {% if administrateur.login!=null %}
                 <td>{{ administrateur.login.nomutilisateur }}</td>
-
+                {% else %}
+                    <td> pas de login</td>
+                {% endif %}
                 <td>
                     <a href="{{ path('app_administrateur_show', {'id': administrateur.id}) }}">show</a>
                     <a href="{{ path('app_administrateur_edit', {'id': administrateur.id}) }}">edit</a>

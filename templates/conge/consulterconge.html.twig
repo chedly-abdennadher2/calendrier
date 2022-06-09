@@ -50,10 +50,14 @@
             <td>    <a href ="{{ path ('supprimerconge',{'id':conge.id}) }}"
                 > supprimer conge</a>
             </td>
+
             {% if conge.state=='no check' %}
-            <td>            <a href ="{{ path ('validerconge',{'id':conge.id}) }}">valider conger</a> </td>
-{% else  %}
-                <td> verifié </td>
+            <td>
+                    <a href ="{{ path ('validercongeform',{"id":conge.id}) }}" class="nav-link "
+                    > validerconge</a>
+
+            {% else  %}
+                <td> déjà vérifié </td>
       {% endif %}
             </tr>
 

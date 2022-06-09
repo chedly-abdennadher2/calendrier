@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use function Symfony\Bundle\FrameworkBundle\Controller\redirectToRoute;
 use function Symfony\Component\Finder\contains;
 use App\Entity\Employe;
 
@@ -22,7 +23,6 @@ class EmployeController extends AbstractController
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
     public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
@@ -36,16 +36,11 @@ class EmployeController extends AbstractController
             $nomlogin = $form->get('nom')->getData();
             $rep=$doctrine->getRepository(User::class);
             $user=$rep->findOneBy(["nomutilisateur"=>$nomlogin]);
-            if ($user ==null)
-            {
-                return $this->redirectToRoute('register');
-
-            }
             $emp= $form->getData();
             $emp->setLogin($user);
         $entityManager->persist($emp);
         $entityManager->flush();
-            return $this->redirectToRoute('login');
+            return $this->redirectToRoute('/');
         }
     return $this->renderForm('employe/ajouteremploye.html.twig', [
      'form' => $form,
@@ -85,7 +80,7 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
         $emp->setLogin($user);
         $entityManager->persist($emp);
         $entityManager->flush();
-
+       return $this->redirectToRoute('consulteremp');
     }
     return $this->renderForm('employe/modifieremploye.html.twig', [
         'form' => $form,
@@ -106,6 +101,7 @@ public function supprimer (string $id, Request $request,ManagerRegistry $doctrin
 
         $entityManager->remove($emp);
         $entityManager->flush();
+
     }
 else {
     $form->get('id')->setData($id);}

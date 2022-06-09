@@ -36,7 +36,8 @@ class AdministrateurController extends AbstractController
             $nomlogin = $form->get('nom')->getData();
             $rep=$doctrine->getRepository(User::class);
             $user=$rep->findOneBy(["nomutilisateur"=>$nomlogin]);
-            $administrateur->setLogin($user);
+            if ($user!=null)
+            {$administrateur->setLogin($user);}
             $administrateurRepository->add($administrateur, true);
 
             return $this->redirectToRoute('app_administrateur_index', [], Response::HTTP_SEE_OTHER);

@@ -20,7 +20,7 @@ class CongeformulaireType extends AbstractType
         $builder
             ->add('datedebut')
             ->add('datefin')
-            ->add ('id',TextType::class,['mapped'=>false])
+            ->add ('id',TextType::class,['mapped'=>false,'disabled'=>true])
             ->add ('envoyer',SubmitType::class )
 
         ;
