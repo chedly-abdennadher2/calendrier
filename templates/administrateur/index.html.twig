@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1>Administrateur index</h1>
-
+{% if administrateurs !=null %}
     <table class="table">
         <thead>
             <tr>
@@ -42,6 +42,8 @@
         {% endfor %}
         </tbody>
     </table>
-
+{% else %}
+    no record found
+{% endif %}
     <a href="{{ path('app_administrateur_new') }}">Create new</a>
 {% endblock %}

@@ -112,26 +112,17 @@ else {
 
 }
 
-public function  rechercheridparlogin (ManagerRegistry $doctrine,AuthenticationUtils $authenticationUtils
-)
-{
-    $login=$authenticationUtils->getLastUsername();
-    $rep=$doctrine->getRepository(User::class);
-    $user=$rep->findBy(['nomutilisateur'=>$login]);
-    $rep=$doctrine->getRepository(Employe::class);
-$emp=$rep->findOneBy(['login'=>$user]);
-return $emp->getId();
-}
+
+
     #[Route('/consulteremp', name: 'consulteremp')]
 
     public function consulteremployer(ManagerRegistry $doctrine,     AuthenticationUtils $authenticationUtils
     )
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $id= $this->rechercheridparlogin($doctrine,$authenticationUtils);
         $rep = $doctrine->getRepository(Employe::class);
-        $employe = $rep->find($id);
+        $user=$this->getUser();
+        $employe=$rep->findOneBy(['login'=>$user]);
 
         return $this->render('employe/consulteremployespecifiique.html.twig', [
             'employe' => $employe,

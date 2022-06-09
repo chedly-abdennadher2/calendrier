@@ -1,6 +1,6 @@
-{% extends 'baseadmin.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Contrat index{% endblock %}
+{% block title %}Contrat index par emp{% endblock %}
 
 {% block body %}
  {{ parent() }}
@@ -59,17 +59,14 @@
     <tbody>
 
 
-    {% for contrat in contrats %}
-    <tr>
-        <th scope="row"> {{ contrat.id }} </th>
+        <tr>
 
-        <th scope="row"> {{ contrat.employe.id }} </th>
-        <td>  {{ contrat.employe.nom }} </td>
-        <td> {{ contrat.employe.prenom }} </td>
-        <td> {{ contrat.employe.quota }} </td>
-        <td> {{ contrat.employe.salaire }} </td>
+        <th scope="row"> {{ contrats[0].employe.id }} </th>
+        <td>  {{ contrats[0].employe.nom }} </td>
+        <td> {{ contrats[0].employe.prenom }} </td>
+        <td> {{ contrats[0].employe.quota }} </td>
+        <td> {{ contrats[0].employe.salaire }} </td>
     </tr>
-    {% endfor %}
     </tbody>
 </table>
     {% else %}

@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 #[Route('/contrat')]
 class ContratController extends AbstractController
@@ -53,6 +54,22 @@ class ContratController extends AbstractController
             'form' => $form,
         ]);
     }
+    #[Route('/afficher', name:'app_contrat_afficher', methods: ['GET'])]
+    public function afficher(ManagerRegistry $doctrine): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $user =$this->getUser();
+
+         $rep = $doctrine->getRepository(Employe::class);
+        $emp=$rep->findOneBy(['login'=>$user]);
+         $rep = $doctrine->getRepository(Contrat::class);
+       $contrats = $rep->findBy(['employe' => $emp]);
+
+         return $this->render('contrat/consultercontratemp.html.twig', [
+             'contrats' => $contrats,
+         ]);
+
+        }
 
     #[Route('/{id}', name: 'app_contrat_show', methods: ['GET'])]
     public function show(Contrat $contrat): Response
@@ -100,4 +117,5 @@ class ContratController extends AbstractController
 
         return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

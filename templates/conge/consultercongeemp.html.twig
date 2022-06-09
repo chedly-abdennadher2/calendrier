@@ -61,7 +61,7 @@
     > ajouter conge</a>
 
     <h1> employé concerné par ses congés </h1>
-
+{% if conges!=null %}
     <table class="table table-striped">
     <thead>
     <th scope="col"> employe id </th>
@@ -89,5 +89,5 @@
 
 </tbody>
 </table>
-
+{% endif %}
 {% endblock %}

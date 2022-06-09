@@ -4,7 +4,7 @@
 
 {% block body %}
     {{ parent() }}
-
+{% if conges!=null %}
     <h1> conge </h1>
     <table class="table table-striped">
         <thead>
@@ -84,6 +84,7 @@
         <tbody>
 
         {%  for conge in conges %}
+
             {% if conge.state=='invalide' %}
                 <tr class="table table-danger">
             {% endif %}
@@ -109,5 +110,7 @@
         {% endfor %}
 </tbody>
 </table>
-
+    {% else  %}
+        no record founds
+{% endif  %}
 {% endblock %}

@@ -35,6 +35,9 @@ class Contrat
     #[ORM\JoinColumn(nullable: false)]
     private $employe;
 
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private $statut;
+
 
     public function getId(): ?int
     {
@@ -135,6 +138,18 @@ public function calculquotaparmoisaccorde ()
     }
     echo ($this->quotaparmoisaccorde);
 
+}
+
+public function getStatut(): ?string
+{
+    return $this->statut;
+}
+
+public function setStatut(?string $statut): self
+{
+    $this->statut = $statut;
+
+    return $this;
 }
 
 }

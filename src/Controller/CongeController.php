@@ -104,9 +104,22 @@ class CongeController extends AbstractController
 
             $rep = $doctrine->getRepository(Conge::class);
             $conge = $rep->find($id);
-
+            $conge->calculernbjour($conge->getId(), $doctrine);
+            $nbjour = $conge->getNbjour();
+            $emp = $conge->getEmploye();
+            $emp->nbjourprisreset();
+            if ($conge->getState ()=='valide')
+            {
+                $emp->setNbjourpris($emp->getNbjourpris() - $nbjour);
+                if ($emp->getcontratplusrecent() != null) {
+                    $emp->getcontratplusrecent()->setQuotarestant($emp->getQuota() - $nbjour);
+                }
+            }
             $entityManager->remove($conge);
             $entityManager->flush();
+            $entityManager->persist($emp);
+            $entityManager->flush();
+
             return $this->redirectToRoute('consultercongeemp', ['id'=>$id], Response::HTTP_SEE_OTHER);
 
         } else {
@@ -132,7 +145,8 @@ class CongeController extends AbstractController
         if (($nbjour <= $emp->getQuota()) and ($conge->getState() == 'no check')) {
             $emp->nbjourprisreset();
             $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
-            $emp->getcontratplusrecent()->setQuotarestant($emp->getQuota() - $nbjour);
+            if ($emp->getcontratplusrecent()!=null)
+            {$emp->getcontratplusrecent()->setQuotarestant($emp->getQuota() - $nbjour);}
             $conge->setState('valide');
 
         } else if ($conge->getState() == 'no check') {
@@ -153,10 +167,11 @@ class CongeController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $employecontroller = new EmployeController();
-        $id = $employecontroller->rechercheridparlogin($doctrine, $authenticationUtils);
+
         $rep = $doctrine->getRepository(Employe::class);
-        $employe = $rep->find($id);
+        $user=$this->getUser();
+        $employe=$rep->findOneBy(['login'=>$user]);
+
         $rep = $doctrine->getRepository(Conge::class);
         $conges = $rep->findBy(['employe' => $employe]);
         foreach ($conges as $key => $value) {
@@ -165,6 +180,7 @@ class CongeController extends AbstractController
         return $this->render('conge/consultercongeemp.html.twig', [
             'conges' => $conges,
         ]);
+
     }
 
     #[Route('/validercongeform/{id}', name: 'validercongeform')]
