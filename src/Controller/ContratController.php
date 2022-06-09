@@ -38,9 +38,10 @@ class ContratController extends AbstractController
             $rep = $doctrine->getRepository(Employe::class);
             $emp=$rep->find($id);
             $contrat->setEmploye($emp);
-            $contrat->setQuotaparmoisaccorde('2');
+            $contrat->calculquotaparmoisaccorde();
             $emp->addContrat($contrat);
             $contratRepository->add($contrat, true);
+            $emp->calculerquota();
             $entityManager->persist($emp);
             $entityManager->flush();
 
@@ -61,8 +62,8 @@ class ContratController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_contrat_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Contrat $contrat, ContratRepository $contratRepository,ManagerRegistry $doctrine): Response
+#[Route('/{id}/edit', name: 'app_contrat_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Contrat $contrat, ContratRepository $contratRepository,ManagerRegistry $doctrine,EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ContratType::class, $contrat);
         $form->get('employe')->setData($contrat->getEmploye()->getId());
@@ -74,18 +75,21 @@ class ContratController extends AbstractController
             $rep = $doctrine->getRepository(Employe::class);
             $emp=$rep->find($id);
             $contrat->setEmploye($emp);
-            $contrat->setQuotaparmoisaccorde('2');
+            $contrat->calculquotaparmoisaccorde();
+        $emp->calculerquota();
+        $entityManager->persist($emp);
+        $entityManager->flush();
+        $contratRepository->add($contrat, true);
 
-            $contratRepository->add($contrat, true);
-
-            return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
-        }
+        return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
+    }
 
         return $this->renderForm('contrat/edit.html.twig', [
             'contrat' => $contrat,
             'form' => $form,
         ]);
     }
+
 
     #[Route('/{id}', name: 'app_contrat_delete', methods: ['POST'])]
     public function delete(Request $request, Contrat $contrat, ContratRepository $contratRepository): Response

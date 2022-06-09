@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\EmployeRepository;
+use ContainerFsHrUuq\get_ServiceLocator_Aqqd1v5Service;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Date;
 
 #[ORM\Entity(repositoryClass: EmployeRepository::class)]
 class Employe
@@ -184,14 +187,42 @@ class Employe
 
         return $this;
     }
-public function calculerquota ()
+    public function getcontratplusrecent()
+    {
+        $tab=$this->getContrat();
+        $max=0;
+        foreach ($tab as $clef=>$value)
+        { if ($value->getDatedebut()>$tab->get($max)->getDatedebut())
+        {$max=$clef;}
+        }
+        return $tab->get($max);
+    }
+    public function calculerquota ()
 {
-    $nbjour2 = $this->getContrat()->get(0)->getDatefin()->diff($this->getContrat()->get(0)->getDatedebut());
-    $diff['jour']= $nbjour2->d;
-    $diff['mois']= $nbjour2->m;
-    $diff['annee']= $nbjour2->y;
-    $this->quota=$this->getContrat()->get(0)->calculquotaparmoisaccorde()*12;
-    $this->getContrat()->get(0)->setQuotarestant($this->quota-$this->nbjourpris);
+    $date =date ('d-m-Y');
+    $jour = substr ($date,0,2);
+    $mois = substr ($date,3,2);
+    $annee=substr ($date,6,4);
+    $datetest=$this->getcontratplusrecent()->getDatedebut();
+    $yeardebut= $datetest->format('Y');
+    $moisdebut= $datetest->format('m');
+    $jourdebut= $datetest->format('d');
+    $nbmois=($annee-$yeardebut)*12+($mois-$moisdebut);
+  $nbmois=  number_format( (float) $nbmois, 2, '.', '');
+
+  $this->quota=$this->getcontratplusrecent()->getQuotaparmoisaccorde()*$nbmois;
+  echo $nbmois;
+
+    $this->getcontratplusrecent()->setQuotarestant($this->quota-$this->nbjourpris);
+}
+public function nbjourprisreset()
+{
+    $date =date ('d-m-Y');
+    $jour = substr ($date,0,2);
+if (intval($jour)==1)
+{$this->nbjourpris=0;
+}
 
 }
+
 }

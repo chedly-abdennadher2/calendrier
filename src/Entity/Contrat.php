@@ -89,12 +89,12 @@ class Contrat
         return $this;
     }
 
-    public function getQuotaparmoisaccorde(): ?int
+    public function getQuotaparmoisaccorde(): ?float
     {
         return $this->quotaparmoisaccorde;
     }
 
-    public function setQuotaparmoisaccorde(int $quotaparmoisaccorde): self
+    public function setQuotaparmoisaccorde(float $quotaparmoisaccorde): self
     {
         $this->quotaparmoisaccorde = $quotaparmoisaccorde;
 
@@ -133,6 +133,8 @@ public function calculquotaparmoisaccorde ()
     if ($this->typedecontrat=='CDD')
     {   $this->quotaparmoisaccorde=1.5;
     }
+    echo ($this->quotaparmoisaccorde);
 
 }
+
 }

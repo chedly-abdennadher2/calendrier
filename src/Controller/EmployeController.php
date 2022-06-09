@@ -43,7 +43,6 @@ class EmployeController extends AbstractController
             }
             $emp= $form->getData();
             $emp->setLogin($user);
-
         $entityManager->persist($emp);
         $entityManager->flush();
             return $this->redirectToRoute('login');
@@ -142,4 +141,6 @@ return $emp->getId();
             'employe' => $employe,
         ]);
     }
+
+
 }

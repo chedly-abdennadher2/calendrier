@@ -119,6 +119,7 @@ else {
     $conge->calculernbjour($conge->getId(),$doctrine);
     $nbjour=$conge->getNbjour();
     if (($nbjour <= $emp->getQuota()) and ($conge->getState()=='no check')) {
+        $emp->nbjourprisreset();
         $emp->setNbjourpris ($emp->getNbjourpris()+$nbjour);
         $emp->getContrat()->get(0)->setQuotarestant($emp->getQuota()-$nbjour);
         var_dump("hello valide");

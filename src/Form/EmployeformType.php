@@ -16,7 +16,6 @@ class EmployeformType extends AbstractType
         $builder
             ->add('nom')
             ->add('prenom')
-            ->add('quota')
             ->add('salaire')
 
             ->add ('envoyer',SubmitType::class )
