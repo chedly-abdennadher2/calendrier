@@ -1,13 +1,11 @@
-{% extends 'baseadmin.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}
-    SuiviConge index
-{% endblock %}
+{% block title %}SuiviConge index{% endblock %}
 
 {% block body %}
-{{ parent() }}
+    {{ parent() }}
     <h1>SuiviConge index</h1>
-
+{% if suivi_conges!=NULL %}
     <table class="table">
         <thead>
             <tr>
@@ -59,24 +57,23 @@
         </thead>
         <tbody>
 
-        {%  for suivi_conge in suivi_conges %}
             <tr class="table-info">
-            <td> {{ suivi_conge.employe.id }} </td>
+            <td> {{ suivi_conges[0].employe.id }} </td>
 
 
-            <td> {{ suivi_conge.employe.nom }} </td>
-            <td> {{ suivi_conge.employe.prenom }} </td>
-            <td> {{ suivi_conge.employe.quota }} </td>
-            <td> {{ suivi_conge.employe.salaire }} </td>
+            <td> {{ suivi_conges[0].employe.nom }} </td>
+            <td> {{ suivi_conges[0].employe.prenom }} </td>
+            <td> {{ suivi_conges[0].employe.quota }} </td>
+            <td> {{ suivi_conges[0].employe.salaire }} </td>
 
             </tr>
 
-        {% endfor %}
         </tbody>
     </table>
 
 
     <a href="{{ path('app_suivi_conge_new') }}">Create new</a>
-
-
+{% else %}
+employe n'a pas de suiviconge
+{% endif %}
 {% endblock %}

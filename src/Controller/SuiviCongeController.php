@@ -58,7 +58,21 @@ class SuiviCongeController extends AbstractController
             'form' => $form,
         ]);
     }
+    #[Route('/showemp', name: 'app_suivi_conge_showemp', methods: ['GET'])]
+    public function afficherparemp(ManagerRegistry $doctrine)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
 
+        $rep= $doctrine->getRepository(Employe::class);
+        $user =$this->getUser();
+        $emp=$rep->findOneBy(['login'=>$user]);
+        $rep=$doctrine->getRepository(SuiviConge::class);
+        $suivi_conges=$rep->findBy(['employe'=>$emp]);
+        return $this->render('suivi_conge/showemp.html.twig', [
+            'suivi_conges' => $suivi_conges,
+        ]);
+
+    }
     #[Route('/{id}', name: 'app_suivi_conge_show', methods: ['GET'])]
     public function show(SuiviConge $suiviConge): Response
     {
