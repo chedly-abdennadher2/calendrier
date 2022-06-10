@@ -114,4 +114,5 @@ class Conge
         $diff['annee']= $nbjour->y;
         $nbjour= $diff['jour']+$diff['mois'] *30 +$diff['annee']*365;
 $this->setNbjour($nbjour);
+return $nbjour;
     }}
