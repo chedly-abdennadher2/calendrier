@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New SuiviConge{% endblock %}
+
+{% block body %}
+    <h1>Create new SuiviConge</h1>
+
+    {{ include('suivi_conge/_form.html.twig') }}
+
+    <a href="{{ path('app_suivi_conge_index') }}">back to list</a>
+{% endblock %}

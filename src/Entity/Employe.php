@@ -44,10 +44,12 @@ class Employe
 
 
 
+
     public function __construct()
     {
         $this->conge = new ArrayCollection();
         $this->contrat = new ArrayCollection();
+        $this->suiviconge = new ArrayCollection();
     }
 
 
@@ -200,14 +202,14 @@ class Employe
     public function calculerquota ()
 {
     $date =date ('d-m-Y');
-    $jour = substr ($date,0,2);
-    $mois = substr ($date,3,2);
-    $annee=substr ($date,6,4);
-    $datetest=$this->getcontratplusrecent()->getDatedebut();
-    $yeardebut= $datetest->format('Y');
-    $moisdebut= $datetest->format('m');
-    $jourdebut= $datetest->format('d');
-    $nbmois=($annee-$yeardebut)*12+($mois-$moisdebut);
+    $jouractuel = substr ($date,0,2);
+    $moisactuel = substr ($date,3,2);
+    $anneeactuel=substr ($date,6,4);
+    $datedebutrecent=$this->getcontratplusrecent()->getDatedebut();
+    $yeardebut= $datedebutrecent->format('Y');
+    $moisdebut= $datedebutrecent->format('m');
+    $jourdebut= $datedebutrecent->format('d');
+    $nbmois=($anneeactuel-$yeardebut)*12+($moisactuel-$moisdebut);
   $nbmois=  number_format( (float) $nbmois, 2, '.', '');
 
   $this->quota=$this->getcontratplusrecent()->getQuotaparmoisaccorde()*$nbmois;
@@ -224,5 +226,6 @@ if (intval($jour)==1)
 }
 
 }
+
 
 }

@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Conge;
 use App\Entity\Employe;
 use App\Form\CongeformulaireType;
-use App\Form\CongeformulaireUpdateType;
 use App\Form\CongeValiderType;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
@@ -17,13 +16,12 @@ use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use function Symfony\Component\Console\Helper\render;
 
 class CongeController extends AbstractController
 {
     #[Route('/ajouterconge', name: 'ajouterconge')]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine,AuthenticationUtils $authenticationUtils): Response
+    public function ajouter(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -70,7 +68,7 @@ class CongeController extends AbstractController
 
     #[Route('/mettreajourconge/{id}', name: 'mettreajourconge')]
 
-    public function mettreajour(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine,AuthenticationUtils $authenticationUtils): Response
+    public function mettreajour(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $rep = $doctrine->getRepository(Conge::class);
@@ -162,7 +160,7 @@ class CongeController extends AbstractController
 
     #[Route('/consultercongeemp', name: 'consultercongeemp')]
 
-    public function consultercongerdeemployer(ManagerRegistry $doctrine, AuthenticationUtils $authenticationUtils
+    public function consultercongerdeemployer(ManagerRegistry $doctrine
     )
     {
         $this->denyAccessUnlessGranted('ROLE_USER');

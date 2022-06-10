@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SuiviConge{% endblock %}
+
+{% block body %}
+    <h1>SuiviConge</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ suivi_conge.id }}</td>
+            </tr>
+            <tr>
+                <th>Annee</th>
+                <td>{{ suivi_conge.annee }}</td>
+            </tr>
+            <tr>
+                <th>Mois</th>
+                <td>{{ suivi_conge.mois }}</td>
+            </tr>
+            <tr>
+                <th>Quota</th>
+                <td>{{ suivi_conge.quota }}</td>
+            </tr>
+            <tr>
+                <th>Nbjourpris</th>
+                <td>{{ suivi_conge.nbjourpris }}</td>
+            </tr>
+            <tr>
+                <th>Nbjourrestant</th>
+                <td>{{ suivi_conge.nbjourrestant }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_suivi_conge_index') }}">back to list</a>
+
+    <a href="{{ path('app_suivi_conge_edit', {'id': suivi_conge.id}) }}">edit</a>
+
+    {{ include('suivi_conge/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\SuiviCongeRepository;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: SuiviCongeRepository::class)]
+class SuiviConge
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private $id;
+
+    #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'suiviconge')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $employe;
+
+    #[ORM\ManyToOne(targetEntity: Contrat::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $contrat;
+
+    #[ORM\Column(type: 'integer')]
+    private $annee;
+
+    #[ORM\Column(type: 'integer')]
+    private $mois;
+
+    #[ORM\Column(type: 'float')]
+    private $quota;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $nbjourpris;
+
+    #[ORM\Column(type: 'integer')]
+    private $nbjourrestant;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getEmploye(): ?Employe
+    {
+        return $this->employe;
+    }
+
+    public function setEmploye(?Employe $employe): self
+    {
+        $this->employe = $employe;
+
+        return $this;
+    }
+
+    public function getContrat(): ?Contrat
+    {
+        return $this->contrat;
+    }
+
+    public function setContrat(?Contrat $contrat): self
+    {
+        $this->contrat = $contrat;
+
+        return $this;
+    }
+
+    public function getAnnee(): ?int
+    {
+        return $this->annee;
+    }
+
+    public function setAnnee(int $annee): self
+    {
+        $this->annee = $annee;
+
+        return $this;
+    }
+
+    public function getMois(): ?int
+    {
+        return $this->mois;
+    }
+
+    public function setMois(int $mois): self
+    {
+        $this->mois = $mois;
+
+        return $this;
+    }
+
+    public function getQuota(): ?float
+    {
+        return $this->quota;
+    }
+
+    public function setQuota(float $quota): self
+    {
+        $this->quota = $quota;
+
+        return $this;
+    }
+
+    public function getNbjourpris(): ?int
+    {
+        return $this->nbjourpris;
+    }
+
+    public function setNbjourpris(?int $nbjourpris): self
+    {
+        $this->nbjourpris = $nbjourpris;
+
+        return $this;
+    }
+
+    public function getNbjourrestant(): ?int
+    {
+        return $this->nbjourrestant;
+    }
+
+    public function setNbjourrestant(int $nbjourrestant): self
+    {
+        $this->nbjourrestant = $nbjourrestant;
+
+        return $this;
+    }
+}
