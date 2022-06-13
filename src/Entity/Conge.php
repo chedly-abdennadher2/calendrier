@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CongeRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -103,7 +104,7 @@ class Conge
         $this->nbjour = $nbjour;
     }
 
-    public function calculernbjour(string $id, ManagerRegistry $doctrine)
+    public function calculernbjour(string $id, EntityManager $doctrine)
     {
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);

@@ -123,39 +123,6 @@ class SuiviCongeController extends AbstractController
 
     }
 
-    public function calculnbjourpris (string $mois,string $annee,string $idemploye,ManagerRegistry $doctrine,SuiviCongeRepository $suiviCongeRepository)
-    {
-        $rep=$doctrine->getRepository(Employe::class);
-        $emp=$rep->find($idemploye);
-        if ($emp!=null) {
-            $rep = $doctrine->getRepository(SuiviConge::class);
-            $suivi_conges = $rep->findBy(['employe' => $emp]);
-            if ($suivi_conges!=null)
-            {
-                foreach ($suivi_conges as $cle=>$value)
-                {
-                 $tabconge=$value->getEmploye()->getConge();
-                 if ($value->getNbjourpris()==0)
-                 {foreach ($tabconge as $clef2=>$value2)
-                    {
-                        $dateconge=$value2->getDateDebut();
-
-                        if (($dateconge->format('m')==$mois) and($dateconge->format('Y')==$annee)) {
-                       $nbjourprisparconge = $value2->calculerNbjour($value2->getId(), $doctrine);
-                       $value->setNbjourpris($value->getNbjourpris()+$nbjourprisparconge);
-                        }
-                    }}
-                    $value->setNbjourRestant($value->getQuota()-$value->getNbjourpris());
-
-                    $suiviCongeRepository->add($value,true);
-                }
-
-            }
-
-        }
-    }
-
-
     #[Route('/{id}', name: 'app_suivi_conge_show', methods: ['GET'])]
     public function show(SuiviConge $suiviConge): Response
     {
