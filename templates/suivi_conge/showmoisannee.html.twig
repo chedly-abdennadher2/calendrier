@@ -5,7 +5,7 @@
 {% block body %}
     {{ parent() }}
     <h1>SuiviConge index</h1>
-{% if suivi_conges!=NULL %}
+{% if suivi_conges is defined %}
     <table class="table">
         <thead>
             <tr>
@@ -72,6 +72,8 @@
 
     <a href="{{ path('app_suivi_conge_new') }}">Create new</a>
 {% else %}
-employe n'a pas de suiviconge
+employe n'a pas de suiviconge dans cette date pour ce contrat
+    <a href ="{{  path('app_suivi_conge_afficher_par_mois_annee')}}"> retour au formulaire mois conge pris </a>
+
 {% endif %}
 {% endblock %}

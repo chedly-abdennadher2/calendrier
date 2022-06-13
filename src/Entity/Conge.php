@@ -103,8 +103,10 @@ class Conge
     {
         $this->nbjour = $nbjour;
     }
-
-    public function calculernbjour(string $id, EntityManager $doctrine)
+// etant donnee que la méthode pour la commande nbjour necissite un entity manager
+// ailleurs j'ai cette méthode appele avec managerregistry j'ai du créer une autre fonction
+// avec même code mais dn paramètre d'entreé différent
+    public function calculernbjourpourcommande(string $id, EntityManager $doctrine)
     {
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
@@ -116,4 +118,18 @@ class Conge
         $nbjour= $diff['jour']+$diff['mois'] *30 +$diff['annee']*365;
 $this->setNbjour($nbjour);
 return $nbjour;
-    }}
+    }
+    public function calculernbjour(string $id, ManagerRegistry $doctrine)
+    {
+        $rep = $doctrine->getRepository(Conge::class);
+        $conge = $rep->find($id);
+        $nbjour = $conge->getDatefin()->diff($conge->getDatedebut());
+
+        $diff['jour']= $nbjour->d;
+        $diff['mois']= $nbjour->m;
+        $diff['annee']= $nbjour->y;
+        $nbjour= $diff['jour']+$diff['mois'] *30 +$diff['annee']*365;
+        $this->setNbjour($nbjour);
+        return $nbjour;
+    }
+}

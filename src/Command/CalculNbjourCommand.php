@@ -4,7 +4,6 @@ namespace App\Command;
 
 use App\Entity\Employe;
 use App\Entity\SuiviConge;
-use App\Repository\SuiviCongeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -16,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'calculnbjour',
-    description: 'calculer le nombre de jour pris par un employé dans un mois et annee donnée',
+    description: 'calculer le nombre de jour pris par un employé dans un mois et annee donnée'
 )]
 class CalculNbjourCommand extends Command
 {
@@ -24,20 +23,22 @@ class CalculNbjourCommand extends Command
     public function __construct(entityManagerInterface $entityManager)
     { $this->entityManager=$entityManager;
         parent::__construct();
-        $this->setHelp('passer comme parametre a cette commande annee mois idemploye  cette commande te permet enregistrer dans la base de donnée le nombre de jour de conges pris et restant par un employe donné pendant un mois de annee donnée');
 
     }
 
-    protected function configure(): void
+    protected function configure()
     {
         $this
             ->addArgument('mois', InputArgument::REQUIRED, 'mois pendant lequel on va calculer le nombre de jour pris')
             ->addArgument ('annee',InputArgument::REQUIRED,'annee pendant laquelle on va calculer le nombre de jour pris')
             ->addArgument('idemploye',InputArgument::REQUIRED,'id de employe pourlequel on va faire le calcul')
+;
+        $this->setHelp('passer comme parametre a cette commande annee mois idemploye  cette commande te permet enregistrer dans la base de donnée le nombre de jour de conges pris et restant par un employe donné pendant un mois de annee donnée');
+
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
         $mois = $input->getArgument('mois');
@@ -59,7 +60,7 @@ class CalculNbjourCommand extends Command
                         $dateconge=$value2->getDateDebut();
 
                         if (($dateconge->format('m')==$mois) and($dateconge->format('Y')==$annee)) {
-                            $nbjourprisparconge = $value2->calculerNbjour($value2->getId(), $this->entityManager);
+                            $nbjourprisparconge = $value2->calculerNbjourpourcommande($value2->getId(), $this->entityManager);
                             $value->setNbjourpris($value->getNbjourpris()+$nbjourprisparconge);
                         }
                     }

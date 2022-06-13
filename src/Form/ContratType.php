@@ -16,7 +16,7 @@ class ContratType extends AbstractType
             ->add('datedebut')
             ->add('datefin')
             ->add('typedecontrat')
-            ->add('employe',TextType::class,array('mapped'=>false))
+            ->add('employe',TextType::class,array('mapped'=>false,'disabled'=>true))
         ;
     }
 

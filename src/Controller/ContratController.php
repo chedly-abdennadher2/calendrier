@@ -29,8 +29,15 @@ class ContratController extends AbstractController
     #[Route('/new', name: 'app_contrat_new', methods: ['GET', 'POST'])]
     public function new(Request $request, ContratRepository $contratRepository,EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $user =$this->getUser();
+
+        $rep = $doctrine->getRepository(Employe::class);
+        $emp=$rep->findOneBy(['login'=>$user]);
         $contrat = new Contrat();
         $form = $this->createForm(ContratType::class, $contrat);
+        $form->get('employe')->setData($emp->getId());
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -44,10 +51,23 @@ class ContratController extends AbstractController
             $emp->calculerquota();
             $entityManager->persist($emp);
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
+            $roles=$user->getRoles();
+            $admin='false';
+            foreach ($roles as $clef=>$value)
+            {
+                if ($value=='ROLE_ADMIN')
+                {
+                    $admin='true';
+                }
+            }
+           if ($admin=='true')
+           { return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
         }
+         else
+         {
+             return $this->redirectToRoute('app_contrat_afficher', [], Response::HTTP_SEE_OTHER);
 
+         }}
         return $this->renderForm('contrat/new.html.twig', [
             'contrat' => $contrat,
             'form' => $form,

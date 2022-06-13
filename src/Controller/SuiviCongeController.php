@@ -64,6 +64,8 @@ class SuiviCongeController extends AbstractController
     #[Route('/afficher', name: 'app_suivi_conge_afficher_par_mois_annee', methods: ['GET','POST'])]
     public function affichernbjourpris (Request $request,ManagerRegistry $doctrine,SuiviCongeRepository $suiviCongeRepository)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $suiviConge = new SuiviConge();
         $form = $this->createForm(SaisirmoisanneeType::class, $suiviConge);
         $form->handleRequest($request);
@@ -74,7 +76,6 @@ class SuiviCongeController extends AbstractController
             $rep=$doctrine->getRepository(Contrat::class);
             $contrat=$rep->find($idcontrat);
             $rep = $doctrine->getRepository(Employe::class);
-            $this->denyAccessUnlessGranted('ROLE_USER');
             $user = $this->getUser();
             $emp = $rep->findOneBy(['login' => $user]);
 
@@ -94,12 +95,15 @@ class SuiviCongeController extends AbstractController
                 if (($mois=='tout') and ($annee=='tout')){
                     $suivi_conges = $rep->findBy(['employe' => $emp,'contrat'=>$contrat]);
                 }
+                return $this->render('suivi_conge/showmoisannee.html.twig', [
+                    'suivi_conges' => $suivi_conges,
+                ]);
 
 
             }
-            return $this->render('suivi_conge/showmoisannee.html.twig', [
-                'suivi_conges' => $suivi_conges,
-            ]);
+            return $this->render('suivi_conge/showmoisannee.html.twig',
+            );
+
         }
         return $this->renderForm('suivi_conge/saisirmoisannee.html.twig', [
             'suivi_conge' => $suiviConge,
