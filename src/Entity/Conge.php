@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CongeRepository;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -106,7 +107,7 @@ class Conge
 // etant donnee que la méthode pour la commande nbjour necissite un entity manager
 // ailleurs j'ai cette méthode appele avec managerregistry j'ai du créer une autre fonction
 // avec même code mais dn paramètre d'entreé différent
-    public function calculernbjourpourcommande(string $id, EntityManager $doctrine)
+    public function calculernbjourpourcommande(string $id, EntityManagerInterface $doctrine)
     {
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);

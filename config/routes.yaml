@@ -12,7 +12,3 @@ login2:
     path:       /login2/{nomuser}/{password}
     controller: App\Controller\LoginController::index2
     methods:    GET
-app_suivi_conge_remplir:
-    path: /remplir/{idemp}
-    controller: App\Controller\SuiviCongeController::remplirsuivicongeauto
-    methods:    GET

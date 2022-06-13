@@ -23,44 +23,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class SuiviCongeController extends AbstractController
 {
 
-    public function  remplirsuivicongeauto (String $idemp,EntityManagerInterface $entityManager)
-    {
-        $rep=$entityManager->getRepository(Employe::class);
-        $emp=$rep->find ($idemp);
-        $tabcontrat =$emp->getContrat();
-
-        foreach ($tabcontrat as $clef=>$value)
-        {
-            $yeardebut= $value->getDatedebut()->format('Y');
-            $moisdebut= $value->getDatedebut()->format('m');
-            $yearfin= $value->getDatefin()->format('Y');
-            $moisfin= $value->getDatefin()->format('m');
-            $moisiteration=$moisdebut;
-
-            for ($i=$yeardebut;$i<=$yearfin;$i++)
-            {
-
-              for ( $moisiteration=$moisdebut;$moisiteration<13;$moisiteration++)
-              {
-                  $suiviconge=new SuiviConge ();
-                  $suiviconge->setEmploye($emp);
-                  $suiviconge->setContrat($value);
-                  $suiviconge->setQuota($value->getQuotaparmoisaccorde());
-                  $suiviconge->setNbjourpris(0);
-                  $suiviconge->setMois($moisiteration);
-                  $suiviconge->setAnnee($i);
-                  $suiviconge->setNbjourrestant($suiviconge->getQuota());
-                  $entityManager->persist ($suiviconge);
-                  $entityManager->flush();
-
-              }
-
-            }
-        }
-
-
-    }
-
     #[Route('/', name: 'app_suivi_conge_index', methods: ['GET'])]
     public function index(SuiviCongeRepository $suiviCongeRepository): Response
     {
@@ -220,45 +182,9 @@ class SuiviCongeController extends AbstractController
 
         return $this->redirectToRoute('app_suivi_conge_index', [], Response::HTTP_SEE_OTHER);
     }
-public function calculernbjour(Integer $mois,Integer $annee, Integer $idemp, EntityManager $entityManager)
-{
-    $rep=$entityManager->getRepository(Employe::class);
-    $emp=$rep->find($idemp);
-    if ($emp!=null) {
-        $rep = $entityManager->getRepository(SuiviConge::class);
-        $suivi_conges = $rep->findBy(['employe' => $emp]);
-        if ($suivi_conges!=null)
-        {
-            foreach ($suivi_conges as $cle=>$value)
-            {
-                $tabconge=$value->getEmploye()->getConge();
-                if ($value->getNbjourpris()==0)
-                {foreach ($tabconge as $clef2=>$value2)
-                {
-                    $dateconge=$value2->getDateDebut();
-
-                    if (($dateconge->format('m')==$mois) and($dateconge->format('Y')==$annee)) {
-                        $nbjourprisparconge = $value2->calculerNbjourpourcommande($value2->getId(), $this->entityManager);
-                        $value->setNbjourpris($value->getNbjourpris()+$nbjourprisparconge);
-                    }
-                }
-                }
-                else
-                {
 
 
-                }
-                $value->setNbjourRestant($value->getQuota()-$value->getNbjourpris());
 
-                $this->entityManager->persist($value);
-                $this->entityManager->flush();
-            }
-
-        }
-
-    }
-
-}
 
 }
 
