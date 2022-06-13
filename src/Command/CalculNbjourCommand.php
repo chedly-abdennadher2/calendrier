@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'calculnbjour',
+    name: 'calcul_nbjour',
     description: 'calculer le nombre de jour pris par un employé dans un mois et annee donnée'
 )]
 class CalculNbjourCommand extends Command
@@ -29,8 +29,6 @@ class CalculNbjourCommand extends Command
     protected function configure()
     {
         $this
-            ->addArgument('mois', InputArgument::REQUIRED, 'mois pendant lequel on va calculer le nombre de jour pris')
-            ->addArgument ('annee',InputArgument::REQUIRED,'annee pendant laquelle on va calculer le nombre de jour pris')
             ->addArgument('idemploye',InputArgument::REQUIRED,'id de employe pourlequel on va faire le calcul')
 ;
         $this->setHelp('passer comme parametre a cette commande annee mois idemploye  cette commande te permet enregistrer dans la base de donnée le nombre de jour de conges pris et restant par un employe donné pendant un mois de annee donnée');
@@ -41,48 +39,15 @@ class CalculNbjourCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $mois = $input->getArgument('mois');
-        $annee=$input->getArgument('annee');
-        $idemploye=$input->getArgument('idemploye');
+        $idemp=$input->getArgument('idemploye');
+        $io->success('calcul réalisé avec success voir base donnée.');
         $rep=$this->entityManager->getRepository(Employe::class);
-        $emp=$rep->find($idemploye);
-        if ($emp!=null) {
-            $rep = $this->entityManager->getRepository(SuiviConge::class);
-            $suivi_conges = $rep->findBy(['employe' => $emp]);
-            if ($suivi_conges!=null)
-            {
-                foreach ($suivi_conges as $cle=>$value)
-                {
-                    $tabconge=$value->getEmploye()->getConge();
-                    if ($value->getNbjourpris()==0)
-                    {foreach ($tabconge as $clef2=>$value2)
-                    {
-                        $dateconge=$value2->getDateDebut();
-
-                        if (($dateconge->format('m')==$mois) and($dateconge->format('Y')==$annee)) {
-                            $nbjourprisparconge = $value2->calculerNbjourpourcommande($value2->getId(), $this->entityManager);
-                            $value->setNbjourpris($value->getNbjourpris()+$nbjourprisparconge);
-                        }
-                    }
-                    }
-                    else
-                    {
-                        $io->success('calcul déja effectué auparavant.');
-
-                        return Command::INVALID;
-
-                    }
-                    $value->setNbjourRestant($value->getQuota()-$value->getNbjourpris());
-
-                    $this->entityManager->persist($value);
-                    $this->entityManager->flush();
-                }
-
-            }
+        $emp=$rep->find ($idemp);
+        $tabcontrat =$emp->getContrat();
+        foreach ($tabcontrat as $clef=>$value)
+        {
 
         }
-
-$io->success('calcul réalisé avec success voir base donnée.');
 
         return Command::SUCCESS;
     }
