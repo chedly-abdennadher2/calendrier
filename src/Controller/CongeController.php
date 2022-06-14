@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\Employe;
 use App\Form\CongeformulaireType;
@@ -55,14 +56,22 @@ class CongeController extends AbstractController
     public function consulter(ManagerRegistry $doctrine)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $user=$this->getUser();
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $rep=$doctrine->getRepository(Administrateur::class);
+        $administrateur=$rep->findOneBy(['login'=>$user]);
+        $rep=$doctrine->getRepository(Employe::class);
+        $employes= $rep->findBy(['admin'=>$administrateur]);
 
         $rep = $doctrine->getRepository(Conge::class);
+
         $conges = $rep->findAll();
         foreach ($conges as $key => $value) {
             $value->calculernbjour($value->getId(), $doctrine);
         }
         return $this->render('conge/consulterconge.html.twig', [
             'conges' => $conges,
+            'admin'=>$administrateur
         ]);
     }
 

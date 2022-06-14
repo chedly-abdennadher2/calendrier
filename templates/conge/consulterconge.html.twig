@@ -26,6 +26,7 @@
 
 
         {%  for conge in conges %}
+{% if conge.employe.admin==admin %}
   {% if conge.state=='invalide' %}
             <tr class="table table-danger">
 {% endif %}
@@ -60,7 +61,7 @@
                 <td> déjà vérifié </td>
       {% endif %}
             </tr>
-
+{% endif %}
         {% endfor %}
         </tbody>
     </table>
@@ -84,6 +85,7 @@
         <tbody>
 
         {%  for conge in conges %}
+            {% if conge.employe.admin==admin %}
 
             {% if conge.state=='invalide' %}
                 <tr class="table table-danger">
@@ -106,7 +108,7 @@
         <td> {{ conge.employe.salaire }} </td>
 
     </tr>
-
+            {% endif %}
         {% endfor %}
 </tbody>
 </table>

@@ -132,10 +132,12 @@ class EmployeController extends AbstractController
 
     public function consulter(ManagerRegistry $doctrine)
     {
+        $user=$this->getUser();
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
- $rep=$doctrine->getRepository(Employe::class);
-$employes= $rep->findAll();
+        $rep=$doctrine->getRepository(Administrateur::class);
+        $administrateur=$rep->findOneBy(['login'=>$user]);
+        $rep=$doctrine->getRepository(Employe::class);
+        $employes= $rep->findBy(['admin'=>$administrateur]);
 
         return $this->render('employe/consulteremploye.html.twig', [
             'employes' => $employes,
