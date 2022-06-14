@@ -4,6 +4,38 @@
 
 {% block body %}
     {{ parent() }}
+    {{ form(form) }}
+    {%   if  employeparnometprenom !=null %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">nom</th>
+                <th scope="col">prenom</th>
+                <th scope="col">quota</th>
+                <th scope="col">salaire</th>
+
+            </tr>
+            </thead>
+            <tbody>
+
+            {%  for employe in employeparnometprenom %}
+
+                <tr>
+                    <th scope="row"> {{ employe.id }} </th>
+                    <td>  {{ employe.nom }} </td>
+                    <td> {{ employe.prenom }} </td>
+                    <td> {{ employe.quota }} </td>
+                    <td> {{ employe.salaire }} </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    {% else %}
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -12,7 +44,6 @@
             <th scope="col">prenom</th>
             <th scope="col">quota</th>
             <th scope="col">salaire</th>
-            <th scope="col" colspan="2"> actions  </th>
 
         </tr>
         </thead>
@@ -26,12 +57,6 @@
         <td> {{ employe.prenom }} </td>
         <td> {{ employe.quota }} </td>
         <td> {{ employe.salaire }} </td>
-        <td>    <a href ="{{ path ('mettreajouremploye',{'id':employe.id}) }}"
-            > modifier employé</a>
-        </td>
-        <td>    <a href ="{{ path ('supprimeremploye',{'id':employe.id}) }}"
-            > supprimer employé</a>
-        </td>
 
     </tr>
 {% endfor %}
@@ -72,5 +97,5 @@
         </tbody>
     </table>
 
-
+{% endif %}
 {% endblock %}

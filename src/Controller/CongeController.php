@@ -6,17 +6,21 @@ use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\Employe;
 use App\Form\CongeformulaireType;
+use App\Form\CongeSearchFormulaireType;
 use App\Form\CongeValiderType;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
+use App\Repository\CongeRepository;
 use App\Repository\EmployeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Date;
 use function Symfony\Component\Console\Helper\render;
 
 class CongeController extends AbstractController
@@ -53,7 +57,7 @@ class CongeController extends AbstractController
 
     #[Route('/consulterconge', name: 'consulterconge')]
 
-    public function consulter(ManagerRegistry $doctrine)
+    public function consulter(Request $request,ManagerRegistry $doctrine,CongeRepository $repository)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user=$this->getUser();
@@ -69,9 +73,21 @@ class CongeController extends AbstractController
         foreach ($conges as $key => $value) {
             $value->calculernbjour($value->getId(), $doctrine);
         }
+        $conge =new Conge();
+        $form=$this->createForm(CongeSearchFormulaireType::class,$conge);
+        $form->handleRequest($request);
+        $congesearch=null;
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $mois=$form->get('mois')->getData();
+            $annee=$form->get('annee')->getData();
+        $congesearch=    $this->recherchercongeparmoisetannee($mois,$annee,$repository);
+        }
         return $this->render('conge/consulterconge.html.twig', [
             'conges' => $conges,
-            'admin'=>$administrateur
+            'admin'=>$administrateur,
+            'form'=>$form->createView(),
+            'congesearch'=>$congesearch
         ]);
     }
 
@@ -222,5 +238,8 @@ class CongeController extends AbstractController
         ]);
 
     }
-
+    public function recherchercongeparmoisetannee (string $mois,string $annee,CongeRepository $repository)
+    {$conges= $repository->FindAllByMoisAnnee($mois,$annee);
+return $conges;
+    }
 }

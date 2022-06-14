@@ -7,7 +7,9 @@ use App\Entity\Conge;
 use App\Entity\User;
 use App\Form\EmployeAdminformType;
 use App\Form\EmployeformType;
+use App\Form\EmployeSearchFormType;
 use App\Form\SuppressionType;
+use App\Repository\EmployeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -130,17 +132,31 @@ class EmployeController extends AbstractController
     
     #[Route('/consulteremploye', name: 'consulteremploye')]
 
-    public function consulter(ManagerRegistry $doctrine)
+    public function consulter(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository)
     {
+        $employessearch=null;
         $user=$this->getUser();
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep=$doctrine->getRepository(Administrateur::class);
         $administrateur=$rep->findOneBy(['login'=>$user]);
         $rep=$doctrine->getRepository(Employe::class);
         $employes= $rep->findBy(['admin'=>$administrateur]);
+        $employe=new Employe();
+        $form=$this->createForm(EmployeSearchFormType::class,$employe);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $nom=$form->get('nom')->getData();
+            $prenom=$form->get('prenom')->getData();
 
-        return $this->render('employe/consulteremploye.html.twig', [
+            $employessearch= $this->rechercherparnomprenom($nom,$prenom,$repository);
+
+        }
+
+            return $this->render('employe/consulteremploye.html.twig', [
             'employes' => $employes,
+            'form'=>$form->createView(),
+             'employeparnometprenom'  => $employessearch
+
         ]);
     }
     #[Route('/mettreajouremploye/{id}', name: 'mettreajouremploye')]
@@ -212,5 +228,17 @@ else {
         ]);
     }
 
+    #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
+public function recherchersalairesup (string $salaire,EmployeRepository $repository)
+{
+    $employes=$repository->findAllGreaterThanSalaire($salaire);
+    return $employes;
+}
+    #[Route('/rechercherparnomprenom/{nom}/{prenom}', name: 'rechercherparnomprenom')]
+    public function rechercherparnomprenom (string $nom,string $prenom ,EmployeRepository $repository)
+    {
+    $employes=$repository->findBy(['nom'=>$nom,'prenom'=>$prenom]);
+    return $employes;
+    }
 
 }

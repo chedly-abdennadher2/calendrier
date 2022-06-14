@@ -11,8 +11,9 @@
         <tr>
             <th scope="col">conge id  </th>
             <th scope="col">date de debut </th>
-            <th scope="col"> date de fin </th>
+            <th scope="col"> date <d></d>e fin </th>
             <th scope="col"> nbjour </th>
+            <th scope="col"> typeconge </th>
 
             <th scope="col"> state  </th>
             <th scope="col"> employe id  </th>
@@ -41,6 +42,7 @@
             <td>  {{ conge.datedebut|date("d/m/Y") }} </td>
             <td> {{ conge.datefin|date("d/m/Y") }} </td>
             <td> {{ conge.nbjour }} </td>
+            <td> {{ conge.typeconge }} </td>
 
             <td> {{ conge.state }} </td>
             <td> {{ conge.employe.id }} </td>

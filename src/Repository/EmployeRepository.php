@@ -38,29 +38,11 @@ class EmployeRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+public function findAllGreaterThanSalaire(float $salaire):array
+{
+$entitymanager=$this->getEntityManager();
+$query=$entitymanager->createQuery('select emp from App\Entity\Employe emp where emp.salaire>:salaire')->setParameter('salaire',$salaire);
+return $query->getResult();
 
-//    /**
-//     * @return Employe[] Returns an array of Employe objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Employe
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+}
 }

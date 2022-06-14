@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Conge;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -38,29 +39,12 @@ class CongeRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+public function FindAllByMoisAnnee(int $mois,int $annee)
+{
+    $entitymanager=$this->getEntityManager();
+    $query=$entitymanager->createQuery('select c from App\Entity\Conge c where MONTH(c.datedebut)=:mois and YEAR(c.datedebut) = :annee')
+        ->setParameter('mois',$mois)->setParameter('annee',$annee);
+    return $query->getResult();
 
-//    /**
-//     * @return Conge[] Returns an array of Conge objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Conge
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+}
 }

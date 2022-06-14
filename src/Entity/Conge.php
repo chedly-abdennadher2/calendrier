@@ -34,6 +34,9 @@ class Conge
 
     private $nbjour;
 
+    #[ORM\Column(type: 'string', length: 20)]
+    private $typeconge;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,5 +135,17 @@ return $nbjour;
         $nbjour= $diff['jour']+$diff['mois'] *30 +$diff['annee']*365;
         $this->setNbjour($nbjour);
         return $nbjour;
+    }
+
+    public function getTypeconge(): ?string
+    {
+        return $this->typeconge;
+    }
+
+    public function setTypeconge(string $typeconge): self
+    {
+        $this->typeconge = $typeconge;
+
+        return $this;
     }
 }

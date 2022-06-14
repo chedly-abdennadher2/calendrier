@@ -4,6 +4,64 @@
 
 {% block body %}
     {{ parent() }}
+    {{ form(form) }}
+    {% if congesearch != null %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">conge id  </th>
+                <th scope="col">date de debut </th>
+                <th scope="col"> date de fin </th>
+                <th scope="col"> nbjour </th>
+                <th scope="col"> typedeconge </th>
+
+                <th scope="col"> state  </th>
+                <th scope="col"> employe id  </th>
+                <th scope="col"> actions  </th>
+
+
+
+            </tr>
+            </thead>
+            <tbody>
+
+
+            {%  for conge in congesearch %}
+                {% if conge.employe.admin==admin %}
+                    {% if conge.state=='invalide' %}
+                        <tr class="table table-danger">
+                    {% endif %}
+                    {% if conge.state=='no check' %}
+                        <tr class="table-dark">
+                    {% endif %}
+
+                    {% if conge.state=='valide' %}
+                        <tr class="table-info">
+                    {% endif %}
+
+                    <th scope="row"> {{ conge.id }} </th>
+                    <td>  {{ conge.datedebut|date("d/m/Y") }} </td>
+                    <td> {{ conge.datefin|date("d/m/Y") }} </td>
+                    <td> {{ conge.nbjour }} </td>
+                    <td> {{ conge.typeconge }} </td>
+
+                    <td> {{ conge.state }} </td>
+                    <td> {{ conge.employe.id }} </td>
+                    {% if conge.state=='no check' %}
+                        <td>
+                        <a href ="{{ path ('validercongeform',{"id":conge.id}) }}" class="nav-link "
+                        > validerconge</a>
+
+                    {% else  %}
+                        <td> déjà vérifié </td>
+                    {% endif %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+
+    {% else  %}
 {% if conges!=null %}
     <h1> conge </h1>
     <table class="table table-striped">
@@ -13,10 +71,11 @@
             <th scope="col">date de debut </th>
             <th scope="col"> date de fin </th>
             <th scope="col"> nbjour </th>
+            <th scope="col"> typedeconge </th>
 
             <th scope="col"> state  </th>
             <th scope="col"> employe id  </th>
-            <th scope="col" colspan="3"> actions  </th>
+            <th scope="col"> actions  </th>
 
 
 
@@ -42,16 +101,10 @@
             <td>  {{ conge.datedebut|date("d/m/Y") }} </td>
             <td> {{ conge.datefin|date("d/m/Y") }} </td>
             <td> {{ conge.nbjour }} </td>
+    <td> {{ conge.typeconge }} </td>
 
             <td> {{ conge.state }} </td>
             <td> {{ conge.employe.id }} </td>
-         <td>    <a href ="{{ path ('mettreajourconge',{'id':conge.id}) }}"
-            > modifier conge</a>
-         </td>
-            <td>    <a href ="{{ path ('supprimerconge',{'id':conge.id}) }}"
-                > supprimer conge</a>
-            </td>
-
             {% if conge.state=='no check' %}
             <td>
                     <a href ="{{ path ('validercongeform',{"id":conge.id}) }}" class="nav-link "
@@ -115,4 +168,5 @@
     {% else  %}
         no record founds
 {% endif  %}
+{% endif %}
 {% endblock %}
