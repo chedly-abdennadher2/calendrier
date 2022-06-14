@@ -140,11 +140,20 @@ class CongeController extends AbstractController
         $emp = $conge->getEmploye();
         $conge->calculernbjour($conge->getId(), $doctrine);
         $nbjour = $conge->getNbjour();
-        if (($nbjour <= $emp->getQuota()) and ($conge->getState() == 'no check')) {
-            $emp->nbjourprisreset();
+        $contrat=$emp->getcontratplusrecent();
+
+        if (($nbjour <= $contrat->getQuotaparmoisaccorde()) and ($contrat->getQuotarestant()>0 ) and ($conge->getState() == 'no check')) {
             $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
-            if ($emp->getcontratplusrecent()!=null)
-            {$emp->getcontratplusrecent()->setQuotarestant($emp->getQuota() - $nbjour);}
+            if ($contrat!=null)
+            {  if ($emp->getNbjourpris()==0)
+            { $contrat->setQuotarestant($emp->getQuota() - $nbjour);}
+            else
+            {
+                $contrat->setQuotarestant($contrat->getQuotarestant()- $nbjour);
+            }
+
+
+            }
             $conge->setState('valide');
 
         } else if ($conge->getState() == 'no check') {
@@ -153,9 +162,12 @@ class CongeController extends AbstractController
 
         }
         $conge->setEmploye($emp);
+        dump($contrat->getQuotaRestant());
         $entityManager->persist($conge);
+        $entityManager->persist($contrat);
+        $entityManager->persist($emp);
         $entityManager->flush();
-        $repository->add($emp);
+
     }
 
     #[Route('/consultercongeemp', name: 'consultercongeemp')]
@@ -185,7 +197,7 @@ class CongeController extends AbstractController
 
     public function validercongerform(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine,EmployeRepository $repository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
         $form = $this->createForm(CongeValiderType::class, $conge);
