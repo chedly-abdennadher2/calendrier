@@ -34,9 +34,13 @@ class Administrateur
     #[ORM\JoinColumn(nullable: true)]
     private $login;
 
+    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Employe::class)]
+    private $employes;
+
     public function __construct()
     {
         $this->listeconge = new ArrayCollection();
+        $this->employes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,6 +134,36 @@ class Administrateur
     public function setLogin(User $login): self
     {
         $this->login = $login;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Employe>
+     */
+    public function getEmployes(): Collection
+    {
+        return $this->employes;
+    }
+
+    public function addEmploye(Employe $employe): self
+    {
+        if (!$this->employes->contains($employe)) {
+            $this->employes[] = $employe;
+            $employe->setAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmploye(Employe $employe): self
+    {
+        if ($this->employes->removeElement($employe)) {
+            // set the owning side to null (unless already changed)
+            if ($employe->getAdmin() === $this) {
+                $employe->setAdmin(null);
+            }
+        }
 
         return $this;
     }

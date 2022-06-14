@@ -42,6 +42,9 @@ class Employe
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Contrat::class, orphanRemoval: true)]
     private $contrat;
 
+    #[ORM\ManyToOne(targetEntity: Administrateur::class, inversedBy: 'employes')]
+    private $admin;
+
 
 
 
@@ -225,6 +228,18 @@ if (intval($jour)==1)
 {$this->nbjourpris=0;
 }
 
+}
+
+public function getAdmin(): ?Administrateur
+{
+    return $this->admin;
+}
+
+public function setAdmin(?Administrateur $admin): self
+{
+    $this->admin = $admin;
+
+    return $this;
 }
 
 

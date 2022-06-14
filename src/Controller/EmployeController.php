@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\User;
+use App\Form\EmployeAdminformType;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,6 +49,85 @@ class EmployeController extends AbstractController
  ]);
 
     }
+    #[Route('/affecteradmin', name: 'affecteradmin')]
+    public function ajouterempadmin(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
+    {
+
+        // Call whatever methods you've added to your User class
+        // For example, if you added a getFirstName() method, you can use that.
+        $emp=new Employe();
+        $form = $this->createForm(EmployeAdminformType::class,$emp);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $loginemp=$form->get('loginemploye')->getData();
+            $loginadmin=$form->get('loginadmin')->getData();
+            $rep=$entityManager->getRepository(User::class);
+            $useremp=$rep->findBy(['nomutilisateur'=>$loginemp]);
+            $useradmin=$rep->findBy(['nomutilisateur'=>$loginadmin]);
+
+            $rep=$entityManager->getRepository(Employe::class);
+            $emp=$rep->findOneBy(['login'=>$useremp]);
+            $rep=$entityManager->getRepository(Administrateur::class);
+            $admin=$rep->findOneBy(['login'=>$useradmin]);
+            $emp->setAdmin($admin);
+            $admin->addEmploye($emp);
+            $entityManager->persist($emp);
+            $entityManager->persist($admin);
+
+            $entityManager->flush();
+            return $this->redirectToRoute('/');
+        }
+        return $this->renderForm('employe/ajouteremploye.html.twig', [
+            'form' => $form,
+        ]);
+
+    }
+    #[Route('/modifieraffectationadmin/{loginemploye}/{loginadmin}', name: 'modifieraffectationadmin')]
+    public function modifierempadmin(string $loginemploye,string $loginadmin, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
+    {
+
+        // Call whatever methods you've added to your User class
+        // For example, if you added a getFirstName() method, you can use that.
+        $emp=new Employe();
+        $form = $this->createForm(EmployeAdminformType::class,$emp);
+
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $loginemp=$form->get('loginemploye')->getData();
+            $loginadmin=$form->get('loginadmin')->getData();
+            $rep=$entityManager->getRepository(User::class);
+            $useremp=$rep->findBy(['nomutilisateur'=>$loginemp]);
+            $useradmin=$rep->findBy(['nomutilisateur'=>$loginadmin]);
+
+            $rep=$entityManager->getRepository(Employe::class);
+            $emp=$rep->findOneBy(['login'=>$useremp]);
+            $rep=$entityManager->getRepository(Administrateur::class);
+            $admin=$rep->findOneBy(['login'=>$useradmin]);
+            $emp->setAdmin($admin);
+            $admin->addEmploye($emp);
+
+            $entityManager->persist($emp);
+            $entityManager->persist($admin);
+
+            $entityManager->flush();
+            return $this->redirectToRoute('/');
+        }
+        else
+        {
+            $form->get('loginemploye')->setData($loginemploye);
+            $form->get('loginadmin')->setData($loginadmin);
+
+        }
+        return $this->renderForm('employe/ajouteremploye.html.twig', [
+            'form' => $form,
+        ]);
+
+    }
+    
+    
     #[Route('/consulteremploye', name: 'consulteremploye')]
 
     public function consulter(ManagerRegistry $doctrine)
