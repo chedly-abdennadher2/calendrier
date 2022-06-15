@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\Contrat;
 use App\Entity\Employe;
 use App\Form\CongeformulaireUpdateType;
 use App\Form\ContratType;
 use App\Repository\ContratRepository;
+use App\Repository\EmployeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -144,5 +146,24 @@ class ContratController extends AbstractController
 
         return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/triercontrat/{critere}', name: 'triercontrat')]
+    public function trier(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator,string $critere)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $rep=$doctrine->getRepository(Contrat::class);
+        $contrats= $rep->findBy(array(),array($critere=>'ASC'));
+
+        $contratpages = $paginator->paginate(
+            $contrats, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            6 // Nombre de résultats par page
+        );
+
+        return $this->render('contrat/index.html.twig', [
+            'contrats' => $contratpages,
+
+        ]);
+    }
+
 
 }

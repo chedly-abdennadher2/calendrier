@@ -12,12 +12,34 @@
         <thead>
             <tr>
                 <th>Id contrat</th>
-                <th>Datedebut</th>
-                <th>Datefin</th>
-                <th>Datearret</th>
-                <th>Typedecontrat</th>
-                <th>Quotaparmoisaccorde</th>
-                <th>Quotarestant</th>
+                <th>
+                    <a href="{{ path('triercontrat',{'critere':'datedebut'})  }}">Datedebut </a>
+                    </th>
+                <th>
+                    <a href="{{ path('triercontrat',{'critere':'datefin'})  }}">Datefin </a>
+
+                </th>
+                <th>
+                    <a href="{{ path('triercontrat',{'critere':'datearret'})  }}">Datearret </a>
+
+                </th>
+                <th>
+                    <a href="{{ path('triercontrat',{'critere':'typedecontrat'})  }}">type de contrat </a>
+
+                </th>
+                <th>
+                    <a href="{{ path('triercontrat',{'critere':'quotaparmoisaccorde'})  }}">     Quota par mois accorde
+                    </a>
+
+
+                </th>
+                <th>
+                    <a href="{{ path('triercontrat',{'critere':'quotarestant'})  }}">                         Quota restant
+
+                    </a>
+
+
+                </th>
                 <th>actions</th>
             </tr>
         </thead>
