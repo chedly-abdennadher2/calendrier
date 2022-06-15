@@ -22,6 +22,7 @@ use function Symfony\Bundle\FrameworkBundle\Controller\redirectToRoute;
 use function Symfony\Component\Finder\contains;
 use App\Entity\Employe;
 
+use Knp\Component\Pager\PaginatorInterface;
 class EmployeController extends AbstractController
 {
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
@@ -132,15 +133,15 @@ class EmployeController extends AbstractController
     
     #[Route('/consulteremploye', name: 'consulteremploye')]
 
-    public function consulter(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository)
+    public function consulter(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator)
     {
-        $employessearch=null;
+        $employessearchpages=null;
         $user=$this->getUser();
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep=$doctrine->getRepository(Administrateur::class);
         $administrateur=$rep->findOneBy(['login'=>$user]);
         $rep=$doctrine->getRepository(Employe::class);
-        $employes= $rep->findBy(['admin'=>$administrateur]);
+        $employes= $rep->findAll();
         $employe=new Employe();
         $form=$this->createForm(EmployeSearchFormType::class,$employe);
         $form->handleRequest($request);
@@ -149,13 +150,23 @@ class EmployeController extends AbstractController
             $prenom=$form->get('prenom')->getData();
 
             $employessearch= $this->rechercherparnomprenom($nom,$prenom,$repository);
+            $employessearchpages = $paginator->paginate(
+                $employessearch, // Requête contenant les données à paginer (ici nos articles)
+                $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+                6 // Nombre de résultats par page
+            );
 
         }
+        $employespages = $paginator->paginate(
+            $employes, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            6 // Nombre de résultats par page
+        );
 
             return $this->render('employe/consulteremploye.html.twig', [
-            'employes' => $employes,
+            'employes' => $employespages,
             'form'=>$form->createView(),
-             'employeparnometprenom'  => $employessearch
+             'employeparnometprenom'  => $employessearchpages
 
         ]);
     }
@@ -240,5 +251,24 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
     $employes=$repository->findBy(['nom'=>$nom,'prenom'=>$prenom]);
     return $employes;
     }
+    #[Route('/trieremploye/{critere}', name: 'trieremploye')]
+    public function trier(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator,string $critere)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $rep=$doctrine->getRepository(Employe::class);
+        $employes= $rep->findBy(array(),array($critere=>'ASC'));
+
+        $employespages = $paginator->paginate(
+            $employes, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            6 // Nombre de résultats par page
+        );
+
+        return $this->render('employe/consulteremploye.html.twig', [
+            'employes' => $employespages,
+
+        ]);
+    }
 
 }
+

@@ -4,24 +4,34 @@
 
 {% block body %}
     {{ parent() }}
+    {% if congesearch is defined %}
     {{ form(form) }}
     {% if congesearch != null %}
         <table class="table table-striped">
             <thead>
             <tr>
                 <th scope="col">conge id  </th>
-                <th scope="col">date de debut </th>
-                <th scope="col"> date de fin </th>
-                <th scope="col"> nbjour </th>
-                <th scope="col"> typedeconge </th>
+                <th scope="col">
+                     date de debut
 
-                <th scope="col"> state  </th>
+                </th>
+                <th scope="col">
+                    date de fin
+                </th>
+                <th scope="col">
+
+                    nbjour </th>
+                <th scope ="col">
+                    typedeconge
+                </th>
+
+                <th scope="col">
+                    state
+                </th>
                 <th scope="col"> employe id  </th>
                 <th scope="col"> actions  </th>
 
 
-
-            </tr>
             </thead>
             <tbody>
 
@@ -58,22 +68,39 @@
                     </tr>
                 {% endif %}
             {% endfor %}
+            {{ knp_pagination_render(congesearch) }}
             </tbody>
         </table>
-
-    {% else  %}
+        {% endif %}
+        {% endif %}
+    {% if  congesearch is not defined or congesearch ==null  %}
 {% if conges!=null %}
     <h1> conge </h1>
     <table class="table table-striped">
         <thead>
         <tr>
             <th scope="col">conge id  </th>
-            <th scope="col">date de debut </th>
-            <th scope="col"> date de fin </th>
-            <th scope="col"> nbjour </th>
-            <th scope="col"> typedeconge </th>
+            <th scope="col">
+                <a href="{{ path ('trierconge',{'critere':'datedebut'} ) }}"> date de debut</a>
 
-            <th scope="col"> state  </th>
+                 </th>
+            <th scope="col">
+                <a href="{{ path ('trierconge',{'critere':'datefin'} ) }}"> date de fin</a>
+
+            </th>
+            <th scope="col">
+
+                nbjour </th>
+            <th scope ="col">
+                <a href="{{ path ('trierconge',{'critere':'typedeconge'} ) }}"> typedeconge</a>
+
+                 </th>
+
+            <th scope="col">
+                <a href="{{ path ('trierconge',{'critere':'state'} ) }}"> state </a>
+
+
+            </th>
             <th scope="col"> employe id  </th>
             <th scope="col"> actions  </th>
 
@@ -116,6 +143,7 @@
             </tr>
 {% endif %}
         {% endfor %}
+        {{ knp_pagination_render(conges) }}
         </tbody>
     </table>
 
@@ -163,7 +191,8 @@
     </tr>
             {% endif %}
         {% endfor %}
-</tbody>
+        {{ knp_pagination_render(conges) }}
+        </tbody>
 </table>
     {% else  %}
         no record founds

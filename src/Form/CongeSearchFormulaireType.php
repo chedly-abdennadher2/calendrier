@@ -15,7 +15,6 @@ class CongeSearchFormulaireType extends AbstractType
     {
         $builder
             ->add('mois', TextType::class, [
-                'label' => false,
                 'mapped'=>false,
                 'attr' => [
                     'class' => 'form-control',
@@ -23,14 +22,13 @@ class CongeSearchFormulaireType extends AbstractType
                 ]
             ])
             ->add('annee', TextType::class, [
-                'label' => false,
                 'mapped'=>false,
                     'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Entrez un annee'
                 ]
             ] )
-            ->add('recherche', SubmitType::class, [
+            ->add('rechercher', SubmitType::class, [
                 'attr' => [
                     'class' => 'btn btn-primary'
                 ]

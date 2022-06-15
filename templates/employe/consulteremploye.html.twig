@@ -4,16 +4,20 @@
 
 {% block body %}
     {{ parent() }}
+   {% if employeparnometprenom is defined %}
     {{ form(form) }}
-    {%   if  employeparnometprenom !=null %}
+    {%   if  employeparnometprenom !=null   %}
         <table class="table table-striped">
             <thead>
             <tr>
                 <th scope="col">id</th>
-                <th scope="col">nom</th>
+
+                <th  scope="col">nom</th>
                 <th scope="col">prenom</th>
                 <th scope="col">quota</th>
                 <th scope="col">salaire</th>
+                <th scope="col"> idadminconcerne </th>
+                <th scope="col"> nomadminconcerne </th>
 
             </tr>
             </thead>
@@ -23,27 +27,54 @@
 
                 <tr>
                     <th scope="row"> {{ employe.id }} </th>
-                    <td>  {{ employe.nom }} </td>
+                   <td>  {{ employe.nom }} </td>
                     <td> {{ employe.prenom }} </td>
                     <td> {{ employe.quota }} </td>
                     <td> {{ employe.salaire }} </td>
+                    {% if employe.admin!=NULL %}
+                    <td>   {{ employe.admin.id }} </td>
+                    <td>   {{ employe.admin.nom }} </td>
+                    {% else %}
+                        <td>   pas d'admin </td>
+                        <td>   pas d'admin </td>
 
+                    {% endif %}
                 </tr>
             {% endfor %}
+            {{ knp_pagination_render(employeparnometprenom) }}
+
             </tbody>
         </table>
+    {% endif %}
+       {% endif %}
 
+    {%   if  employeparnometprenom is not defined or employeparnometprenom ==null   %}
 
-    {% else %}
-
-    <table class="table table-striped">
+        <table class="table table-striped">
         <thead>
         <tr>
             <th scope="col">id</th>
-            <th scope="col">nom</th>
-            <th scope="col">prenom</th>
-            <th scope="col">quota</th>
-            <th scope="col">salaire</th>
+
+            <th  scope="col">
+                <a href="{{ path('trieremploye',{'critere':'nom'}) }}">
+                    nom </a> </th>
+
+            <th scope="col">
+                <a href="{{ path('trieremploye',{'critere':'prenom'}) }}">
+                    prenom </a>
+                 </th>
+            <th scope="col">
+
+                <a href="{{ path('trieremploye',{'critere':'quota'}) }}">
+                    quota </a>
+                </th>
+            <th scope="col">
+                <a href="{{ path('trieremploye',{'critere':'salaire'}) }}">
+                    salaire </a>
+
+                </th>
+            <th scope="col"> idadminconcerne </th>
+            <th scope="col"> nomadminconcerne </th>
 
         </tr>
         </thead>
@@ -57,9 +88,18 @@
         <td> {{ employe.prenom }} </td>
         <td> {{ employe.quota }} </td>
         <td> {{ employe.salaire }} </td>
+   {% if employe.admin!=NULL %}
+        <td>   {{ employe.admin.id }} </td>
+        <td>   {{ employe.admin.nom }} </td>
+       {% else %}
+           <td>   pas d'admin </td>
+           <td>  pas d'admin  </td>
+
+   {%  endif %}
 
     </tr>
 {% endfor %}
+        {{ knp_pagination_render(employes) }}
         </tbody>
     </table>
     <table class="table table-striped">
@@ -97,5 +137,6 @@
         </tbody>
     </table>
 
-{% endif %}
+   {% endif %}
+
 {% endblock %}

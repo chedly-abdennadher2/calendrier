@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Employe;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
@@ -32,7 +33,11 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
-
+            $rep=$entityManager->getRepository(Employe::class);
+            $employe=$rep->FindOneBy(['nom'=>$user->getNomutilisateur()]);
+           if ($employe!=null){
+            $employe->setLogin($user);
+            $entityManager->persist($employe);}
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email

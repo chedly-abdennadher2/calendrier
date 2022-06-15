@@ -15,21 +15,20 @@ class EmployeSearchFormType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label' => false,
+
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Entrez un nom'
                 ]
             ] )
             ->add('prenom', TextType::class, [
-                'label' => false,
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Entrez un mot-clé'
+                    'placeholder' => 'Entrez un prenom'
                 ]
             ])
 
-            ->add('recherche', SubmitType::class, [
+            ->add('rechercher', SubmitType::class, [
                 'attr' => [
                     'class' => 'btn btn-primary'
                 ]

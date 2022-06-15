@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Date;
 use function Symfony\Component\Console\Helper\render;
-
+use Knp\Component\Pager\PaginatorInterface;
 class CongeController extends AbstractController
 {
     #[Route('/ajouterconge', name: 'ajouterconge')]
@@ -32,10 +32,9 @@ class CongeController extends AbstractController
 
         $conge = new Conge();
         $form = $this->createForm(congeformulaireType::class, $conge);
-        $employecontroller=new EmployeController();
-        $id = $employecontroller->rechercheridparlogin($doctrine, $authenticationUtils);
+        $user=$this->getUser();
         $rep = $doctrine->getRepository(Employe::class);
-        $employe = $rep->find($id);
+        $employe = $rep->findOneBy(['login'=>$user]);
         $form->get('id')->setData($employe->getId());
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -57,15 +56,12 @@ class CongeController extends AbstractController
 
     #[Route('/consulterconge', name: 'consulterconge')]
 
-    public function consulter(Request $request,ManagerRegistry $doctrine,CongeRepository $repository)
+    public function consulter(Request $request,ManagerRegistry $doctrine,CongeRepository $repository,PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user=$this->getUser();
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep=$doctrine->getRepository(Administrateur::class);
         $administrateur=$rep->findOneBy(['login'=>$user]);
-        $rep=$doctrine->getRepository(Employe::class);
-        $employes= $rep->findBy(['admin'=>$administrateur]);
 
         $rep = $doctrine->getRepository(Conge::class);
 
@@ -76,18 +72,30 @@ class CongeController extends AbstractController
         $conge =new Conge();
         $form=$this->createForm(CongeSearchFormulaireType::class,$conge);
         $form->handleRequest($request);
-        $congesearch=null;
+        $congesearchpages=null;
         if ($form->isSubmitted() && $form->isValid())
         {
             $mois=$form->get('mois')->getData();
             $annee=$form->get('annee')->getData();
         $congesearch=    $this->recherchercongeparmoisetannee($mois,$annee,$repository);
+            $congesearchpages = $paginator->paginate(
+                $congesearch, // Requête contenant les données à paginer (ici nos articles)
+                $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+                6 // Nombre de résultats par page
+            );
+
         }
+        $congespages = $paginator->paginate(
+            $conges, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            6 // Nombre de résultats par page
+        );
+
         return $this->render('conge/consulterconge.html.twig', [
-            'conges' => $conges,
+            'conges' => $congespages,
             'admin'=>$administrateur,
             'form'=>$form->createView(),
-            'congesearch'=>$congesearch
+            'congesearch'=>$congesearchpages
         ]);
     }
 
@@ -242,4 +250,31 @@ class CongeController extends AbstractController
     {$conges= $repository->FindAllByMoisAnnee($mois,$annee);
 return $conges;
     }
+    #[Route('/trierconge/{critere}', name: 'trierconge')]
+    public function trier(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator,string $critere)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $user =$this->getUser();
+        $rep=$doctrine->getRepository(Administrateur::class);
+        $administrateur=$rep->findOneBy(['login'=>$user]);
+        $rep=$doctrine->getRepository(Conge::class);
+        $conges= $rep->findBy(array(),array($critere=>'ASC'));
+        foreach ($conges as $key => $value) {
+            $value->calculernbjour($value->getId(), $doctrine);
+        }
+
+        $congespages = $paginator->paginate(
+            $conges, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            6 // Nombre de résultats par page
+        );
+
+        return $this->render('conge/consulterconge.html.twig', [
+            'conges' => $congespages,
+            'admin'=>$administrateur,
+
+        ]);
+    }
+
+
 }

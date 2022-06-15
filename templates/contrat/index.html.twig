@@ -41,6 +41,7 @@
                 <td colspan="8">no records found</td>
             </tr>
         {% endfor %}
+        {{ knp_pagination_render(contrats) }}
         </tbody>
     </table>
 <table class="table table-striped">
@@ -70,6 +71,7 @@
         <td> {{ contrat.employe.salaire }} </td>
     </tr>
     {% endfor %}
+    {{ knp_pagination_render(contrats) }}
     </tbody>
 </table>
     {% else %}
