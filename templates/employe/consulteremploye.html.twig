@@ -4,7 +4,7 @@
 
 {% block body %}
     {{ parent() }}
-   {% if employeparnometprenom is defined %}
+    {% if employeparnometprenom is defined %}
     {{ form(form) }}
     {%   if  employeparnometprenom !=null   %}
         <table class="table table-striped">
@@ -49,30 +49,52 @@
        {% endif %}
 
     {%   if  employeparnometprenom is not defined or employeparnometprenom ==null   %}
-
         <table class="table table-striped">
         <thead>
         <tr>
-            <th scope="col">id</th>
+            <th scope="col">id
+
+            </th>
 
             <th  scope="col">
-                <a href="{{ path('trieremploye',{'critere':'nom'}) }}">
-                    nom </a> </th>
+
+                    nom
+                <a href="{{ path('trieremploye',{'critere':'nom','sens':'ASC'}) }}">
+                    <img src="{{ asset("Images/haut.png") }}" WIDTH="50" HEIGHT="70" /></a>
+                <a href="{{ path('trieremploye',{'critere':'nom','sens':'DESC'}) }}">
+
+                    <img src="{{ asset("Images/bas.png") }}" WIDTH="50" HEIGHT="70"/></a>
+
+            </th>
 
             <th scope="col">
-                <a href="{{ path('trieremploye',{'critere':'prenom'}) }}">
-                    prenom </a>
-                 </th>
+                    prenom
+                <a href="{{ path('trieremploye',{'critere':'prenom','sens':'ASC'}) }}">
+                    <img src="{{ asset("Images/haut.png") }}" WIDTH="50" HEIGHT="70" /></a>
+                <a href="{{ path('trieremploye',{'critere':'prenom','sens':'DESC'}) }}">
+
+                    <img src="{{ asset("Images/bas.png") }}" WIDTH="50" HEIGHT="70"/></a>
+
+            </th>
             <th scope="col">
 
-                <a href="{{ path('trieremploye',{'critere':'quota'}) }}">
-                    quota </a>
-                </th>
-            <th scope="col">
-                <a href="{{ path('trieremploye',{'critere':'salaire'}) }}">
-                    salaire </a>
+                    quota
+                <a href="{{ path('trieremploye',{'critere':'quota','sens':'ASC'}) }}">
+                    <img src="{{ asset("Images/haut.png") }}" WIDTH="50" HEIGHT="70" /></a>
+                <a href="{{ path('trieremploye',{'critere':'quota','sens':'DESC'}) }}">
 
-                </th>
+                    <img src="{{ asset("Images/bas.png") }}" WIDTH="50" HEIGHT="70"/></a>
+
+            </th>
+            <th scope="col">
+                    salaire
+                <a href="{{ path('trieremploye',{'critere':'salaire','sens':'ASC'}) }}">
+                    <img src="{{ asset("Images/haut.png") }}" WIDTH="50" HEIGHT="70" /></a>
+                <a href="{{ path('trieremploye',{'critere':'salaire','sens':'DESC'}) }}">
+
+                    <img src="{{ asset("Images/bas.png") }}" WIDTH="50" HEIGHT="70"/></a>
+
+            </th>
             <th scope="col"> idadminconcerne </th>
             <th scope="col"> nomadminconcerne </th>
 

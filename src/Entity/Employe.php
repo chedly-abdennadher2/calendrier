@@ -46,6 +46,21 @@ class Employe
     private $admin;
 
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getSuiviconge()
+    {
+        return $this->suiviconge;
+    }
+
+    /**
+     * @param ArrayCollection $suiviconge
+     */
+    public function setSuiviconge($suiviconge)
+    {
+        $this->suiviconge = $suiviconge;
+    }
 
 
     public function __construct()
@@ -53,6 +68,7 @@ class Employe
         $this->conge = new ArrayCollection();
         $this->contrat = new ArrayCollection();
         $this->suiviconge = new ArrayCollection();
+        $this->nbvisit=0;
     }
 
 

@@ -12,3 +12,7 @@ login2:
     path:       /login2/{nomuser}/{password}
     controller: App\Controller\LoginController::index2
     methods:    GET
+sg_datatables_bundle:
+    resource: "@SgDatatablesBundle/Controller/"
+    type:     annotation
+    prefix:   /sg

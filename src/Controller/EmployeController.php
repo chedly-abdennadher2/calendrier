@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DataTables\EmployeDataTable;
 use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\User;
@@ -13,6 +14,8 @@ use App\Repository\EmployeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sg\DatatablesBundle\Datatable\DatatableInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,8 +26,11 @@ use function Symfony\Component\Finder\contains;
 use App\Entity\Employe;
 
 use Knp\Component\Pager\PaginatorInterface;
+use Sg\DatatablesBundle\Datatable\DatatableFactory;
+use Sg\DatatablesBundle\Response\DatatableResponse;
 class EmployeController extends AbstractController
 {
+
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
     public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
     {
@@ -251,12 +257,14 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
     $employes=$repository->findBy(['nom'=>$nom,'prenom'=>$prenom]);
     return $employes;
     }
-    #[Route('/trieremploye/{critere}', name: 'trieremploye')]
-    public function trier(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator,string $critere)
+    #[Route('/trieremploye/{critere}/{sens}', name: 'trieremploye')]
+    public function trier(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator,string $critere,string $sens)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep=$doctrine->getRepository(Employe::class);
-        $employes= $rep->findBy(array(),array($critere=>'ASC'));
+
+              $employes= $rep->findBy(array(),array($critere=>$sens));
+
 
         $employespages = $paginator->paginate(
             $employes, // Requête contenant les données à paginer (ici nos articles)
@@ -266,8 +274,46 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
 
         return $this->render('employe/consulteremploye.html.twig', [
             'employes' => $employespages,
-
         ]);
+    }
+
+
+    /**
+     * Lists all Post entities.
+     *
+     * @param Request $request
+     *
+     * @Route("/consulteremployedatatable", name="consulteremployedatatable")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function indexAction(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
+    {
+        $isAjax = $request->isXmlHttpRequest();
+
+        // Get your Datatable ...
+        //$datatable = $this->get('app.datatable.post');
+        //$datatable->buildDatatable();
+
+        // or use the DatatableFactory
+        /**
+         * @var DatatableInterface $datatable
+         */
+        $datatable = $datatableFactory->create(EmployeDataTable::class);
+        $datatable->buildDatatable();
+        dump($isAjax);
+        if ($isAjax) {
+            $responseService = $datatableResponse;
+            $responseService->setDatatable($datatable);
+            $responseService->getDatatableQueryBuilder();
+
+            return $responseService->getResponse();
+        }
+
+        return $this->render('Employe/consulteremployedatatable.html.twig', array(
+            'datatable' => $datatable,
+        ));
     }
 
 }
