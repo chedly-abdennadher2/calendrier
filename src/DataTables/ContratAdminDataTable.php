@@ -20,7 +20,7 @@ use Sg\DatatablesBundle\Datatable\Filter\SelectFilter;
 use Sg\DatatablesBundle\Datatable\Filter\TextFilter;
 use Sg\DatatablesBundle\Datatable\Style;
 
-class CongeAdminDataTable extends AbstractDatatable
+class ContratAdminDataTable extends AbstractDatatable
 {
     /**
      * {@inheritdoc}
@@ -41,7 +41,7 @@ class CongeAdminDataTable extends AbstractDatatable
      */
     public function buildDatatable(array $options = array())
     {
-
+       // refaire fonction
         $this->ajax->set(array(
             // send some extra example data
             'data' => array('data1' => 1, 'data2' => 2),
@@ -60,7 +60,6 @@ class CongeAdminDataTable extends AbstractDatatable
             'search_in_non_visible_columns' => true,
         ));
 
-        $conges = $this->em->getRepository(Conge::class)->findAll();
         $this->columnBuilder
             ->add('id', Column::class, array(
                 'title' => 'Id',
@@ -132,37 +131,7 @@ class CongeAdminDataTable extends AbstractDatatable
                 )),
             ))
 
-            ->add(null, ActionColumn::class, array(
-                'title' => 'Actions',
-                'start_html' => '<div class="start_actions">',
-                'end_html' => '</div>',
-                'actions' => array(
-                    array(
-                        'route' => 'validercongeform',
-                        'route_parameters' => array(
-                            'id' => 'id',
-                        ),
-                        'icon' => 'glyphicon glyphicon-eye-open',
-                        'label' => 'valider',
-                        'confirm' => true,
-                        'confirm_message' => 'Are you sure?',
-                        'attributes' => array(
-                            'rel' => 'tooltip',
-                            'title' => 'Show',
-                            'class' => 'btn btn-primary btn-xs',
-                            'role' => 'button',
-                        ),
-
-                        'start_html' => '<div class="start_show_action">',
-                        'end_html' => '</div>',
-                    ),
-
-                ),
-            ))
-
         ;
-
-
 
 
 
@@ -175,7 +144,7 @@ class CongeAdminDataTable extends AbstractDatatable
      */
     public function getEntity()
     {
-        return 'App\Entity\Conge';
+        return 'App\Entity\Contrat';
     }
 
     /**
@@ -183,7 +152,7 @@ class CongeAdminDataTable extends AbstractDatatable
      */
     public function getName()
     {
-        return 'CongeAdminDataTable';
+        return 'ContratAdminDataTable';
     }
 
 }

@@ -60,7 +60,7 @@ class CongeDataTable extends AbstractDatatable
             'search_in_non_visible_columns' => true,
         ));
 
-        $conges = $this->em->getRepository(Conge::class)->findAll();
+
         $this->columnBuilder
             ->add('id', Column::class, array(
                 'title' => 'Id',

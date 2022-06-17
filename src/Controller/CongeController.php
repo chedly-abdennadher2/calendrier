@@ -294,6 +294,8 @@ return $conges;
      */
     public function consultercongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $isAjax = $request->isXmlHttpRequest();
 
         // Get your Datatable ...
@@ -304,7 +306,7 @@ return $conges;
         /**
          * @var DatatableInterface $datatable
          */
-        $datatable = $datatableFactory->create(CongeDataTable::class);
+        $datatable = $datatableFactory->create(CongeAdminDataTable::class);
         $datatable->buildDatatable();
         if ($isAjax) {
             $responseService = $datatableResponse;
