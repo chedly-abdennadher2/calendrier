@@ -3,6 +3,7 @@
 
 namespace App\DataTables;
 
+use App\Entity\Conge;
 use App\Entity\Employe;
 use Sg\DatatablesBundle\Datatable\AbstractDatatable;
 use Sg\DatatablesBundle\Datatable\Column\ActionColumn;
@@ -19,7 +20,7 @@ use Sg\DatatablesBundle\Datatable\Filter\SelectFilter;
 use Sg\DatatablesBundle\Datatable\Filter\TextFilter;
 use Sg\DatatablesBundle\Datatable\Style;
 
-class EmployeDataTable extends AbstractDatatable
+class CongeDataTable extends AbstractDatatable
 {
     /**
      * {@inheritdoc}
@@ -40,6 +41,7 @@ class EmployeDataTable extends AbstractDatatable
      */
     public function buildDatatable(array $options = array())
     {
+
         $this->ajax->set(array(
             // send some extra example data
             'data' => array('data1' => 1, 'data2' => 2),
@@ -58,6 +60,7 @@ class EmployeDataTable extends AbstractDatatable
             'search_in_non_visible_columns' => true,
         ));
 
+        $conges = $this->em->getRepository(Conge::class)->findAll();
         $this->columnBuilder
             ->add('id', Column::class, array(
                 'title' => 'Id',
@@ -72,8 +75,9 @@ class EmployeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-            ->add('nom', Column::class, array(
-                'title' => 'nom',
+            ->add('datedebut', DateTimeColumn::class, array(
+                'title' => 'datedebut',
+                'date_format' => 'L',
                 'searchable' => true,
                 'orderable' => true,
                 'filter' => array(NumberFilter::class, array(
@@ -86,8 +90,9 @@ class EmployeDataTable extends AbstractDatatable
                 )),
             ))
 
-            ->add('prenom', Column::class, array(
-                'title' => 'prenom',
+            ->add('datefin', DateTimeColumn::class, array(
+                'title' => 'datefin',
+                'date_format' => 'L',
                 'searchable' => true,
                 'orderable' => true,
                 'filter' => array(NumberFilter::class, array(
@@ -100,8 +105,8 @@ class EmployeDataTable extends AbstractDatatable
                 )),
             ))
 
-            ->add('salaire', Column::class, array(
-                'title' => 'salaire',
+            ->add('state', Column::class, array(
+                'title' => 'state',
                 'searchable' => true,
                 'orderable' => true,
                 'filter' => array(NumberFilter::class, array(
@@ -113,8 +118,8 @@ class EmployeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-            ->add('quota', Column::class, array(
-                'title' => 'quota',
+            ->add('typeconge', Column::class, array(
+                'title' => 'typeconge',
                 'searchable' => true,
                 'orderable' => true,
                 'filter' => array(NumberFilter::class, array(
@@ -132,7 +137,7 @@ class EmployeDataTable extends AbstractDatatable
                 'end_html' => '</div>',
                 'actions' => array(
                     array(
-                        'route' => 'mettreajouremploye',
+                        'route' => 'mettreajourconge',
                         'route_parameters' => array(
                             'id' => 'id',
                         ),
@@ -178,7 +183,7 @@ class EmployeDataTable extends AbstractDatatable
                 'end_html' => '</div>',
                 'actions' => array(
                     array(
-                        'route' => 'supprimeremploye',
+                        'route' => 'supprimerconge',
                         'route_parameters' => array(
                             'id' => 'id',
 
@@ -202,7 +207,7 @@ class EmployeDataTable extends AbstractDatatable
                         'confirm' => false,
                         'attributes' => array(
                             'rel' => 'tooltip',
-                            'title' => 'Show',
+                            'title' => 'supprimer   ',
                             'class' => 'btn btn-primary btn-xs',
                             'role' => 'button',
                         ),
@@ -218,8 +223,7 @@ class EmployeDataTable extends AbstractDatatable
                 ),
             ))
 
-
-         ;
+        ;
 
 
 
@@ -232,7 +236,7 @@ class EmployeDataTable extends AbstractDatatable
      */
     public function getEntity()
     {
-        return 'App\Entity\Employe';
+        return 'App\Entity\Conge';
     }
 
     /**
@@ -240,7 +244,7 @@ class EmployeDataTable extends AbstractDatatable
      */
     public function getName()
     {
-        return 'EmployeDataTable';
+        return 'CongeAdminDataTable';
     }
 
 }

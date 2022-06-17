@@ -19,7 +19,7 @@ use Sg\DatatablesBundle\Datatable\Filter\SelectFilter;
 use Sg\DatatablesBundle\Datatable\Filter\TextFilter;
 use Sg\DatatablesBundle\Datatable\Style;
 
-class EmployeDataTable extends AbstractDatatable
+class EmployeAdminDataTable extends AbstractDatatable
 {
     /**
      * {@inheritdoc}
@@ -40,6 +40,7 @@ class EmployeDataTable extends AbstractDatatable
      */
     public function buildDatatable(array $options = array())
     {
+
         $this->ajax->set(array(
             // send some extra example data
             'data' => array('data1' => 1, 'data2' => 2),
@@ -58,6 +59,7 @@ class EmployeDataTable extends AbstractDatatable
             'search_in_non_visible_columns' => true,
         ));
 
+        $employes = $this->em->getRepository(Employe::class)->findAll();
         $this->columnBuilder
             ->add('id', Column::class, array(
                 'title' => 'Id',
@@ -126,99 +128,12 @@ class EmployeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-            ->add(null, ActionColumn::class, array(
-                'title' => 'Actions',
-                'start_html' => '<div class="start_actions">',
-                'end_html' => '</div>',
-                'actions' => array(
-                    array(
-                        'route' => 'mettreajouremploye',
-                        'route_parameters' => array(
-                            'id' => 'id',
-                        ),
-                        'icon' => 'glyphicon glyphicon-eye-open',
-                        'label' => 'mettre à jour ',
-                        'confirm' => true,
-                        'confirm_message' => 'Are you sure?',
-                        'attributes' => array(
-                            'rel' => 'tooltip',
-                            'title' => 'Show',
-                            'class' => 'btn btn-primary btn-xs',
-                            'role' => 'button',
-                        ),
-
-                        'start_html' => '<div class="start_show_action">',
-                        'end_html' => '</div>',
-                    ),
-                    array(
-                        'icon' => 'glyphicon glyphicon-star',
-                        'label' => 'mettreajour',
-                        'confirm' => false,
-                        'attributes' => array(
-                            'rel' => 'tooltip',
-                            'title' => 'Show',
-                            'class' => 'btn btn-primary btn-xs',
-                            'role' => 'button',
-                        ),
-                        'button' => true,
-                        'button_value' => 'id',
-                        'button_value_prefix' => true,
-                        'render_if' => function ($row) {
-                            return $this->authorizationChecker->isGranted('ROLE_ADMIN');
-                        },
-                        'start_html' => '<div class="start_show_action">',
-                        'end_html' => '</div>',
-                    ),
-                ),
+            ->add('contrat.datedebut', Column::class, array(
+                'title' => 'contrats',
+                'data' => 'contrats[,].datedebut',
+                'searchable' => true,
+                'orderable' => true,
             ))
-
-            ->add(null, ActionColumn::class, array(
-                'title' => 'Actions',
-                'start_html' => '<div class="start_actions">',
-                'end_html' => '</div>',
-                'actions' => array(
-                    array(
-                        'route' => 'supprimeremploye',
-                        'route_parameters' => array(
-                            'id' => 'id',
-
-                        ),
-                        'icon' => 'glyphicon glyphicon-eye-open',
-                        'label' => 'supprimer',
-                        'confirm' => true,
-                        'confirm_message' => 'Are you sure?',
-                        'attributes' => array(
-                            'rel' => 'tooltip',
-                            'title' => 'supprimer',
-                            'class' => 'btn btn-primary btn-xs',
-                            'role' => 'button',
-                        ),
-                        'start_html' => '<div class="start_show_action">',
-                        'end_html' => '</div>',
-                    ),
-                    array(
-                        'icon' => 'glyphicon glyphicon-star',
-                        'label' => 'supprimer',
-                        'confirm' => false,
-                        'attributes' => array(
-                            'rel' => 'tooltip',
-                            'title' => 'Show',
-                            'class' => 'btn btn-primary btn-xs',
-                            'role' => 'button',
-                        ),
-                        'button' => true,
-                        'button_value' => 'id',
-                        'button_value_prefix' => true,
-                        'render_if' => function ($row) {
-                            return $this->authorizationChecker->isGranted('ROLE_ADMIN');
-                        },
-                        'start_html' => '<div class="start_show_action">',
-                        'end_html' => '</div>',
-                    ),
-                ),
-            ))
-
-
          ;
 
 
@@ -240,7 +155,7 @@ class EmployeDataTable extends AbstractDatatable
      */
     public function getName()
     {
-        return 'EmployeDataTable';
+        return 'EmployeAdminDataTable';
     }
 
 }

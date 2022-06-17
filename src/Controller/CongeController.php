@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\DataTables\CongeAdminDataTable;
+use App\DataTables\CongeDataTable;
+use App\DataTables\EmployeAdminDataTable;
 use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\Employe;
@@ -15,6 +18,10 @@ use App\Repository\EmployeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sg\DatatablesBundle\Datatable\DatatableFactory;
+use Sg\DatatablesBundle\Datatable\DatatableInterface;
+use Sg\DatatablesBundle\Response\DatatableResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
@@ -275,6 +282,89 @@ return $conges;
 
         ]);
     }
+    /**
+     * Lists all Post entities.
+     *
+     * @param Request $request
+     *
+     * @Route("/consultercongedatatable", name="consultercongedatatable")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function consultercongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
+    {
+        $isAjax = $request->isXmlHttpRequest();
+
+        // Get your Datatable ...
+        //$datatable = $this->get('app.datatable.post');
+        //$datatable->buildDatatable();
+
+        // or use the DatatableFactory
+        /**
+         * @var DatatableInterface $datatable
+         */
+        $datatable = $datatableFactory->create(CongeDataTable::class);
+        $datatable->buildDatatable();
+        if ($isAjax) {
+            $responseService = $datatableResponse;
+            $responseService->setDatatable($datatable);
+            $responseService->getDatatableQueryBuilder();
+
+            return $responseService->getResponse();
+        }
+
+        return $this->render('conge/consultercongedatatable.html.twig', array(
+            'datatable' => $datatable,
+        ));
+    }
+
+    /**
+     * Lists all Post entities.
+     *
+     * @param Request $request
+     *
+     * @Route("/consultercongeempdatatable", name="consultercongeempdatatable")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function consultercongeempdatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse,EntityManagerInterface $doctrine)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $rep = $doctrine->getRepository(Employe::class);
+        $user=$this->getUser();
+        $emp = $rep->findOneBy(['login'=>$user]);
+
+        $isAjax = $request->isXmlHttpRequest();
+
+        // Get your Datatable ...
+        //$datatable = $this->get('app.datatable.post');
+        //$datatable->buildDatatable();
+
+        // or use the DatatableFactory
+        /**
+         * @var DatatableInterface $datatable
+         */
+        $datatable = $datatableFactory->create(CongeDataTable::class);
+        $datatable->buildDatatable();
+
+        if ($isAjax) {
+            $datatableResponse->setDatatable($datatable);
+            $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
+            $qb = $datatableQueryBuilder->getQb();
+            $id = $emp->getId();
+            $qb->leftJoin("conge.employe","employe");
+            $qb->andWhere('employe.id=:employe');
+            $qb->setParameter('employe', $id);
+            return $datatableResponse->getResponse();
+        }
+
+        return $this->render('conge/consultercongeempdatatable.html.twig', array(
+            'datatable' => $datatable,
+        ));
+    }
+
 
 
 }

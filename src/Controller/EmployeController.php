@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DataTables\EmployeAdminDataTable;
 use App\DataTables\EmployeDataTable;
 use App\Entity\Administrateur;
 use App\Entity\Conge;
@@ -230,20 +231,7 @@ else {
 
 
 
-    #[Route('/consulteremp', name: 'consulteremp')]
 
-    public function consulteremployer(ManagerRegistry $doctrine
-    )
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        $rep = $doctrine->getRepository(Employe::class);
-        $user=$this->getUser();
-        $employe=$rep->findOneBy(['login'=>$user]);
-
-        return $this->render('employe/consulteremployespecifiique.html.twig', [
-            'employe' => $employe,
-        ]);
-    }
 
     #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
 public function recherchersalairesup (string $salaire,EmployeRepository $repository)
@@ -288,8 +276,10 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
      *
      * @return Response
      */
-    public function indexAction(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
+    public function consulteremployedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $isAjax = $request->isXmlHttpRequest();
 
         // Get your Datatable ...
@@ -300,9 +290,8 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         /**
          * @var DatatableInterface $datatable
          */
-        $datatable = $datatableFactory->create(EmployeDataTable::class);
+    $datatable = $datatableFactory->create(EmployeAdminDataTable::class);
         $datatable->buildDatatable();
-        dump($isAjax);
         if ($isAjax) {
             $responseService = $datatableResponse;
             $responseService->setDatatable($datatable);
@@ -316,5 +305,43 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         ));
     }
 
+
+    #[Route('/consulterempdatatable', name: 'consulterempdatatable')]
+
+    public function consulteremployerspecifiquedatatable(Request $request, ManagerRegistry $doctrine, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse
+    )
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $rep = $doctrine->getRepository(Employe::class);
+        $user=$this->getUser();
+        $isAjax = $request->isXmlHttpRequest();
+
+        // Get your Datatable ...
+        //$datatable = $this->get('app.datatable.post');
+        //$datatable->buildDatatable();
+
+        // or use the DatatableFactory
+        /**
+         * @var DatatableInterface $datatable
+         */
+        $datatable = $datatableFactory->create(EmployeDataTable::class);
+        $datatable->buildDatatable();
+        if ($isAjax) {
+
+            $datatableResponse->setDatatable($datatable);
+            $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
+            $qb = $datatableQueryBuilder->getQb();
+            $id = $user->getId();
+            $qb->leftJoin("employe.login","login");
+            $qb->andWhere('login.id=:login');
+            $qb->setParameter('login', $id);
+
+            return $datatableResponse->getResponse();
+        }
+
+        return $this->render('Employe/consulteremployespecifiquedatatable.html.twig', array(
+            'datatable' => $datatable,
+        ));
+    }
 }
 
