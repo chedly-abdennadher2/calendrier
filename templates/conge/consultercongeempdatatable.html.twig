@@ -2,5 +2,7 @@
 {% block body %}
     {{ parent() }}
     {{ sg_datatables_render(datatable) }}
+    <a href ="{{ path ('ajouterconge') }}"
+    > ajouter conge</a>
 
 {% endblock %}
