@@ -3,7 +3,12 @@
 
 namespace App\DataTables;
 
+use App\Entity\Conge;
+use App\Entity\Contrat;
 use App\Entity\Employe;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Integer;
 use Sg\DatatablesBundle\Datatable\AbstractDatatable;
 use Sg\DatatablesBundle\Datatable\Column\ActionColumn;
 use Sg\DatatablesBundle\Datatable\Column\BooleanColumn;
@@ -21,25 +26,63 @@ use Sg\DatatablesBundle\Datatable\Style;
 
 class EmployeDataTable extends AbstractDatatable
 {
-    /**
-     * {@inheritdoc}
-     */
-/*    public function getLineFormatter()
+    private $contrats;
+    public function getLineFormatter()
     {
         $formatter = function($row) {
-            $row['test'] = 'Post from ' . $row['createdBy']['username'];
+            $row['datedebut']=null;
+            $row['datefin']=null;
+            $row['datearret']=null;
+
+            $row['id']=null;
+            $row['typedecontrat']=null;
+            $row['quotaparmoisaccorde']=null;
+            $row['quotarestant']=null;
+
+            $doctrine=$this->getEntityManager();
+            $repository=$doctrine->getRepository(Employe::class);
+            $employes=$repository->findAll();
+
+            foreach ($this->contrats as $clef2=>$value2)
+            {
+                $row['id']=$row['id'].$value2->getId();
+                $row['id']=$row['id']."<br>";
+
+                $row['datedebut']=$row['datedebut']. date_format($value2->getDatedebut(),'d/m/Y');
+                $row['datedebut']=$row['datedebut']."<br>";
+                $row['datefin']=$row['datefin']. date_format($value2->getDatefin(),'d/m/Y');
+                $row['datefin']=$row['datefin']."<br>";
+                $row['typedecontrat']=$row['typedecontrat'].$value2->getTypedecontrat();
+                $row['typedecontrat']=$row['typedecontrat']."<br>";
+                $row['quotaparmoisaccorde']=$row['quotaparmoisaccorde'].$value2->getQuotaparmoisaccorde();
+                $row['quotaparmoisaccorde']=$row['quotaparmoisaccorde']."<br>";
+                $row['quotarestant']=$row['quotarestant'].$value2->getQuotarestant();
+                $row['quotarestant']=$row['quotarestant']."<br>";
+
+            }
+
+
 
             return $row;
         };
 
         return $formatter;
     }
-*/
+
+
     /**
      * {@inheritdoc}
      */
     public function buildDatatable(array $options = array())
     {
+
+        $doctrine=$this->getEntityManager();
+        $repository=$doctrine->getRepository(Employe::class);
+        $employe=$repository->find($options['id']);
+        $repository=$doctrine->getRepository(Contrat::class);
+
+        $this->contrats=$repository->findBy(['employe'=>$employe]);
+
         $this->ajax->set(array(
             // send some extra example data
             'data' => array('data1' => 1, 'data2' => 2),
@@ -72,6 +115,7 @@ class EmployeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
+
             ->add('nom', Column::class, array(
                 'title' => 'nom',
                 'searchable' => true,
@@ -126,6 +170,8 @@ class EmployeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
+
+
             ->add(null, ActionColumn::class, array(
                 'title' => 'Actions',
                 'start_html' => '<div class="start_actions">',
@@ -217,6 +263,13 @@ class EmployeDataTable extends AbstractDatatable
                     ),
                 ),
             ))
+            ->add ('id',VirtualColumn::class,['title'=>'id contrat'])
+            ->add ('datedebut',VirtualColumn::class,['title'=>'datedebut'])
+            ->add ('datefin',VirtualColumn::class,['title'=>'datefin'])
+
+            ->add ('typedecontrat',VirtualColumn::class,['title'=>'typedecontrat'])
+            ->add ('quotaparmoisaccorde',VirtualColumn::class,['title'=>'quotaparmoisaccorde'])
+            ->add ('quotarestant',VirtualColumn::class,['title'=>'quotarestant'])
 
 
          ;

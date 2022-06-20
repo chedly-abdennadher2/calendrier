@@ -33,7 +33,7 @@ class EmployeController extends AbstractController
 {
 
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
-    public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
+    public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine ) :Response
     {
 
         // Call whatever methods you've added to your User class
@@ -325,7 +325,11 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
          * @var DatatableInterface $datatable
          */
         $datatable = $datatableFactory->create(EmployeDataTable::class);
-        $datatable->buildDatatable();
+        $rep = $doctrine->getRepository(Employe::class);
+        $employe=$rep->findOneBy(['login'=>$user]);
+
+
+        $datatable->buildDatatable(['id'=>$employe->getId()]);
         if ($isAjax) {
 
             $datatableResponse->setDatatable($datatable);
