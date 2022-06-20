@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {{ parent() }}
+    {{ sg_datatables_render(datatable) }}
+    <a href="{{ path('app_contrat_new') }}">Create new contrat</a>
+
+{% endblock %}

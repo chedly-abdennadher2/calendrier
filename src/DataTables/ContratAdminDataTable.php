@@ -103,9 +103,23 @@ class ContratAdminDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
+            ->add('datearret', DateTimeColumn::class, array(
+                'title' => 'datearret',
+                'date_format' => 'L',
+                'searchable' => true,
+                'orderable' => true,
+                'filter' => array(NumberFilter::class, array(
+                    'classes' => 'test1 test2',
+                    'search_type' => 'eq',
+                    'cancel_button' => true,
+                    'type' => 'number',
+                    'show_label' => true,
+                    'datalist' => array('3', '50', '75')
+                )),
+            ))
 
-            ->add('state', Column::class, array(
-                'title' => 'state',
+            ->add('typedecontrat', Column::class, array(
+                'title' => 'type de contrat',
                 'searchable' => true,
                 'orderable' => true,
                 'filter' => array(NumberFilter::class, array(
@@ -117,8 +131,8 @@ class ContratAdminDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-            ->add('typeconge', Column::class, array(
-                'title' => 'typeconge',
+            ->add('quotaparmoisaccorde', Column::class, array(
+                'title' => 'quota par mois accordé',
                 'searchable' => true,
                 'orderable' => true,
                 'filter' => array(NumberFilter::class, array(
@@ -130,6 +144,124 @@ class ContratAdminDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
+            ->add('quotarestant', Column::class, array(
+                'title' => 'quotarestant',
+                'searchable' => true,
+                'orderable' => true,
+                'filter' => array(NumberFilter::class, array(
+                    'classes' => 'test1 test2',
+                    'search_type' => 'eq',
+                    'cancel_button' => true,
+                    'type' => 'number',
+                    'show_label' => true,
+                    'datalist' => array('3', '50', '75')
+                )),
+            ))
+            ->add('statut', Column::class, array(
+                'title' => 'statut',
+                'searchable' => true,
+                'orderable' => true,
+                'filter' => array(NumberFilter::class, array(
+                    'classes' => 'test1 test2',
+                    'search_type' => 'eq',
+                    'cancel_button' => true,
+                    'type' => 'number',
+                    'show_label' => true,
+                    'datalist' => array('3', '50', '75')
+                )),
+            ))
+            ->add(null, ActionColumn::class, array(
+                'title' => 'Actions',
+                'start_html' => '<div class="start_actions">',
+                'end_html' => '</div>',
+                'actions' => array(
+                    array(
+                        'route' => 'app_contrat_edit',
+                        'route_parameters' => array(
+                            'id' => 'id',
+                        ),
+                        'icon' => 'glyphicon glyphicon-eye-open',
+                        'label' => 'mettre à jour ',
+                        'confirm' => true,
+                        'confirm_message' => 'Are you sure?',
+                        'attributes' => array(
+                            'rel' => 'tooltip',
+                            'title' => 'Show',
+                            'class' => 'btn btn-primary btn-xs',
+                            'role' => 'button',
+                        ),
+
+                        'start_html' => '<div class="start_show_action">',
+                        'end_html' => '</div>',
+                    ),
+                    array(
+                        'icon' => 'glyphicon glyphicon-star',
+                        'label' => 'mettreajour',
+                        'confirm' => false,
+                        'attributes' => array(
+                            'rel' => 'tooltip',
+                            'title' => 'Show',
+                            'class' => 'btn btn-primary btn-xs',
+                            'role' => 'button',
+                        ),
+                        'button' => true,
+                        'button_value' => 'id',
+                        'button_value_prefix' => true,
+                        'render_if' => function ($row) {
+                            return $this->authorizationChecker->isGranted('ROLE_ADMIN');
+                        },
+                        'start_html' => '<div class="start_show_action">',
+                        'end_html' => '</div>',
+                    ),
+                ),
+            ))
+
+            ->add(null, ActionColumn::class, array(
+                'title' => 'Actions',
+                'start_html' => '<div class="start_actions">',
+                'end_html' => '</div>',
+                'actions' => array(
+                    array(
+                        'route' => 'app_contrat_delete',
+                        'route_parameters' => array(
+                            'id' => 'id',
+
+                        ),
+                        'icon' => 'glyphicon glyphicon-eye-open',
+                        'label' => 'supprimer',
+                        'confirm' => true,
+                        'confirm_message' => 'Are you sure?',
+                        'attributes' => array(
+                            'rel' => 'tooltip',
+                            'title' => 'supprimer',
+                            'class' => 'btn btn-primary btn-xs',
+                            'role' => 'button',
+                        ),
+                        'start_html' => '<div class="start_show_action">',
+                        'end_html' => '</div>',
+                    ),
+                    array(
+                        'icon' => 'glyphicon glyphicon-star',
+                        'label' => 'supprimer',
+                        'confirm' => false,
+                        'attributes' => array(
+                            'rel' => 'tooltip',
+                            'title' => 'supprimer   ',
+                            'class' => 'btn btn-primary btn-xs',
+                            'role' => 'button',
+                        ),
+                        'button' => true,
+                        'button_value' => 'id',
+                        'button_value_prefix' => true,
+                        'render_if' => function ($row) {
+                            return $this->authorizationChecker->isGranted('ROLE_ADMIN');
+                        },
+                        'start_html' => '<div class="start_show_action">',
+                        'end_html' => '</div>',
+                    ),
+                ),
+            ))
+
 
         ;
 

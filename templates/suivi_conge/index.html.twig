@@ -39,14 +39,10 @@
                     <a href="{{ path('app_suivi_conge_edit', {'id': suivi_conge.id}) }}">edit</a>
                 </td>
             </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
+
         {% endfor %}
         </tbody>
     </table>
-
     <table class="table table-striped">
         <thead>
         <th scope="col"> employe id </th>
