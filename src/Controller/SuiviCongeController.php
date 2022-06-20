@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DataTables\SuiviCongeAdminDataTable;
 use App\Entity\Contrat;
 use App\Entity\Employe;
 use App\Entity\SuiviConge;
@@ -13,6 +14,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
+use Sg\DatatablesBundle\Datatable\DatatableFactory;
+use Sg\DatatablesBundle\Datatable\DatatableInterface;
+use Sg\DatatablesBundle\Response\DatatableResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +26,72 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/suivi/conge')]
 class SuiviCongeController extends AbstractController
 {
+    #[Route('/consultersuivicongedatatable', name: 'consultersuivicongedatatable')]
+
+    public function consultersuivicongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $isAjax = $request->isXmlHttpRequest();
+
+        // Get your Datatable ...
+        //$datatable = $this->get('app.datatable.post');
+        //$datatable->buildDatatable();
+
+        // or use the DatatableFactory
+        /**
+         * @var DatatableInterface $datatable
+         */
+        $datatable = $datatableFactory->create(SuiviCongeAdminDataTable::class);
+        $datatable->buildDatatable();
+        if ($isAjax) {
+            $responseService = $datatableResponse;
+            $responseService->setDatatable($datatable);
+            $responseService->getDatatableQueryBuilder();
+
+            return $responseService->getResponse();
+        }
+
+        return $this->render('suivi_conge/consultersuivicongeadmindatatable.html.twig', array(
+            'datatable' => $datatable,
+        ));
+    }
+    #[Route('/consultersuivicongeempdatatable', name: 'consultersuivicongeempdatatable')]
+
+    public function consultersuivicongeempdatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse,EntityManagerInterface $doctrine)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $rep = $doctrine->getRepository(Employe::class);
+        $user=$this->getUser();
+        $emp = $rep->findOneBy(['login'=>$user]);
+
+        $isAjax = $request->isXmlHttpRequest();
+
+        // Get your Datatable ...
+        //$datatable = $this->get('app.datatable.post');
+        //$datatable->buildDatatable();
+
+        // or use the DatatableFactory
+        /**
+         * @var DatatableInterface $datatable
+         */
+        $datatable = $datatableFactory->create(SuiviCongeAdminDataTable::class);
+        $datatable->buildDatatable();
+
+        if ($isAjax) {
+            $datatableResponse->setDatatable($datatable);
+            $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
+            $qb = $datatableQueryBuilder->getQb();
+            $id = $emp->getId();
+            $qb->leftJoin("suiviconge.employe","employe");
+            $qb->andWhere('employe.id=:employe');
+            $qb->setParameter('employe', $id);
+            return $datatableResponse->getResponse();
+        }
+
+        return $this->render('suivi_conge/consultersuivicongedatatable.html.twig', array(
+            'datatable' => $datatable,
+        ));
+    }
 
     #[Route('/', name: 'app_suivi_conge_index', methods: ['GET'])]
     public function index(SuiviCongeRepository $suiviCongeRepository): Response

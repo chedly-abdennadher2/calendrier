@@ -87,7 +87,7 @@ class ContratController extends AbstractController
             return $datatableResponse->getResponse();
         }
 
-        return $this->render('contrat/consultercontratdatatable.html.twig', array(
+        return $this->render('contrat/consultercontratempdatatable.html.twig', array(
             'datatable' => $datatable,
         ));
     }
