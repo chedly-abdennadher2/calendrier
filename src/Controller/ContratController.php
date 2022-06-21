@@ -81,9 +81,8 @@ class ContratController extends AbstractController
             $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
             $qb = $datatableQueryBuilder->getQb();
             $id = $emp->getId();
-            $qb->leftJoin("contrat.employe","employe");
-            $qb->andWhere('employe.id=:employe');
-            $qb->setParameter('employe', $id);
+            $qb->andWhere('employe.id=:id');
+            $qb->setParameter('id', $id);
             return $datatableResponse->getResponse();
         }
 

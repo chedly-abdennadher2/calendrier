@@ -364,7 +364,6 @@ return $conges;
             $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
             $qb = $datatableQueryBuilder->getQb();
             $id = $emp->getId();
-            $qb->leftJoin("conge.employe","employe");
             $qb->andWhere('employe.id=:employe');
             $qb->setParameter('employe', $id);
             return $datatableResponse->getResponse();

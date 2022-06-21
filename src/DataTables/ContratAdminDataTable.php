@@ -25,7 +25,7 @@ class ContratAdminDataTable extends AbstractDatatable
     /**
      * {@inheritdoc}
      */
-    public function getLineFormatter()
+    /*public function getLineFormatter()
     {
         $formatter = function($row) {
 
@@ -34,7 +34,7 @@ class ContratAdminDataTable extends AbstractDatatable
 
         return $formatter;
     }
-
+*/
     /**
      * {@inheritdoc}
      */
@@ -53,7 +53,7 @@ class ContratAdminDataTable extends AbstractDatatable
             'stripe_classes' => [ 'strip1', 'strip2', 'strip3' ],
             'individual_filtering' => true,
             'individual_filtering_position' => 'head',
-            'order' => array(array(0, 'asc')),
+            'order' => array(array(8, 'asc')),
             'order_cells_top' => true,
             //'global_search_type' => 'gt',
             'search_in_non_visible_columns' => true,

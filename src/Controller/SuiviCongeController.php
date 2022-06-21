@@ -81,7 +81,6 @@ class SuiviCongeController extends AbstractController
             $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
             $qb = $datatableQueryBuilder->getQb();
             $id = $emp->getId();
-            $qb->leftJoin("suiviconge.employe","employe");
             $qb->andWhere('employe.id=:employe');
             $qb->setParameter('employe', $id);
             return $datatableResponse->getResponse();
