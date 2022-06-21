@@ -131,6 +131,24 @@ class CongeAdminDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
+            ->add('employe.id', Column::class, array(
+                'title' => 'id employe',
+                'searchable' => true,
+                'orderable' => true,
+
+            ))
+            ->add('employe.nom', Column::class, array(
+                'title' => 'nom employe',
+                'searchable' => true,
+                'orderable' => true,
+
+            ))
+            ->add('employe.prenom', Column::class, array(
+                'title' => 'prenom employe',
+                'searchable' => true,
+                'orderable' => true,
+
+            ))
 
             ->add(null, ActionColumn::class, array(
                 'title' => 'Actions',

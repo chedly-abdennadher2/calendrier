@@ -27,7 +27,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class SuiviCongeController extends AbstractController
 {
     #[Route('/consultersuivicongedatatable', name: 'consultersuivicongedatatable')]
-
     public function consultersuivicongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');

@@ -36,9 +36,6 @@ class EmployeAdminDataTable extends AbstractDatatable
             $row['quotaparmoisaccorde']=null;
             $row['quotarestant']=null;
 
-            $doctrine=$this->getEntityManager();
-            $repository=$doctrine->getRepository(Employe::class);
-            $employes=$repository->findAll();
 
             foreach ($this->contrats as $clef2=>$value2)
             {

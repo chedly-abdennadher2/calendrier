@@ -112,14 +112,15 @@ class ContratController extends AbstractController
     #[Route('/new', name: 'app_contrat_new', methods: ['GET', 'POST'])]
     public function new(Request $request, ContratRepository $contratRepository, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $user = $this->getUser();
 
         $rep = $doctrine->getRepository(Employe::class);
         $emp = $rep->findOneBy(['login' => $user]);
         $contrat = new Contrat();
         $form = $this->createForm(ContratType::class, $contrat);
-        $form->get('employe')->setData($emp->getId());
+         if($emp!=null)
+         {$form->get('employe')->setData($emp->getId());}
 
         $form->handleRequest($request);
 
