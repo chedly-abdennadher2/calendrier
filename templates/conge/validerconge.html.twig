@@ -3,7 +3,13 @@
 {% block title %}  valider conge {% endblock %}
 
 {% block body %}
-    {{ form(form) }}
+{% if conge.employe.admin.id==  administrateur.id %}
 
+    {{ form(form) }}
+{% else %}
+    <h1> vous n'avez pas le droit de toucher les conges de {{ conge.employe.nom }}
+        {{ conge.employe.prenom }}
+    </h1>
+{% endif %}
 
 {% endblock %}

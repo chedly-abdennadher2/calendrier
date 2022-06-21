@@ -239,6 +239,10 @@ class CongeController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
+        $user=$this->getUser();
+        $rep = $doctrine->getRepository(Administrateur::class);
+     $administrateur=$rep->findOneBy(['login'=>$user]);
+
         $form = $this->createForm(CongeValiderType::class, $conge);
        $form->get('id')->setData($id);
         $form->handleRequest($request);
@@ -249,6 +253,8 @@ class CongeController extends AbstractController
         }
         return $this->renderForm('conge/validerconge.html.twig', [
             'form' => $form,
+            'conge'=>$conge,
+           'administrateur'=> $administrateur
         ]);
 
     }
@@ -291,9 +297,12 @@ return $conges;
      *
      * @return Response
      */
-    public function consultercongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
+    public function consultercongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse,EntityManagerInterface $doctrine)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $user=$this->getUser();
+        $rep=$doctrine->getRepository(Employe::class);
+        $employes=$rep->findBy(['admin'=>$user]);
 
         $isAjax = $request->isXmlHttpRequest();
 

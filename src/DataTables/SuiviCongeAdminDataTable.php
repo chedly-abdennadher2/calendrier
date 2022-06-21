@@ -146,7 +146,6 @@ class SuiviCongeAdminDataTable extends AbstractDatatable
                 'title' => 'id employe',
                 'searchable' => true,
                 'orderable' => true,
-
             ))
             ->add('employe.nom', Column::class, array(
                 'title' => 'nom employe',
@@ -159,6 +158,23 @@ class SuiviCongeAdminDataTable extends AbstractDatatable
                 'searchable' => true,
                 'orderable' => true,
 
+            ))
+            ->add('contrat.id', Column::class, array(
+                'title' => 'id contrat',
+                'searchable' => true,
+                'orderable' => true,
+            ))
+            ->add('contrat.datedebut', DateTimeColumn::class, array(
+                'title' => 'contrat datedebut',
+                'date_format' => 'L',
+                'searchable' => true,
+                'orderable' => true,
+            ))
+            ->add('contrat.datefin', DateTimeColumn::class, array(
+                'title' => 'contrat datefin',
+                'searchable' => true,
+                'orderable' => true,
+                'date_format' => 'L',
             ))
 
 
