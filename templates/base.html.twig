@@ -70,33 +70,34 @@
                             <a href ="{{ path ('consultersuivicongeempdatatable') }}" class="nav-link "
                             > consulter suiviconge</a>
                         </li>
+                        {% if app.user is null %}
 
                         <li class="nav-item">
                             <a href ="{{ path ('/entree') }}" class="nav-link "
                             >  partie admin </a>
 
                         </li>
+
+                        {% endif %}
+
                         <li class="nav-item">
-                            <a href ="{{ path ('login') }}" class="nav-link "
-                            >  login </a>
+
                         <li class="nav-item">
                             <a href ="{{ path ('logout') }}" class="nav-link "
                             >  logout </a>
 
                         </li>
+                        {% if app.user is null %}
                         <li class="nav-item">
                             <a href ="{{ path ('register') }}" class="nav-link "
                             > s'inscrire </a>
-
                         </li>
+                        {% endif %}
 
-
-                        </li>
 
                     </ul>
                 </nav>
             </div>
-
 
         {% endblock %}
 

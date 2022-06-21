@@ -24,7 +24,7 @@ use Sg\DatatablesBundle\Datatable\Style;
 class EmployeAdminDataTable extends AbstractDatatable
 {
     private $contrats;
-      public function getLineFormatter()
+     /* public function getLineFormatter()
     {
         $formatter = function($row) {
             $row['datedebut']=null;
@@ -62,7 +62,7 @@ class EmployeAdminDataTable extends AbstractDatatable
 
         return $formatter;
     }
-
+*/
     /**
      * {@inheritdoc}
      */
@@ -161,13 +161,6 @@ class EmployeAdminDataTable extends AbstractDatatable
                 )),
             ))
 
-            ->add ('id',VirtualColumn::class,['title'=>'id contrat'])
-            ->add ('datedebut',VirtualColumn::class,['title'=>'datedebut'])
-            ->add ('datefin',VirtualColumn::class,['title'=>'datefin'])
-
-            ->add ('typedecontrat',VirtualColumn::class,['title'=>'typedecontrat'])
-            ->add ('quotaparmoisaccorde',VirtualColumn::class,['title'=>'quotaparmoisaccorde'])
-            ->add ('quotarestant',VirtualColumn::class,['title'=>'quotarestant'])
 
          ;
 
