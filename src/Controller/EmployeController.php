@@ -197,7 +197,7 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
         $emp->setLogin($user);
         $entityManager->persist($emp);
         $entityManager->flush();
-       return $this->redirectToRoute('consulteremp');
+       return $this->redirectToRoute('consulterempdatatable');
     }
     return $this->renderForm('employe/modifieremploye.html.twig', [
         'form' => $form,
@@ -215,9 +215,9 @@ public function supprimer (string $id, Request $request,ManagerRegistry $doctrin
 
         $rep=$doctrine->getRepository(Employe::class);
         $emp=$rep->find($id);
-
         $entityManager->remove($emp);
         $entityManager->flush();
+        return $this->redirectToRoute('/');
 
     }
 else {

@@ -8,6 +8,7 @@ use App\Entity\Employe;
 use App\Entity\SuiviConge;
 use App\Form\SaisirmoisanneeType;
 use App\Form\SuiviCongeType;
+use App\Form\SuiviCongeUpdateType;
 use App\Repository\SuiviCongeRepository;
 use Container0SlFVJx\get_Console_Command_AssetsInstall_LazyService;
 use Doctrine\ORM\EntityManager;
@@ -102,9 +103,11 @@ class SuiviCongeController extends AbstractController
     #[Route('/new', name: 'app_suivi_conge_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SuiviCongeRepository $suiviCongeRepository,ManagerRegistry $doctrine): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $suiviConge = new SuiviConge();
 
         $form = $this->createForm(SuiviCongeType::class, $suiviConge);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
           $idemp=$form->get('employeid')->getData();
@@ -114,18 +117,19 @@ class SuiviCongeController extends AbstractController
           $suiviConge->setEmploye($emp);
           $rep=$doctrine->getRepository(Contrat::class);
           $contrat=$rep->find($idcontrat);
-          $suiviConge->setContrat($contrat);
-            $yeardebut= $contrat->getDatedebut()->format('Y');
-            $moisdebut= $contrat->getDatedebut()->format('m');
-            $suiviConge->setAnnee($yeardebut);
-            $suiviConge->setMois($moisdebut);
-            $suiviConge->setQuota($contrat->getQuotaparmoisaccorde());
-            $suiviConge->setNbjourpris(0);
-            $suiviConge->setNbjourrestant($suiviConge->getQuota());
+          if ($contrat->getEmploye()->  getId()==$emp->getId()) {
+              $suiviConge->setContrat($contrat);
+              $yeardebut = $contrat->getDatedebut()->format('Y');
+              $moisdebut = $contrat->getDatedebut()->format('m');
+              $suiviConge->setAnnee($yeardebut);
+              $suiviConge->setMois($moisdebut);
+              $suiviConge->setQuota($contrat->getQuotaparmoisaccorde());
+              $suiviConge->setNbjourpris(0);
+              $suiviConge->setNbjourrestant($suiviConge->getQuota());
 
-            $suiviCongeRepository->add($suiviConge, true);
-
-            return $this->redirectToRoute('app_suivi_conge_index', [], Response::HTTP_SEE_OTHER);
+              $suiviCongeRepository->add($suiviConge, true);
+          }
+            return $this->redirectToRoute('consultersuivicongedatatable');
         }
 
         return $this->renderForm('suivi_conge/new.html.twig', [
@@ -211,28 +215,40 @@ class SuiviCongeController extends AbstractController
     #[Route('/{id}/edit', name: 'app_suivi_conge_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, SuiviConge $suiviConge, SuiviCongeRepository $suiviCongeRepository, ManagerRegistry $doctrine): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(SuiviCongeType::class, $suiviConge);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $idemp=$form->get('employeid')->getData();
+
             $idcontrat= $form->get('contratid')->getData();
             $rep=$doctrine->getRepository(Employe::class);
             $emp=$rep->find($idemp);
             $suiviConge->setEmploye($emp);
             $rep=$doctrine->getRepository(Contrat::class);
             $contrat=$rep->find($idcontrat);
-            $suiviConge->setContrat($contrat);
-            $yeardebut= $contrat->getDatedebut()->format('Y');
-            $moisdebut= $contrat->getDatedebut()->format('m');
-            $suiviConge->setAnnee($yeardebut);
-            $suiviConge->setMois($moisdebut);
-            $suiviConge->setQuota($contrat->getQuotaparmoisaccorde());
-            $suiviConge->setNbjourpris(0);
-            $suiviConge->setNbjourrestant($suiviConge->getQuota());
-            $suiviCongeRepository->add($suiviConge, true);
 
-            return $this->redirectToRoute('app_suivi_conge_index', [], Response::HTTP_SEE_OTHER);
+            if ($contrat->getEmploye()->  getId()==$emp->getId()) {
+
+                $suiviConge->setContrat($contrat);
+                $yeardebut = $contrat->getDatedebut()->format('Y');
+                $moisdebut = $contrat->getDatedebut()->format('m');
+                $suiviConge->setAnnee($yeardebut);
+                $suiviConge->setMois($moisdebut);
+                $suiviConge->setQuota($contrat->getQuotaparmoisaccorde());
+                $suiviConge->setNbjourpris(0);
+                $suiviConge->setNbjourrestant($suiviConge->getQuota());
+                $suiviCongeRepository->add($suiviConge, true);
+            }
+            return $this->redirectToRoute('consultersuivicongedatatable');
+        }
+        else {
+            $form->get('employeid')->setData($suiviConge->getEmploye()->getId());
+            $form->get('contratid')->setData($suiviConge->getContrat()->getId());
+
+
         }
 
         return $this->renderForm('suivi_conge/edit.html.twig', [
@@ -244,11 +260,13 @@ class SuiviCongeController extends AbstractController
     #[Route('/{id}', name: 'app_suivi_conge_delete', methods: ['POST'])]
     public function delete(Request $request, SuiviConge $suiviConge, SuiviCongeRepository $suiviCongeRepository): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         if ($this->isCsrfTokenValid('delete'.$suiviConge->getId(), $request->request->get('_token'))) {
             $suiviCongeRepository->remove($suiviConge, true);
         }
 
-        return $this->redirectToRoute('app_suivi_conge_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('consultersuivicongedatatable');
     }
 
 

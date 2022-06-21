@@ -51,7 +51,7 @@ class CongeController extends AbstractController
             $conge->setEmploye($rep->find($id));
             $entityManager->persist($conge);
             $entityManager->flush();
-            return $this->redirectToRoute('consultercongeemp', ['id'=>$id], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('consultercongeempdatatable');
 
 
         }
@@ -120,7 +120,7 @@ class CongeController extends AbstractController
             $conge = $form->getData();
             $entityManager->persist($conge);
             $entityManager->flush();
-            return $this->redirectToRoute('consultercongeemp', ['id'=>$id], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('consultercongeempdatatable');
 
         }
         return $this->renderForm('conge/modifierconge.html.twig', [
@@ -157,7 +157,7 @@ class CongeController extends AbstractController
             $entityManager->persist($emp);
             $entityManager->flush();
 
-            return $this->redirectToRoute('consultercongeemp', ['id'=>$id], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('consultercongeempdatatable');
 
         } else {
             $id = $form->get('id')->setData($id);
@@ -248,7 +248,7 @@ class CongeController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->validerconge($id,$doctrine,$entityManager,$repository);
-            return $this->redirectToRoute('consulterconge', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('consultercongedatatable');
 
         }
         return $this->renderForm('conge/validerconge.html.twig', [

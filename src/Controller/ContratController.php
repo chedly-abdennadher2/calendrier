@@ -9,6 +9,7 @@ use App\Entity\Conge;
 use App\Entity\Contrat;
 use App\Entity\Employe;
 use App\Form\ContratType;
+use App\Form\ContratUpdateType;
 use App\Repository\ContratRepository;
 use App\Repository\EmployeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -142,9 +143,9 @@ class ContratController extends AbstractController
                 }
             }
             if ($admin == 'true') {
-                return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('consultercontratdatatable');
             } else {
-                return $this->redirectToRoute('app_contrat_afficher', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('consultercontratempdatatable');
 
             }
         }
@@ -182,7 +183,9 @@ class ContratController extends AbstractController
 #[Route('/{id}/edit', name: 'app_contrat_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Contrat $contrat, ContratRepository $contratRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(ContratType::class, $contrat);
+        $user = $this->getUser();
+
+        $form = $this->createForm(ContratUpdateType::class, $contrat);
         $form->get('employe')->setData($contrat->getEmploye()->getId());
 
         $form->handleRequest($request);
@@ -197,8 +200,19 @@ class ContratController extends AbstractController
             $entityManager->persist($emp);
             $entityManager->flush();
             $contratRepository->add($contrat, true);
+            $roles = $user->getRoles();
+            $admin = 'false';
+            foreach ($roles as $clef => $value) {
+                if ($value == 'ROLE_ADMIN') {
+                    $admin = 'true';
+                }
+            }
+            if ($admin == 'true') {
+                return $this->redirectToRoute('consultercontratdatatable');
+            } else {
+                return $this->redirectToRoute('consultercontratempdatatable');
 
-            return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->renderForm('contrat/edit.html.twig', [
@@ -211,11 +225,25 @@ class ContratController extends AbstractController
     #[Route('/{id}', name: 'app_contrat_delete', methods: ['POST'])]
     public function delete(Request $request, Contrat $contrat, ContratRepository $contratRepository): Response
     {
+        $user = $this->getUser();
+
         if ($this->isCsrfTokenValid('delete' . $contrat->getId(), $request->request->get('_token'))) {
             $contratRepository->remove($contrat, true);
         }
 
-        return $this->redirectToRoute('app_contrat_index', [], Response::HTTP_SEE_OTHER);
+        $roles = $user->getRoles();
+        $admin = 'false';
+        foreach ($roles as $clef => $value) {
+            if ($value == 'ROLE_ADMIN') {
+                $admin = 'true';
+            }
+        }
+        if ($admin == 'true') {
+            return $this->redirectToRoute('consultercontratdatatable');
+        } else {
+            return $this->redirectToRoute('consultercontratempdatatable');
+
+        }
     }
 
     #[Route('/triercontrat/{critere}', name: 'triercontrat')]

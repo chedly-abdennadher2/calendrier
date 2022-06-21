@@ -66,10 +66,8 @@
                             <a href ="{{ path ('consultercongeempdatatable') }}" class="nav-link "
                             > consulter conge</a>
                         </li>
-                        <li class="nav-item">
-                            <a href ="{{ path ('consultersuivicongeempdatatable') }}" class="nav-link "
-                            > consulter suiviconge</a>
-                        </li>
+                        {% if app.user is defined %}
+
                         {% if app.user is null %}
 
                         <li class="nav-item">
@@ -79,21 +77,29 @@
                         </li>
 
                         {% endif %}
+                        {% endif %}
 
-                        <li class="nav-item">
+                        {% if app.user is defined %}
+
+                        {% if app.user is not null %}
 
                         <li class="nav-item">
                             <a href ="{{ path ('logout') }}" class="nav-link "
                             >  logout </a>
 
                         </li>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if app.user is defined %}
+
                         {% if app.user is null %}
                         <li class="nav-item">
                             <a href ="{{ path ('register') }}" class="nav-link "
                             > s'inscrire </a>
                         </li>
                         {% endif %}
-
+                        {% endif %}
 
                     </ul>
                 </nav>

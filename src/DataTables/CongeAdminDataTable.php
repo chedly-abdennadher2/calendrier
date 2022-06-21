@@ -170,7 +170,11 @@ class CongeAdminDataTable extends AbstractDatatable
                             'class' => 'btn btn-primary btn-xs',
                             'role' => 'button',
                         ),
-
+                        'render_if' =>function ($row)
+                        {
+                            return ($row['state']==='no check') ;
+                        }
+                    ,
                         'start_html' => '<div class="start_show_action">',
                         'end_html' => '</div>',
                     ),

@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ContratType extends AbstractType
+class ContratUpdateType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -18,7 +18,7 @@ class ContratType extends AbstractType
             ->add('typedecontrat')
             ->add('statut')
 
-            ->add('employe',TextType::class,array('mapped'=>false))
+            ->add('employe',TextType::class,array('mapped'=>false,'disabled'=>true))
         ;
     }
 
