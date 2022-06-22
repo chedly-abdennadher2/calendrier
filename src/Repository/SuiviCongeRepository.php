@@ -57,7 +57,7 @@ class SuiviCongeRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-    public function calculersommenbjourrestant (Employe $emp, int $mois, int $annee):array
+ /*   public function calculersommenbjourrestant (Employe $emp, int $mois, int $annee):array
     {
         $entitymanager=$this->getEntityManager();
      if ($mois>1) {
@@ -71,5 +71,5 @@ class SuiviCongeRepository extends ServiceEntityRepository
         return $query->getResult();
 
     }
-
+*/
 }

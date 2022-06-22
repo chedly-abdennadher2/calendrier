@@ -114,14 +114,22 @@ class Conge
     {
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
-        $nbjour = $conge->getDatefin()->diff($conge->getDatedebut());
+        if ($conge->state == 'valide')
+        {            $nbjour = $conge->getDatefin()->diff($conge->getDatedebut());
 
-        $diff['jour']= $nbjour->d;
-        $diff['mois']= $nbjour->m;
-        $diff['annee']= $nbjour->y;
-        $nbjour= $diff['jour']+$diff['mois'] *30 +$diff['annee']*365;
-$this->setNbjour($nbjour);
-return $nbjour;
+        $diff['jour'] = $nbjour->d;
+        $diff['mois'] = $nbjour->m;
+        $diff['annee'] = $nbjour->y;
+        $nbjour = $diff['jour'] + $diff['mois'] * 30 + $diff['annee'] * 365;
+        $this->setNbjour($nbjour);
+        return $nbjour;
+    }
+    else
+{
+$this->setNbjour(0);
+return 0;
+
+}
     }
     public function calculernbjour(string $id, ManagerRegistry $doctrine)
     {

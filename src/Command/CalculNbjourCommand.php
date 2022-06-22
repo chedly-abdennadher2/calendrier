@@ -79,6 +79,9 @@ class CalculNbjourCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
 
     {
+        $dateactuel = date('d-m-Y');
+        $moisactuel=substr ($dateactuel,3,2);
+        $anneeactuel=substr ($dateactuel,6,4);
 
         $io = new SymfonyStyle($input, $output);
 
@@ -106,10 +109,16 @@ class CalculNbjourCommand extends Command
                     $moisiteration = $moisdebut;
 
 
-                    for ($i = $yeardebut; $i <= $yearfin; $i++) {
+                    for ($i = $yeardebut; (($i <= $anneeactuel) and ($i<=$yearfin)); $i++) {
 
 
                         for ($moisiteration = $moisdebut; $moisiteration < 13; $moisiteration++) {
+
+                            if (($i==$anneeactuel) and ($moisiteration==$moisactuel))
+                            {
+                                break;
+
+                            }
 
                             $rep = $this->entityManager->getRepository(SuiviConge::class);
 
@@ -173,10 +182,16 @@ class CalculNbjourCommand extends Command
                     $moisiteration = $moisdebut;
 
 
-                    for ($i = $yeardebut; $i <= $yearfin; $i++) {
+                    for ($i = $yeardebut; (($i <= $anneeactuel) and ($i<=$yearfin)); $i++) {
 
 
                         for ($moisiteration = $moisdebut; $moisiteration < 13; $moisiteration++) {
+                            if (($i==$anneeactuel) and ($moisiteration==$moisactuel))
+                            {
+                                break;
+
+                            }
+
                             $rep = $this->entityManager->getRepository(SuiviConge::class);
 
                             $suivicongetrouve = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration, 'employe' => $valueemp, 'contrat' => $value]);
@@ -206,6 +221,7 @@ class CalculNbjourCommand extends Command
 
                                 $this->entityManager->persist($suiviconge);
                                 $this->entityManager->flush();
+
                             }
 
 

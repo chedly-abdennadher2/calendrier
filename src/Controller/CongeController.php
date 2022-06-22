@@ -382,17 +382,7 @@ $repositoryemploye=$doctrine->getRepository(Employe::class);
 $emp=$repositoryemploye->find($idemp);
 if ($emp!=null)
 {
-$resultmoisanneeactuel=$repositorysuivi->calculersommenbjourrestant($emp,intval($mois),intval($annee));
-$resultanneeprecedente=$repositorysuivi->calculersommenbjourrestant($emp,-1,intval($annee));
-if (($resultanneeprecedente>=0) and ($resultmoisanneeactuel>0))
-{
-return true;
 
-}
-else
-{
-    return false;
-}
 }
 }
 
