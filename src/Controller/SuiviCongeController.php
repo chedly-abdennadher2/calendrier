@@ -270,7 +270,17 @@ class SuiviCongeController extends AbstractController
     }
 
 
+    #[Route('/afficher/{idemploye}/{idcontrat}', name: 'afficher', methods: ['GET'])]
+public function afficher (string $idemploye,string $idcontrat, EntityManagerInterface $doctrine, SuiviCongeRepository $repository)
+{$rep=$doctrine->getRepository(Employe::class);
+$emp=$rep->find($idemploye);
+$rep=$doctrine->getRepository(Contrat::class);
+$contrat=$rep->find($idcontrat);
+$result = $repository->FindByMoisAnneerecent($emp,$contrat);
+dd($result);
 
+
+}
 
 }
 

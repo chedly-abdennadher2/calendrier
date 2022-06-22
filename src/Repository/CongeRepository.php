@@ -47,4 +47,5 @@ public function FindAllByMoisAnnee(int $mois,int $annee)
     return $query->getResult();
 
 }
+
 }

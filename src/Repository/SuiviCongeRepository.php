@@ -72,4 +72,16 @@ class SuiviCongeRepository extends ServiceEntityRepository
 
     }
 */
+    public function FindByMoisAnneerecent(Employe $emp,Contrat $contrat)
+    {
+        $entitymanager=$this->getEntityManager();
+        $query=$entitymanager->createQuery('select s from App\Entity\SuiviConge s 
+        where s.employe=:employe and s.contrat =:contrat and s.annee =(select max(s2.annee) from App\Entity\SuiviConge s2 
+        where s2.employe=:employe and s2.contrat =:contrat ) and s.mois= (select max(s3.mois) from App\Entity\SuiviConge s3 
+        where s3.employe=:employe and s3.contrat =:contrat  ) ')
+            ->setParameter('employe',$emp)->setParameter('contrat',$contrat);
+        return $query->getResult();
+
+    }
+
 }
