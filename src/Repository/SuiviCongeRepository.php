@@ -2,9 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Contrat;
+use App\Entity\Employe;
 use App\Entity\SuiviConge;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @extends ServiceEntityRepository<SuiviConge>
@@ -54,13 +57,19 @@ class SuiviCongeRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?SuiviConge
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function calculersommenbjourrestant (Employe $emp, int $mois, int $annee):array
+    {
+        $entitymanager=$this->getEntityManager();
+     if ($mois>1) {
+         $query = $entitymanager->createQuery('select SUM(suivi.nbjourrestant)  from App\Entity\SuiviConge suivi where (suivi.employe=:employe and suivi.annee=:annee and suivi.mois<:mois)')->setParameter('employe', $emp)->setParameter('annee', $annee)->setParameter('mois',$mois);
+     }
+     else
+     {
+         $query = $entitymanager->createQuery('select SUM(suivi.nbjourrestant)  from App\Entity\SuiviConge suivi where (suivi.employe=:employe and suivi.annee=:annee)')->setParameter('employe', $emp)->setParameter('annee', $annee-1);
+
+     }
+        return $query->getResult();
+
+    }
+
 }

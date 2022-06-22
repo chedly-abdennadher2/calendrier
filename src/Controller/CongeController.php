@@ -7,6 +7,7 @@ use App\DataTables\CongeDataTable;
 use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\Employe;
+use App\Entity\SuiviConge;
 use App\Form\CongeformulaireType;
 use App\Form\CongeSearchFormulaireType;
 use App\Form\CongeValiderType;
@@ -14,6 +15,7 @@ use App\Form\EmployeformType;
 use App\Form\SuppressionType;
 use App\Repository\CongeRepository;
 use App\Repository\EmployeRepository;
+use App\Repository\SuiviCongeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
@@ -330,7 +332,6 @@ return $conges;
     }
 
     /**
-     * Lists all Post entities.
      *
      * @param Request $request
      *
@@ -373,7 +374,26 @@ return $conges;
             'datatable' => $datatable,
         ));
     }
+    #[Route('/calcul/{idemp}/{mois}/{annee}', name: 'calcul')]
 
+    public function accepterajoutdemandedeconge (string $idemp, string $mois, string $annee,ManagerRegistry $doctrine, SuiviCongeRepository $repositorysuivi)
+{
+$repositoryemploye=$doctrine->getRepository(Employe::class);
+$emp=$repositoryemploye->find($idemp);
+if ($emp!=null)
+{
+$resultmoisanneeactuel=$repositorysuivi->calculersommenbjourrestant($emp,intval($mois),intval($annee));
+$resultanneeprecedente=$repositorysuivi->calculersommenbjourrestant($emp,-1,intval($annee));
+if (($resultanneeprecedente>=0) and ($resultmoisanneeactuel>0))
+{
+return true;
 
+}
+else
+{
+    return false;
+}
+}
+}
 
 }
