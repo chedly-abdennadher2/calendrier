@@ -62,50 +62,6 @@ class CongeController extends AbstractController
         ]);
     }
 
-    #[Route('/consulterconge', name: 'consulterconge')]
-
-    public function consulter(Request $request,ManagerRegistry $doctrine,CongeRepository $repository,PaginatorInterface $paginator)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user=$this->getUser();
-        $rep=$doctrine->getRepository(Administrateur::class);
-        $administrateur=$rep->findOneBy(['login'=>$user]);
-
-        $rep = $doctrine->getRepository(Conge::class);
-
-        $conges = $rep->findAll();
-        foreach ($conges as $key => $value) {
-            $value->calculernbjour();
-        }
-        $conge =new Conge();
-        $form=$this->createForm(CongeSearchFormulaireType::class,$conge);
-        $form->handleRequest($request);
-        $congesearchpages=null;
-        if ($form->isSubmitted() && $form->isValid())
-        {
-            $mois=$form->get('mois')->getData();
-            $annee=$form->get('annee')->getData();
-        $congesearch=    $this->recherchercongeparmoisetannee($mois,$annee,$repository);
-            $congesearchpages = $paginator->paginate(
-                $congesearch, // Requête contenant les données à paginer (ici nos articles)
-                $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-                6 // Nombre de résultats par page
-            );
-
-        }
-        $congespages = $paginator->paginate(
-            $conges, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            6 // Nombre de résultats par page
-        );
-
-        return $this->render('conge/consulterconge.html.twig', [
-            'conges' => $congespages,
-            'admin'=>$administrateur,
-            'form'=>$form->createView(),
-            'congesearch'=>$congesearchpages
-        ]);
-    }
 
     #[Route('/mettreajourconge/{id}', name: 'mettreajourconge')]
 
@@ -249,28 +205,6 @@ else {
 
     }
 
-    #[Route('/consultercongeemp', name: 'consultercongeemp')]
-
-    public function consultercongerdeemployer(ManagerRegistry $doctrine
-    )
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-
-        $rep = $doctrine->getRepository(Employe::class);
-        $user=$this->getUser();
-        $employe=$rep->findOneBy(['login'=>$user]);
-
-        $rep = $doctrine->getRepository(Conge::class);
-        $conges = $rep->findBy(['employe' => $employe]);
-        foreach ($conges as $key => $value) {
-            $value->calculernbjour();
-        }
-        return $this->render('conge/consultercongeemp.html.twig', [
-            'conges' => $conges,
-        ]);
-
-    }
 
     #[Route('/validercongeform/{id}', name: 'validercongeform')]
 

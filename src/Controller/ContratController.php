@@ -93,21 +93,6 @@ class ContratController extends AbstractController
     }
 
 
-    #[Route('/', name: 'app_contrat_index', methods: ['GET'])]
-    public function index(Request $request, ContratRepository $contratRepository, PaginatorInterface $paginator): Response
-    {
-        $contrats = $contratRepository->findAll();
-
-        $contratspages = $paginator->paginate(
-            $contrats, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            6 // Nombre de résultats par page
-        );
-
-        return $this->render('contrat/index.html.twig', [
-            'contrats' => $contratspages,
-        ]);
-    }
 
     #[Route('/new', name: 'app_contrat_new', methods: ['GET', 'POST'])]
     public function new(Request $request, ContratRepository $contratRepository, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
@@ -155,22 +140,7 @@ class ContratController extends AbstractController
         ]);
     }
 
-    #[Route('/afficher', name:'app_contrat_afficher', methods: ['GET'])]
-    public function afficher(ManagerRegistry $doctrine): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        $user = $this->getUser();
 
-        $rep = $doctrine->getRepository(Employe::class);
-        $emp = $rep->findOneBy(['login' => $user]);
-        $rep = $doctrine->getRepository(Contrat::class);
-        $contrats = $rep->findBy(['employe' => $emp]);
-
-        return $this->render('contrat/consultercontratemp.html.twig', [
-            'contrats' => $contrats,
-        ]);
-
-    }
 
     #[Route('/{id}', name: 'app_contrat_show', methods: ['GET'])]
     public function show(Contrat $contrat): Response

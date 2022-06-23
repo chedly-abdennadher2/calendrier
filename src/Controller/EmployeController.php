@@ -138,45 +138,6 @@ class EmployeController extends AbstractController
     }
     
     
-    #[Route('/consulteremploye', name: 'consulteremploye')]
-
-    public function consulter(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator)
-    {
-        $employessearchpages=null;
-        $user=$this->getUser();
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $rep=$doctrine->getRepository(Administrateur::class);
-        $administrateur=$rep->findOneBy(['login'=>$user]);
-        $rep=$doctrine->getRepository(Employe::class);
-        $employes= $rep->findAll();
-        $employe=new Employe();
-        $form=$this->createForm(EmployeSearchFormType::class,$employe);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $nom=$form->get('nom')->getData();
-            $prenom=$form->get('prenom')->getData();
-
-            $employessearch= $this->rechercherparnomprenom($nom,$prenom,$repository);
-            $employessearchpages = $paginator->paginate(
-                $employessearch, // Requête contenant les données à paginer (ici nos articles)
-                $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-                6 // Nombre de résultats par page
-            );
-
-        }
-        $employespages = $paginator->paginate(
-            $employes, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            6 // Nombre de résultats par page
-        );
-
-            return $this->render('employe/consulteremploye.html.twig', [
-            'employes' => $employespages,
-            'form'=>$form->createView(),
-             'employeparnometprenom'  => $employessearchpages
-
-        ]);
-    }
     #[Route('/mettreajouremploye/{id}', name: 'mettreajouremploye')]
 
 public function mettreajour(string $id, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response

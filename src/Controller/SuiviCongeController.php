@@ -92,13 +92,6 @@ class SuiviCongeController extends AbstractController
         ));
     }
 
-    #[Route('/', name: 'app_suivi_conge_index', methods: ['GET'])]
-    public function index(SuiviCongeRepository $suiviCongeRepository): Response
-    {
-        return $this->render('suivi_conge/index.html.twig', [
-            'suivi_conges' => $suiviCongeRepository->findAll(),
-        ]);
-    }
 
     #[Route('/new', name: 'app_suivi_conge_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SuiviCongeRepository $suiviCongeRepository,ManagerRegistry $doctrine): Response
@@ -188,21 +181,6 @@ class SuiviCongeController extends AbstractController
         ]);
 
     }
-    #[Route('/showemp', name: 'app_suivi_conge_showemp', methods: ['GET'])]
-    public function afficherparemp(ManagerRegistry $doctrine)
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $rep= $doctrine->getRepository(Employe::class);
-        $user =$this->getUser();
-        $emp=$rep->findOneBy(['login'=>$user]);
-        $rep=$doctrine->getRepository(SuiviConge::class);
-        $suivi_conges=$rep->findBy(['employe'=>$emp]);
-        return $this->render('suivi_conge/showemp.html.twig', [
-            'suivi_conges' => $suivi_conges,
-        ]);
-
-    }
 
     #[Route('/{id}', name: 'app_suivi_conge_show', methods: ['GET'])]
     public function show(SuiviConge $suiviConge): Response
@@ -270,17 +248,8 @@ class SuiviCongeController extends AbstractController
     }
 
 
-    #[Route('/afficher/{idemploye}/{idcontrat}', name: 'afficher', methods: ['GET'])]
-public function afficher (string $idemploye,string $idcontrat, EntityManagerInterface $doctrine, SuiviCongeRepository $repository)
-{$rep=$doctrine->getRepository(Employe::class);
-$emp=$rep->find($idemploye);
-$rep=$doctrine->getRepository(Contrat::class);
-$contrat=$rep->find($idcontrat);
-$result = $repository->FindByMoisAnneerecent($emp,$contrat);
-dd($result);
 
 
 }
 
-}
 
