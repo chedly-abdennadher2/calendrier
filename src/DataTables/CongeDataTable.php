@@ -174,25 +174,7 @@ class CongeDataTable extends AbstractDatatable
                         'start_html' => '<div class="start_show_action">',
                         'end_html' => '</div>',
                     ),
-                    array(
-                        'icon' => 'glyphicon glyphicon-star',
-                        'label' => 'mettreajour',
-                        'confirm' => false,
-                        'attributes' => array(
-                            'rel' => 'tooltip',
-                            'title' => 'Show',
-                            'class' => 'btn btn-primary btn-xs',
-                            'role' => 'button',
-                        ),
-                        'button' => true,
-                        'button_value' => 'id',
-                        'button_value_prefix' => true,
-                        'render_if' => function ($row) {
-                            return $this->authorizationChecker->isGranted('ROLE_ADMIN');
-                        },
-                        'start_html' => '<div class="start_show_action">',
-                        'end_html' => '</div>',
-                    ),
+
                 ),
             ))
 
@@ -220,25 +202,7 @@ class CongeDataTable extends AbstractDatatable
                         'start_html' => '<div class="start_show_action">',
                         'end_html' => '</div>',
                     ),
-                    array(
-                        'icon' => 'glyphicon glyphicon-star',
-                        'label' => 'supprimer',
-                        'confirm' => false,
-                        'attributes' => array(
-                            'rel' => 'tooltip',
-                            'title' => 'supprimer   ',
-                            'class' => 'btn btn-primary btn-xs',
-                            'role' => 'button',
-                        ),
-                        'button' => true,
-                        'button_value' => 'id',
-                        'button_value_prefix' => true,
-                        'render_if' => function ($row) {
-                            return $this->authorizationChecker->isGranted('ROLE_ADMIN');
-                        },
-                        'start_html' => '<div class="start_show_action">',
-                        'end_html' => '</div>',
-                    ),
+
                 ),
             ))
 

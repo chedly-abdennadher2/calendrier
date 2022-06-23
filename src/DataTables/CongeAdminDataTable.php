@@ -187,6 +187,62 @@ class CongeAdminDataTable extends AbstractDatatable
 
                 ),
             ))
+             ->add(null, ActionColumn::class, array(
+                 'title' => 'Actions',
+                 'start_html' => '<div class="start_actions">',
+                 'end_html' => '</div>',
+                 'actions' => array(
+                     array(
+                         'route' => 'mettreajourconge',
+                         'route_parameters' => array(
+                             'id' => 'id',
+                         ),
+                         'icon' => 'glyphicon glyphicon-eye-open',
+                         'label' => 'mettre à jour ',
+                         'confirm' => true,
+                         'confirm_message' => 'Are you sure?',
+                         'attributes' => array(
+                             'rel' => 'tooltip',
+                             'title' => 'Show',
+                             'class' => 'btn btn-primary btn-xs',
+                             'role' => 'button',
+                         ),
+
+                         'start_html' => '<div class="start_show_action">',
+                         'end_html' => '</div>',
+                     ),
+
+                 ),
+             ))
+
+             ->add(null, ActionColumn::class, array(
+                 'title' => 'Actions',
+                 'start_html' => '<div class="start_actions">',
+                 'end_html' => '</div>',
+                 'actions' => array(
+                     array(
+                         'route' => 'supprimerconge',
+                         'route_parameters' => array(
+                             'id' => 'id',
+
+                         ),
+                         'icon' => 'glyphicon glyphicon-eye-open',
+                         'label' => 'supprimer',
+                         'confirm' => true,
+                         'confirm_message' => 'Are you sure?',
+                         'attributes' => array(
+                             'rel' => 'tooltip',
+                             'title' => 'supprimer',
+                             'class' => 'btn btn-primary btn-xs',
+                             'role' => 'button',
+                         ),
+                         'start_html' => '<div class="start_show_action">',
+                         'end_html' => '</div>',
+                     ),
+
+                 ),
+             ))
+
 
         ;
 

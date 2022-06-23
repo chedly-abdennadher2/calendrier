@@ -37,10 +37,22 @@ class Administrateur
     #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Employe::class)]
     private $employes;
 
+    #[ORM\OneToMany(mappedBy: 'administrateur', targetEntity: Conge::class)]
+    private $conge;
+
+    #[ORM\OneToMany(mappedBy: 'administrateur', targetEntity: Conge::class)]
+    private $conges;
+
+    #[ORM\OneToOne(targetEntity: self::class, cascade: ['persist', 'remove'])]
+    private $admin;
+
+
     public function __construct()
     {
         $this->listeconge = new ArrayCollection();
         $this->employes = new ArrayCollection();
+        $this->conge = new ArrayCollection();
+        $this->conges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,6 +176,56 @@ class Administrateur
                 $employe->setAdmin(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conge>
+     */
+    public function getConge(): Collection
+    {
+        return $this->conge;
+    }
+
+    public function addConge(Conge $conge): self
+    {
+        if (!$this->conge->contains($conge)) {
+            $this->conge[] = $conge;
+            $conge->setAdministrateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConge(Conge $conge): self
+    {
+        if ($this->conge->removeElement($conge)) {
+            // set the owning side to null (unless already changed)
+            if ($conge->getAdministrateur() === $this) {
+                $conge->setAdministrateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conge>
+     */
+    public function getConges(): Collection
+    {
+        return $this->conges;
+    }
+
+    public function getAdmin(): ?self
+    {
+        return $this->admin;
+    }
+
+    public function setAdmin(?self $admin): self
+    {
+        $this->admin = $admin;
 
         return $this;
     }

@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-class CongeformulaireType extends AbstractType
+class CongeadminformulaireType extends AbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -22,7 +22,7 @@ class CongeformulaireType extends AbstractType
             ->add('datefin')
             ->add('typeconge')
 
-            ->add ('id_employe',TextType::class,['mapped'=>false,'disabled'=>true])
+            ->add ('id_admin',TextType::class,['mapped'=>false,'disabled'=>true])
             ->add ('envoyer',SubmitType::class )
 
         ;
