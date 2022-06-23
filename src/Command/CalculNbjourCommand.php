@@ -120,6 +120,10 @@ class CalculNbjourCommand extends Command
                                 break;
 
                             }
+                            if (($i==$yearfin) and ($moisiteration==$moisfin))
+                            {
+                                break;
+                            }
 
                             $rep = $this->entityManager->getRepository(SuiviConge::class);
 
@@ -148,7 +152,7 @@ class CalculNbjourCommand extends Command
 
                                 if ($moisiteration-1<=0)
                                 {
-                                    $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => $moisiteration, 'employe' => $emp, 'contrat' => $value]);
+                                    $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => 12, 'employe' => $emp, 'contrat' => $value]);
                                 }
                                 else
                                     {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration-1, 'employe' => $emp, 'contrat' => $value]);}
@@ -219,12 +223,15 @@ class CalculNbjourCommand extends Command
 
 
                         for ($moisiteration = $moisdebut; $moisiteration < 13; $moisiteration++) {
+
                             if (($i==$anneeactuel) and ($moisiteration==$moisactuel))
                             {
                                 break;
-
                             }
-
+                            if (($i==$yearfin) and ($moisiteration==$moisfin))
+                            {
+                               break;
+                            }
                             $rep = $this->entityManager->getRepository(SuiviConge::class);
 
                             $suivicongetrouve = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration, 'employe' => $valueemp, 'contrat' => $value]);
@@ -259,7 +266,7 @@ class CalculNbjourCommand extends Command
 
                             if ($moisiteration-1<=0)
                             {
-                                $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => $moisiteration, 'employe' => $valueemp, 'contrat' => $value]);
+                                $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => 12, 'employe' => $valueemp, 'contrat' => $value]);
                             }
                             else
                             {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration-1, 'employe' => $valueemp, 'contrat' => $value]);}
@@ -280,7 +287,6 @@ class CalculNbjourCommand extends Command
                             $nbinstance++;
 
                         }
-
 
                     }
 

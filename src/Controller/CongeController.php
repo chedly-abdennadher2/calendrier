@@ -182,28 +182,63 @@ class CongeController extends AbstractController
         $conge->calculernbjour($conge->getId(), $doctrine);
         $nbjour = $conge->getNbjour();
         $contrat=$emp->getcontratplusrecent();
-
-        if (($nbjour <= $contrat->getQuotaparmoisaccorde()) and ($contrat->getQuotarestant()>0 ) and ($conge->getState() == 'no check')) {
+        $moisdeconge=substr ($conge->getDatedebut()->format('d/m/Y'),3,2);
+        $anneeconge=substr ($conge->getDatedebut()->format('d/m/Y'),6,4);
+        $rep=$doctrine->getRepository(SuiviConge::class);
+        if ($moisdeconge-1<=0)
+        {
+            $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge-1, 'mois' => $moisdeconge, 'employe' => $emp, 'contrat' => $contrat]);
+        }
+        else
+        {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge, 'mois' => $moisdeconge-1, 'employe' => $emp, 'contrat' => $contrat]);}
+        $nbjourrestant=0;
+        if ($suivicongetrouvemoisprecedent!=null){
+            $nbjourrestant=$suivicongetrouvemoisprecedent->getNbjourRestant();
+        dd ($nbjourrestant);
+        }
+        if ($nbjourrestant!=0) {
+        if (($nbjour <=$nbjourrestant+$suivicongetrouvemoisprecedent->getQuota() )  and ($conge->getState() == 'no check'))
+        {
             $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
-            if ($contrat!=null)
-            {  if ($emp->getNbjourpris()==0)
-            { $contrat->setQuotarestant($emp->getQuota() - $nbjour);}
-            else
-            {
-                $contrat->setQuotarestant($contrat->getQuotarestant()- $nbjour);
-            }
-
+            if ($contrat!=null) {
+                if ($emp->getNbjourpris() == 0) {
+                    $contrat->setQuotarestant($emp->getQuota() - $nbjour);
+                } else {
+                    $contrat->setQuotarestant($contrat->getQuotarestant() - $nbjour);
+                }
 
             }
             $conge->setState('valide');
 
-        } else if ($conge->getState() == 'no check') {
-            $conge->setState('invalide');
+        }
+else {
+    $conge->setState('invalide');
 
+}
+        }
+        else
+        {
+ if       (($nbjour<$contrat->getQuotaparmoisaccorde()) and ($conge->getState() == 'no check'))
+ {           $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
+            if ($contrat!=null) {
+                if ($emp->getNbjourpris() == 0) {
+                    $contrat->setQuotarestant($emp->getQuota() - $nbjour);
+                } else {
+                    $contrat->setQuotarestant($contrat->getQuotarestant() - $nbjour);
+                }
+            }
+            }
+        else
+            {
+                $conge->setState('invalide');
+
+
+            }
 
         }
+
+
         $conge->setEmploye($emp);
-        dump($contrat->getQuotaRestant());
         $entityManager->persist($conge);
         $entityManager->persist($contrat);
         $entityManager->persist($emp);
