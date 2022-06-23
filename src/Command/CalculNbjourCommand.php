@@ -146,7 +146,7 @@ class CalculNbjourCommand extends Command
 
                             }
 
-                                if ($moisiteration-1<0)
+                                if ($moisiteration-1<=0)
                                 {
                                     $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => $moisiteration, 'employe' => $emp, 'contrat' => $value]);
                                 }
@@ -203,8 +203,16 @@ class CalculNbjourCommand extends Command
                     $yearfin = $value->getDatefin()->format('Y');
 
                     $moisfin = $value->getDatefin()->format('m');
-
-                    $moisiteration = $moisdebut;
+                    $rep = $this->entityManager->getRepository(SuiviConge::class);
+                    $suivicongetrouveavant=$rep->FindByMoisAnneerecent($valueemp,$value);
+                    if ($suivicongetrouveavant!=null)
+                    {
+                        $yeardebut=$suivicongetrouveavant[0]->getAnnee();
+                        $moisdebut=$suivicongetrouveavant[0]->getMois();
+                    }
+                    $nbjourrestantaddition=0;
+                    $nbjourprissoustraction=0;
+                    $nbinstance=0;
 
 
                     for ($i = $yeardebut; (($i <= $anneeactuel) and ($i<=$yearfin)); $i++) {
@@ -224,31 +232,52 @@ class CalculNbjourCommand extends Command
 
 
                             if ($suivicongetrouve == null) {
-                                $suiviconge = new SuiviConge ();
+                                $suivicongetrouve = new SuiviConge ();
 
-                                $suiviconge->setEmploye($valueemp);
+                                $suivicongetrouve->setEmploye($valueemp);
 
-                                $suiviconge->setContrat($value);
+                                $suivicongetrouve->setContrat($value);
 
-                                $suiviconge->setQuota($value->getQuotaparmoisaccorde());
+                                $suivicongetrouve->setQuota($value->getQuotaparmoisaccorde());
 
-                                $suiviconge->setNbjourpris(0);
+                                $suivicongetrouve->setNbjourpris(0);
 
-                                $suiviconge->setMois($moisiteration);
+                                $suivicongetrouve->setMois($moisiteration);
 
-                                $suiviconge->setAnnee($i);
+                                $suivicongetrouve->setAnnee($i);
 
-                                $suiviconge->setNbjourrestant($suiviconge->getQuota());
+                                $suivicongetrouve->setNbjourrestant($suivicongetrouve->getQuota());
 
 
 
-                                $this->calculernbjour($suiviconge,$this->entityManager);
+                                $this->calculernbjour($suivicongetrouve,$this->entityManager);
 
-                                $this->entityManager->persist($suiviconge);
+                                $this->entityManager->persist($suivicongetrouve);
                                 $this->entityManager->flush();
 
                             }
 
+                            if ($moisiteration-1<=0)
+                            {
+                                $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => $moisiteration, 'employe' => $valueemp, 'contrat' => $value]);
+                            }
+                            else
+                            {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration-1, 'employe' => $valueemp, 'contrat' => $value]);}
+
+                            if ($suivicongetrouvemoisprecedent!=null){
+                                $nbjourrestantaddition=$suivicongetrouvemoisprecedent->getNbjourrestant();
+                            }
+
+                            if ($nbinstance!=0)
+                            {
+                                $suivicongetrouve->setNbjourrestant($suivicongetrouve->getQuota()+$nbjourrestantaddition);
+                                $suivicongetrouve->setNbjourrestant($suivicongetrouve->getNbjourrestant()-$suivicongetrouve->getNbjourpris());
+
+                                $this->entityManager->persist($suivicongetrouve);
+                                $this->entityManager->flush();
+
+                            }
+                            $nbinstance++;
 
                         }
 
