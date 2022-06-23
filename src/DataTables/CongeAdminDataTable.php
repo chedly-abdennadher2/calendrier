@@ -25,17 +25,20 @@ class CongeAdminDataTable extends AbstractDatatable
     /**
      * {@inheritdoc}
      */
-/*    public function getLineFormatter()
+    public function getLineFormatter()
     {
+
         $formatter = function($row) {
-            $row['test'] = 'Post from ' . $row['createdBy']['username'];
+        $conge = $this->em->getRepository(Conge::class)->find($row['id']);
+
+        $row['nbjour']=$conge->calculernbjour();
 
             return $row;
         };
 
         return $formatter;
     }
-*/
+
     /**
      * {@inheritdoc}
      */
@@ -60,8 +63,7 @@ class CongeAdminDataTable extends AbstractDatatable
             'search_in_non_visible_columns' => true,
         ));
 
-        $conges = $this->em->getRepository(Conge::class)->findAll();
-        $this->columnBuilder
+         $this->columnBuilder
             ->add('id', Column::class, array(
                 'title' => 'Id',
                 'searchable' => true,
@@ -118,6 +120,10 @@ class CongeAdminDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
+            ->add('nbjour', VirtualColumn::class, array(
+                'title' => 'nbjour',
+            ))
+
             ->add('typeconge', Column::class, array(
                 'title' => 'typeconge',
                 'searchable' => true,

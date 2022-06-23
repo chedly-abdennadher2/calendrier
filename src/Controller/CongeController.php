@@ -75,7 +75,7 @@ class CongeController extends AbstractController
 
         $conges = $rep->findAll();
         foreach ($conges as $key => $value) {
-            $value->calculernbjour($value->getId(), $doctrine);
+            $value->calculernbjour();
         }
         $conge =new Conge();
         $form=$this->createForm(CongeSearchFormulaireType::class,$conge);
@@ -143,7 +143,7 @@ class CongeController extends AbstractController
 
             $rep = $doctrine->getRepository(Conge::class);
             $conge = $rep->find($id);
-            $conge->calculernbjour($conge->getId(), $doctrine);
+            $conge->calculernbjour();
             $nbjour = $conge->getNbjour();
             $emp = $conge->getEmploye();
             $emp->nbjourprisreset();
@@ -172,14 +172,13 @@ class CongeController extends AbstractController
     }
 
     #[Route('/validerconge/{id}', name: 'validerconge')]
-
     public function validerconge(string $id, ManagerRegistry $doctrine, EntityManagerInterface $entityManager, EmployeRepository $repository)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
         $emp = $conge->getEmploye();
-        $conge->calculernbjour($conge->getId(), $doctrine);
+        $conge->calculernbjour();
         $nbjour = $conge->getNbjour();
         $contrat=$emp->getcontratplusrecent();
         $moisdeconge=substr ($conge->getDatedebut()->format('d/m/Y'),3,2);
@@ -187,14 +186,15 @@ class CongeController extends AbstractController
         $rep=$doctrine->getRepository(SuiviConge::class);
         if ($moisdeconge-1<=0)
         {
-            $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge-1, 'mois' => $moisdeconge, 'employe' => $emp, 'contrat' => $contrat]);
+            $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge-1, 'mois' => 12, 'employe' => $emp, 'contrat' => $contrat]);
         }
         else
         {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge, 'mois' => $moisdeconge-1, 'employe' => $emp, 'contrat' => $contrat]);}
+
         $nbjourrestant=0;
         if ($suivicongetrouvemoisprecedent!=null){
+
             $nbjourrestant=$suivicongetrouvemoisprecedent->getNbjourRestant();
-        dd ($nbjourrestant);
         }
         if ($nbjourrestant!=0) {
         if (($nbjour <=$nbjourrestant+$suivicongetrouvemoisprecedent->getQuota() )  and ($conge->getState() == 'no check'))
@@ -226,7 +226,10 @@ else {
                 } else {
                     $contrat->setQuotarestant($contrat->getQuotarestant() - $nbjour);
                 }
+                $conge->setState('valide');
+
             }
+
             }
         else
             {
@@ -261,7 +264,7 @@ else {
         $rep = $doctrine->getRepository(Conge::class);
         $conges = $rep->findBy(['employe' => $employe]);
         foreach ($conges as $key => $value) {
-            $value->calculernbjour($value->getId(), $doctrine);
+            $value->calculernbjour();
         }
         return $this->render('conge/consultercongeemp.html.twig', [
             'conges' => $conges,
@@ -309,7 +312,7 @@ return $conges;
         $rep=$doctrine->getRepository(Conge::class);
         $conges= $rep->findBy(array(),array($critere=>'ASC'));
         foreach ($conges as $key => $value) {
-            $value->calculernbjour($value->getId(), $doctrine);
+            $value->calculernbjour();
         }
 
         $congespages = $paginator->paginate(

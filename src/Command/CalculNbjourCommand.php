@@ -54,7 +54,7 @@ class CalculNbjourCommand extends Command
 
             if (($dateconge->format('m')==$suiviconge->getMois()) and($dateconge->format('Y')==$suiviconge->getAnnee())) {
 
-                $nbjourprisparconge = $value2->calculerNbjourpourcommande($value2->getId(), $entityManager);
+                $nbjourprisparconge = $value2->calculerNbjourpourcommande();
 
                 $suiviconge->setNbjourpris($suiviconge->getNbjourpris()+$nbjourprisparconge);
 
