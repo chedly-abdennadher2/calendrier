@@ -45,5 +45,23 @@ $query=$entitymanager->createQuery('select emp from App\Entity\Employe emp where
 return $query->getResult();
 
 }
+ /*   public function compter():array
+    {
+        $entitymanager=$this->getEntityManager();
+        $query=$entitymanager->createQuery('select count(emp) from App\Entity\Employe emp');
+        return $query->getResult();
 
+    }
+*/
+    public function countBy(array $criteria=null)
+    {
+        $persister = $this->_em->getUnitOfWork()->getEntityPersister($this->_entityName);
+        if ($criteria!=null)
+        return $persister->count($criteria);
+        else
+        {
+            return $persister->count();
+
+        }
+    }
 }

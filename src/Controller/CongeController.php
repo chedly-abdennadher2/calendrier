@@ -40,9 +40,9 @@ class CongeController extends AbstractController
 
         $conge = new Conge();
         $form = $this->createForm(congeformulaireType::class, $conge);
-        $user=$this->getUser();
+        $user = $this->getUser();
         $rep = $doctrine->getRepository(Employe::class);
-        $employe = $rep->findOneBy(['login'=>$user]);
+        $employe = $rep->findOneBy(['login' => $user]);
         $form->get('id')->setData($employe->getId());
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -103,8 +103,7 @@ class CongeController extends AbstractController
             $nbjour = $conge->getNbjour();
             $emp = $conge->getEmploye();
             $emp->nbjourprisreset();
-            if ($conge->getState ()=='valide')
-            {
+            if ($conge->getState() == 'valide') {
                 $emp->setNbjourpris($emp->getNbjourpris() - $nbjour);
                 if ($emp->getcontratplusrecent() != null) {
                     $emp->getcontratplusrecent()->setQuotarestant($emp->getQuota() - $nbjour);
@@ -136,115 +135,120 @@ class CongeController extends AbstractController
         $emp = $conge->getEmploye();
         $conge->calculernbjour();
         $nbjour = $conge->getNbjour();
-        $contrat=$emp->getcontratplusrecent();
-        $moisdeconge=substr ($conge->getDatedebut()->format('d/m/Y'),3,2);
-        $anneeconge=substr ($conge->getDatedebut()->format('d/m/Y'),6,4);
-        $rep=$doctrine->getRepository(SuiviConge::class);
-        if ($moisdeconge-1<=0)
-        {
-            $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge-1, 'mois' => 12, 'employe' => $emp, 'contrat' => $contrat]);
-        }
-        else
-        {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge, 'mois' => $moisdeconge-1, 'employe' => $emp, 'contrat' => $contrat]);}
+        $contrat = $emp->getcontratplusrecent();
+        $moisdeconge = substr($conge->getDatedebut()->format('d/m/Y'), 3, 2);
+        $anneeconge = substr($conge->getDatedebut()->format('d/m/Y'), 6, 4);
 
-        $nbjourrestant=0;
-        if ($suivicongetrouvemoisprecedent!=null){
+        $dispo= accepterdemandedeconge($emp->getId(), $moisdeconge,$anneeconge, $doctrine);
+        if ($dispo==true) {
+            $rep = $doctrine->getRepository(SuiviConge::class);
+            if ($moisdeconge - 1 <= 0) {
+                $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge - 1, 'mois' => 12, 'employe' => $emp, 'contrat' => $contrat]);
+            } else {
+                $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge, 'mois' => $moisdeconge - 1, 'employe' => $emp, 'contrat' => $contrat]);
+            }
 
-            $nbjourrestant=$suivicongetrouvemoisprecedent->getNbjourRestant();
-        }
-        if ($nbjourrestant!=0) {
-        if (($nbjour <=$nbjourrestant+$suivicongetrouvemoisprecedent->getQuota() )  and ($conge->getState() == 'no check'))
-        {
-            $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
-            if ($contrat!=null) {
-                if ($emp->getNbjourpris() == 0) {
-                    $contrat->setQuotarestant($emp->getQuota() - $nbjour);
+            $nbjourrestant = 0;
+            if ($suivicongetrouvemoisprecedent != null) {
+
+                $nbjourrestant = $suivicongetrouvemoisprecedent->getNbjourRestant();
+            }
+            if ($nbjourrestant != 0) {
+                if (($nbjour <= $nbjourrestant + $suivicongetrouvemoisprecedent->getQuota()) and ($conge->getState() == 'no check')) {
+                    $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
+                    if ($contrat != null) {
+                        if ($emp->getNbjourpris() == 0) {
+                            $contrat->setQuotarestant($emp->getQuota() - $nbjour);
+                        } else {
+                            $contrat->setQuotarestant($contrat->getQuotarestant() - $nbjour);
+                        }
+
+                    }
+                    $conge->setState('valide');
+
                 } else {
-                    $contrat->setQuotarestant($contrat->getQuotarestant() - $nbjour);
+                    $conge->setState('invalide');
+
+                }
+            } else {
+                if (($nbjour < $contrat->getQuotaparmoisaccorde()) and ($conge->getState() == 'no check')) {
+                    $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
+                    if ($contrat != null) {
+                        if ($emp->getNbjourpris() == 0) {
+                            $contrat->setQuotarestant($emp->getQuota() - $nbjour);
+                        } else {
+                            $contrat->setQuotarestant($contrat->getQuotarestant() - $nbjour);
+                        }
+                        $conge->setState('valide');
+
+                    }
+
+                } else {
+                    $conge->setState('invalide');
+
+
                 }
 
             }
-            $conge->setState('valide');
 
-        }
-else {
-    $conge->setState('invalide');
 
-}
+            $conge->setEmploye($emp);
+            $entityManager->persist($conge);
+            $entityManager->persist($contrat);
+            $entityManager->persist($emp);
+            $entityManager->flush();
         }
         else
         {
- if       (($nbjour<$contrat->getQuotaparmoisaccorde()) and ($conge->getState() == 'no check'))
- {           $emp->setNbjourpris($emp->getNbjourpris() + $nbjour);
-            if ($contrat!=null) {
-                if ($emp->getNbjourpris() == 0) {
-                    $contrat->setQuotarestant($emp->getQuota() - $nbjour);
-                } else {
-                    $contrat->setQuotarestant($contrat->getQuotarestant() - $nbjour);
-                }
-                $conge->setState('valide');
-
-            }
-
-            }
-        else
-            {
-                $conge->setState('invalide');
-
-
-            }
-
+            $conge->setState('invalide');
+            $entityManager->persist($conge);
+            $entityManager->flush();
         }
-
-
-        $conge->setEmploye($emp);
-        $entityManager->persist($conge);
-        $entityManager->persist($contrat);
-        $entityManager->persist($emp);
-        $entityManager->flush();
-
     }
 
 
     #[Route('/validercongeform/{id}', name: 'validercongeform')]
 
-    public function validercongerform(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine,EmployeRepository $repository): Response
+    public function validercongerform(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine, EmployeRepository $repository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
-        $user=$this->getUser();
+        $user = $this->getUser();
         $rep = $doctrine->getRepository(Administrateur::class);
-     $administrateur=$rep->findOneBy(['login'=>$user]);
+        $administrateur = $rep->findOneBy(['login' => $user]);
 
         $form = $this->createForm(CongeValiderType::class, $conge);
-       $form->get('id')->setData($id);
+        $form->get('id')->setData($id);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->validerconge($id,$doctrine,$entityManager,$repository);
+            $this->validerconge($id, $doctrine, $entityManager, $repository);
             return $this->redirectToRoute('consultercongedatatable');
 
         }
         return $this->renderForm('conge/validerconge.html.twig', [
             'form' => $form,
-            'conge'=>$conge,
-           'administrateur'=> $administrateur
+            'conge' => $conge,
+            'administrateur' => $administrateur
         ]);
 
     }
-    public function recherchercongeparmoisetannee (string $mois,string $annee,CongeRepository $repository)
-    {$conges= $repository->FindAllByMoisAnnee($mois,$annee);
-return $conges;
+
+    public function recherchercongeparmoisetannee(string $mois, string $annee, CongeRepository $repository)
+    {
+        $conges = $repository->FindAllByMoisAnnee($mois, $annee);
+        return $conges;
     }
+
     #[Route('/trierconge/{critere}', name: 'trierconge')]
-    public function trier(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator,string $critere)
+    public function trier(Request $request, ManagerRegistry $doctrine, EmployeRepository $repository, PaginatorInterface $paginator, string $critere)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user =$this->getUser();
-        $rep=$doctrine->getRepository(Administrateur::class);
-        $administrateur=$rep->findOneBy(['login'=>$user]);
-        $rep=$doctrine->getRepository(Conge::class);
-        $conges= $rep->findBy(array(),array($critere=>'ASC'));
+        $user = $this->getUser();
+        $rep = $doctrine->getRepository(Administrateur::class);
+        $administrateur = $rep->findOneBy(['login' => $user]);
+        $rep = $doctrine->getRepository(Conge::class);
+        $conges = $rep->findBy(array(), array($critere => 'ASC'));
         foreach ($conges as $key => $value) {
             $value->calculernbjour();
         }
@@ -257,10 +261,11 @@ return $conges;
 
         return $this->render('conge/consulterconge.html.twig', [
             'conges' => $congespages,
-            'admin'=>$administrateur,
+            'admin' => $administrateur,
 
         ]);
     }
+
     /**
      * Lists all Post entities.
      *
@@ -271,12 +276,12 @@ return $conges;
      *
      * @return Response
      */
-    public function consultercongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse,EntityManagerInterface $doctrine)
+    public function consultercongedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse, EntityManagerInterface $doctrine)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user=$this->getUser();
-        $rep=$doctrine->getRepository(Employe::class);
-        $employes=$rep->findBy(['admin'=>$user]);
+        $user = $this->getUser();
+        $rep = $doctrine->getRepository(Employe::class);
+        $employes = $rep->findBy(['admin' => $user]);
 
         $isAjax = $request->isXmlHttpRequest();
 
@@ -312,12 +317,12 @@ return $conges;
      *
      * @return Response
      */
-    public function consultercongeempdatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse,EntityManagerInterface $doctrine)
+    public function consultercongeempdatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse, EntityManagerInterface $doctrine)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $rep = $doctrine->getRepository(Employe::class);
-        $user=$this->getUser();
-        $emp = $rep->findOneBy(['login'=>$user]);
+        $user = $this->getUser();
+        $emp = $rep->findOneBy(['login' => $user]);
 
         $isAjax = $request->isXmlHttpRequest();
 
@@ -346,16 +351,25 @@ return $conges;
             'datatable' => $datatable,
         ));
     }
+
     #[Route('/calcul/{idemp}/{mois}/{annee}', name: 'calcul')]
 
-    public function accepterajoutdemandedeconge (string $idemp, string $mois, string $annee,ManagerRegistry $doctrine, SuiviCongeRepository $repositorysuivi)
-{
-$repositoryemploye=$doctrine->getRepository(Employe::class);
-$emp=$repositoryemploye->find($idemp);
-if ($emp!=null)
-{
+    public function accepterdemandedeconge(string $idemp, string $mois, string $annee, ManagerRegistry $doctrine)
+    {
+        $repositoryemploye = $doctrine->getRepository(Employe::class);
+        $emp = $repositoryemploye->find($idemp);
+        $repositoryconge=$doctrine->getRepository(Conge::class);
+        $nbconge = $repositoryconge->compterCongeByMoisAnnee(intval($mois), intval($annee));
+        $nbcongeresult=$nbconge[0][1];
+        $nbemploye =$repositoryemploye->countBy();
 
-}
-}
-
+        if ($nbcongeresult<$nbemploye)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
