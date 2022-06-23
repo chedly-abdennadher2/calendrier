@@ -9,19 +9,24 @@
 
 {% endif %}
 <form action ="{{  path('login')}}"  method="post" >
+ <div class="form-group">
     <label for="username">nom utilisateur:</label>
 {% if lest_username is defined %}
-    <input type="text" id="username" name="_username" value="{{ last_username }}"/>
+    <input type="text" id="username" name="_username" value="{{ last_username }}" class ="form-control" />
 {% else %}
-    <input type="text" id="username" name="_username"   />
+    <input type="text" id="username" name="_username"  class ="form-control"  />
 {% endif %}
+ </div>
+    <div class ="form-group">
     <label for="password">Password:</label>
 {% if password is defined %}
-    <input type="password" id="password" name="_password" value="{{ password }}"/>
+    <input type="password" id="password" name="_password" value="{{ password }}" class ="form-control"/>
 {% else %}
-    <input type="password" id="password" name="_password"/>
+    <input type="password" id="password" name="_password" class ="form-control"/>
 {% endif %}
-    <button type="submit">login</button>
+        </div>
+    <button type="submit" class="btn btn-primary">login</button>
+    <button type="reset" class="btn btn-primary"> annuler </button>
 
 
 

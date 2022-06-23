@@ -48,4 +48,13 @@ public function FindAllByMoisAnnee(int $mois,int $annee)
 
 }
 
+    public function compterCongeByMoisAnnee(int $mois,int $annee)
+    {
+        $entitymanager=$this->getEntityManager();
+        $query=$entitymanager->createQuery('select Count(c) from App\Entity\Conge c where MONTH(c.datedebut)=:mois and YEAR(c.datedebut) = :annee')
+            ->setParameter('mois',$mois)->setParameter('annee',$annee);
+        return $query->getResult();
+
+    }
+
 }

@@ -4,6 +4,7 @@
 
 {% block body %}
 {% if conge.employe.admin.id==  administrateur.id %}
+    {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
     {{ form(form) }}
 {% else %}
