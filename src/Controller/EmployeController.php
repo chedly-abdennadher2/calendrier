@@ -64,13 +64,13 @@ class EmployeController extends AbstractController
  ]);
 
     }
-/*    #[Route('/affecteradmin', name: 'affecteradmin')]
+    #[Route('/affecteradmin', name: 'affecteradmin')]
     public function ajouterempadmin(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
     {
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
-        $emp=new Employe();
+        $emp=new User();
         $form = $this->createForm(EmployeAdminformType::class,$emp);
 
         $form->handleRequest($request);
@@ -79,17 +79,12 @@ class EmployeController extends AbstractController
             $loginemp=$form->get('loginemploye')->getData();
             $loginadmin=$form->get('loginadmin')->getData();
             $rep=$entityManager->getRepository(User::class);
-            $useremp=$rep->findBy(['nomutilisateur'=>$loginemp]);
-            $useradmin=$rep->findBy(['nomutilisateur'=>$loginadmin]);
-
-            $rep=$entityManager->getRepository(Employe::class);
-            $emp=$rep->findOneBy(['login'=>$useremp]);
-            $rep=$entityManager->getRepository(Administrateur::class);
-            $admin=$rep->findOneBy(['login'=>$useradmin]);
-            $emp->setAdmin($admin);
-            $admin->addEmploye($emp);
-            $entityManager->persist($emp);
-            $entityManager->persist($admin);
+            $useremp=$rep->findOneBy(['nomutilisateur'=>$loginemp]);
+            $useradmin=$rep->findOneBy(['nomutilisateur'=>$loginadmin]);
+            $useremp->setAdministrateur($useradmin);
+            $useradmin->addUser($useremp);
+            $entityManager->persist($useremp);
+            $entityManager->persist($useradmin);
 
             $entityManager->flush();
             return $this->redirectToRoute('/');
@@ -99,13 +94,14 @@ class EmployeController extends AbstractController
         ]);
 
     }
+
     #[Route('/modifieraffectationadmin/{loginemploye}/{loginadmin}', name: 'modifieraffectationadmin')]
     public function modifierempadmin(string $loginemploye,string $loginadmin, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
     {
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
-        $emp=new Employe();
+        $emp=new User();
         $form = $this->createForm(EmployeAdminformType::class,$emp);
 
 
@@ -114,18 +110,13 @@ class EmployeController extends AbstractController
             $loginemp=$form->get('loginemploye')->getData();
             $loginadmin=$form->get('loginadmin')->getData();
             $rep=$entityManager->getRepository(User::class);
-            $useremp=$rep->findBy(['nomutilisateur'=>$loginemp]);
-            $useradmin=$rep->findBy(['nomutilisateur'=>$loginadmin]);
+            $useremp=$rep->findOneBy(['nomutilisateur'=>$loginemp]);
+            $useradmin=$rep->findOneBy(['nomutilisateur'=>$loginadmin]);
+            $useremp->setAdministrateur($useradmin);
+            $useradmin->addUser($useremp);
 
-            $rep=$entityManager->getRepository(Employe::class);
-            $emp=$rep->findOneBy(['login'=>$useremp]);
-            $rep=$entityManager->getRepository(Administrateur::class);
-            $admin=$rep->findOneBy(['login'=>$useradmin]);
-            $emp->setAdmin($admin);
-            $admin->addEmploye($emp);
-
-            $entityManager->persist($emp);
-            $entityManager->persist($admin);
+            $entityManager->persist($useremp);
+            $entityManager->persist($useradmin);
 
             $entityManager->flush();
             return $this->redirectToRoute('/');
@@ -141,7 +132,7 @@ class EmployeController extends AbstractController
         ]);
 
     }
-  */
+
     
     #[Route('/mettreajouremploye/{id}', name: 'mettreajouremploye')]
 
@@ -228,6 +219,7 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         ]);
     }
 
+*/
 
     /**
      * Lists all Post entities.
@@ -239,7 +231,7 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
      *
      * @return Response
      */
-/*
+
     public function consulteremployedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -254,7 +246,7 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         /**
          * @var DatatableInterface $datatable
          */
-  /*  $datatable = $datatableFactory->create(EmployeAdminDataTable::class);
+    $datatable = $datatableFactory->create(EmployeAdminDataTable::class);
         $datatable->buildDatatable();
         if ($isAjax) {
             $responseService = $datatableResponse;
@@ -288,21 +280,19 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         /**
          * @var DatatableInterface $datatable
          */
-    /*    $datatable = $datatableFactory->create(EmployeDataTable::class);
-        $rep = $doctrine->getRepository(Employe::class);
-        $employe=$rep->findOneBy(['login'=>$user]);
+        $datatable = $datatableFactory->create(EmployeDataTable::class);
+        $rep = $doctrine->getRepository(User::class);
 
 
-        $datatable->buildDatatable(['id'=>$employe->getId()]);
+        $datatable->buildDatatable(['user'=>$user]);
         if ($isAjax) {
 
             $datatableResponse->setDatatable($datatable);
             $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
             $qb = $datatableQueryBuilder->getQb();
             $id = $user->getId();
-            $qb->leftJoin("employe.login","login");
-            $qb->andWhere('login.id=:login');
-            $qb->setParameter('login', $id);
+            $qb->andWhere('user.id=:id');
+            $qb->setParameter('id', $id);
 
             return $datatableResponse->getResponse();
         }
@@ -311,6 +301,6 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
             'datatable' => $datatable,
         ));
     }
-*/
+
     }
 

@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Employe;
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -27,7 +28,7 @@ class EmployeAdminformType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Employe::class,
+            'data_class' => User::class,
         ]);
     }
 }

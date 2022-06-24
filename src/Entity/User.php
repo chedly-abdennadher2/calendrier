@@ -50,6 +50,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Contrat::class, orphanRemoval: true)]
     private $contrat;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'users')]
+    private $administrateur;
+
+    #[ORM\OneToMany(mappedBy: 'administrateur', targetEntity: self::class)]
+    private $users;
+
 
     public function getId(): ?int
     {
@@ -126,6 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->contrat = new ArrayCollection();
         $this->suiviconge = new ArrayCollection();
         $this->nbvisit=0;
+        $this->users = new ArrayCollection();
     }
 
 
@@ -288,5 +295,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         {$this->nbjourpris=0;
         }
 
+    }
+
+    public function getAdministrateur(): ?self
+    {
+        return $this->administrateur;
+    }
+
+    public function setAdministrateur(?self $administrateur): self
+    {
+        $this->administrateur = $administrateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(self $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setAdministrateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(self $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getAdministrateur() === $this) {
+                $user->setAdministrateur(null);
+            }
+        }
+
+        return $this;
     }
 }

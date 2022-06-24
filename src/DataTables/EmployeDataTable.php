@@ -77,11 +77,9 @@ class EmployeDataTable extends AbstractDatatable
     {
 
         $doctrine=$this->getEntityManager();
-        $repository=$doctrine->getRepository(Employe::class);
-        $employe=$repository->find($options['id']);
         $repository=$doctrine->getRepository(Contrat::class);
 
-        $this->contrats=$repository->findBy(['employe'=>$employe]);
+        $this->contrats=$repository->findBy(['user'=>$options['user']]);
 
         $this->ajax->set(array(
             // send some extra example data
@@ -280,7 +278,7 @@ class EmployeDataTable extends AbstractDatatable
      */
     public function getEntity()
     {
-        return 'App\Entity\Employe';
+        return 'App\Entity\User';
     }
 
     /**

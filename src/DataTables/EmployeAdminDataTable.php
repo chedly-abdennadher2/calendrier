@@ -175,7 +175,7 @@ class EmployeAdminDataTable extends AbstractDatatable
      */
     public function getEntity()
     {
-        return 'App\Entity\Employe';
+        return 'App\Entity\User';
     }
 
     /**

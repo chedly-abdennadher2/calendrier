@@ -24,6 +24,7 @@ class EmployeformType extends AbstractType
             ->add('nom')
             ->add('prenom')
             ->add('salaire')
+            ->add('quota')
 
             ->add('nomutilisateur')
             ->add('agreeTerms', CheckboxType::class, [
