@@ -31,12 +31,13 @@ class Contrat
     #[ORM\Column(type: 'integer', nullable: true)]
     private $quotarestant;
 
-    #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'contrat')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $employe;
 
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private $statut;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'contrat')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
 
 
     public function getId(): ?int
@@ -116,17 +117,6 @@ class Contrat
         return $this;
     }
 
-    public function getEmploye(): ?Employe
-    {
-        return $this->employe;
-    }
-
-    public function setEmploye(?Employe $employe): self
-    {
-        $this->employe = $employe;
-
-        return $this;
-    }
 public function calculquotaparmoisaccorde ()
 {
     if ($this->typedecontrat=='CDI')
@@ -148,6 +138,18 @@ public function getStatut(): ?string
 public function setStatut(?string $statut): self
 {
     $this->statut = $statut;
+
+    return $this;
+}
+
+public function getUser(): ?User
+{
+    return $this->user;
+}
+
+public function setUser(?User $user): self
+{
+    $this->user = $user;
 
     return $this;
 }

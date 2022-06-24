@@ -13,9 +13,6 @@ class SuiviConge
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'suiviconge')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $employe;
 
     #[ORM\ManyToOne(targetEntity: Contrat::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -36,22 +33,16 @@ class SuiviConge
     #[ORM\Column(type: 'integer',nullable: true)]
     private $nbjourrestant;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getEmploye(): ?Employe
-    {
-        return $this->employe;
-    }
 
-    public function setEmploye(?Employe $employe): self
-    {
-        $this->employe = $employe;
-
-        return $this;
-    }
 
     public function getContrat(): ?Contrat
     {
@@ -121,6 +112,18 @@ class SuiviConge
     public function setNbjourrestant(int $nbjourrestant): self
     {
         $this->nbjourrestant = $nbjourrestant;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

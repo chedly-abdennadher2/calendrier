@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\DataTables\EmployeAdminDataTable;
 use App\DataTables\EmployeDataTable;
-use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\User;
 use App\Form\EmployeAdminformType;
@@ -20,6 +19,7 @@ use Sg\DatatablesBundle\Datatable\DatatableInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use function Symfony\Bundle\FrameworkBundle\Controller\redirectToRoute;
@@ -33,24 +33,29 @@ class EmployeController extends AbstractController
 {
 
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
-    public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine ) :Response
+    public function ajouter(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine,UserPasswordHasherInterface $userPasswordHasher ) :Response
     {
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
-    $emp =new Employe();
+    $emp =new User();
     $form = $this->createForm(EmployeformType::class,$emp);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $nomlogin = $form->get('nom')->getData();
-            $rep=$doctrine->getRepository(User::class);
-            $user=$rep->findOneBy(["nomutilisateur"=>$nomlogin]);
             $emp= $form->getData();
-            $emp->setLogin($user);
-        $entityManager->persist($emp);
+         $password=($form->get('password')->getData());
+            $emp->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $emp,
+                    $password
+                )
+            );
+         $emp->setRoles(['ROLE_USER']);
+
+            $entityManager->persist($emp);
         $entityManager->flush();
             return $this->redirectToRoute('/');
         }
@@ -59,7 +64,7 @@ class EmployeController extends AbstractController
  ]);
 
     }
-    #[Route('/affecteradmin', name: 'affecteradmin')]
+/*    #[Route('/affecteradmin', name: 'affecteradmin')]
     public function ajouterempadmin(Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
     {
 
@@ -136,7 +141,7 @@ class EmployeController extends AbstractController
         ]);
 
     }
-    
+  */
     
     #[Route('/mettreajouremploye/{id}', name: 'mettreajouremploye')]
 
@@ -144,7 +149,7 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
 {
     $this->denyAccessUnlessGranted('ROLE_USER');
 
-    $rep=$doctrine->getRepository(Employe::class);
+    $rep=$doctrine->getRepository(User::class);
     $emp=$rep->find($id);
 
     $form = $this->createForm(EmployeformType::class,$emp);
@@ -152,10 +157,6 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
         $emp= $form->getData();
-        $nomlogin = $form->get('nom')->getData();
-        $rep=$doctrine->getRepository(User::class);
-        $user=$rep->findOneBy(["nomutilisateur"=>$nomlogin]);
-        $emp->setLogin($user);
         $entityManager->persist($emp);
         $entityManager->flush();
        return $this->redirectToRoute('consulterempdatatable');
@@ -165,16 +166,17 @@ public function mettreajour(string $id, Request $request,EntityManagerInterface 
     ]);
 }
     #[Route('/supprimeremploye/{id}', name: 'supprimeremploye')]
-public function supprimer (string $id, Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
+
+    public function supprimer (string $id, Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
 {
     $this->denyAccessUnlessGranted('ROLE_USER');
 
     $form = $this->createForm(SuppressionType::class);
     $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
+    if (($form->isSubmitted() and $form->isValid())) {
 
-        $rep=$doctrine->getRepository(Employe::class);
+        $rep=$doctrine->getRepository(User::class);
         $emp=$rep->find($id);
         $entityManager->remove($emp);
         $entityManager->flush();
@@ -193,7 +195,7 @@ else {
 
 
 
-
+/*
     #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
 public function recherchersalairesup (string $salaire,EmployeRepository $repository)
 {
@@ -237,6 +239,7 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
      *
      * @return Response
      */
+/*
     public function consulteremployedatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -251,7 +254,7 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         /**
          * @var DatatableInterface $datatable
          */
-    $datatable = $datatableFactory->create(EmployeAdminDataTable::class);
+  /*  $datatable = $datatableFactory->create(EmployeAdminDataTable::class);
         $datatable->buildDatatable();
         if ($isAjax) {
             $responseService = $datatableResponse;
@@ -285,7 +288,7 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         /**
          * @var DatatableInterface $datatable
          */
-        $datatable = $datatableFactory->create(EmployeDataTable::class);
+    /*    $datatable = $datatableFactory->create(EmployeDataTable::class);
         $rep = $doctrine->getRepository(Employe::class);
         $employe=$rep->findOneBy(['login'=>$user]);
 
@@ -308,5 +311,6 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
             'datatable' => $datatable,
         ));
     }
-}
+*/
+    }
 

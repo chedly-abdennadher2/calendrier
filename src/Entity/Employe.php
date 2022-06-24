@@ -33,42 +33,17 @@ class Employe
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Conge::class, orphanRemoval: true)]
     private $conge;
 
-    #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
-    private $login;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $nbjourpris;
 
-    #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Contrat::class, orphanRemoval: true)]
-    private $contrat;
-
-    #[ORM\ManyToOne(targetEntity: Administrateur::class, inversedBy: 'employes')]
-    private $admin;
 
 
-    /**
-     * @return ArrayCollection
-     */
-    public function getSuiviconge()
-    {
-        return $this->suiviconge;
-    }
 
-    /**
-     * @param ArrayCollection $suiviconge
-     */
-    public function setSuiviconge($suiviconge)
-    {
-        $this->suiviconge = $suiviconge;
-    }
 
 
     public function __construct()
     {
-        $this->conge = new ArrayCollection();
-        $this->contrat = new ArrayCollection();
-        $this->suiviconge = new ArrayCollection();
-        $this->nbvisit=0;
     }
 
 
@@ -125,47 +100,6 @@ class Employe
         return $this;
     }
 
-    /**
-     * @return Collection<int, Conge>
-     */
-    public function getConge(): Collection
-    {
-        return $this->conge;
-    }
-
-    public function addConge(Conge $conge): self
-    {
-        if (!$this->conge->contains($conge)) {
-            $this->conge[] = $conge;
-            $conge->setEmploye($this);
-        }
-
-        return $this;
-    }
-
-    public function removeConge(Conge $conge): self
-    {
-        if ($this->conge->removeElement($conge)) {
-            // set the owning side to null (unless already changed)
-            if ($conge->getEmploye() === $this) {
-                $conge->setEmploye(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getLogin(): ?User
-    {
-        return $this->login;
-    }
-
-    public function setLogin(?User $login): self
-    {
-        $this->login = $login;
-
-        return $this;
-    }
 
     public function getNbjourpris(): ?int
     {

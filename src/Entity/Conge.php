@@ -28,9 +28,6 @@ class Conge
 
 
 
-    #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'conge')]
-    #[ORM\JoinColumn(nullable: true)]
-    private $employe;
 
 
     private $nbjour;
@@ -38,8 +35,10 @@ class Conge
     #[ORM\Column(type: 'string', length: 20)]
     private $typeconge;
 
-    #[ORM\ManyToOne(targetEntity: Administrateur::class, inversedBy: 'conges')]
-    private $administrateur;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'conge')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
+
 
     public function getId(): ?int
     {
@@ -84,17 +83,6 @@ class Conge
 
 
 
-    public function getEmploye(): ?Employe
-    {
-        return $this->employe;
-    }
-
-    public function setEmploye(?Employe $employe): self
-    {
-        $this->employe = $employe;
-
-        return $this;
-    }
 
     /**
      * @return mixed
@@ -157,14 +145,15 @@ return 0;
         return $this;
     }
 
-    public function getAdministrateur(): ?Administrateur
+
+    public function getUser(): ?User
     {
-        return $this->administrateur;
+        return $this->user;
     }
 
-    public function setAdministrateur(?Administrateur $administrateur): self
+    public function setUser(?User $user): self
     {
-        $this->administrateur = $administrateur;
+        $this->user = $user;
 
         return $this;
     }
