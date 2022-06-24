@@ -446,7 +446,6 @@ class CongeController extends AbstractController
         ));
     }
 
-    #[Route('/calcul/{idemp}/{mois}/{annee}', name: 'calcul')]
 
     public function accepterdemandedeconge(string $idemp, string $mois, string $annee, ManagerRegistry $doctrine)
     {
@@ -458,6 +457,25 @@ class CongeController extends AbstractController
         $nbemploye =$repositoryemploye->countBy();
 
         if ($nbcongeresult<$nbemploye)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    #[Route('/calcul/{idadmin}/{mois}/{annee}', name: 'calcul')]
+
+    public function accepterdemandedecongeadmin(string $idadmin, string $mois, string $annee, ManagerRegistry $doctrine)
+    {
+        $repositoryadmin = $doctrine->getRepository(Administrateur::class);
+        $emp = $repositoryadmin->find($idadmin);
+        $repositoryconge=$doctrine->getRepository(Conge::class);
+        $nbconge = $repositoryconge->compterCongeByMoisAnnee(intval($mois), intval($annee));
+        $nbcongeresult=$nbconge[0][1];
+        if ($nbcongeresult==0)
         {
             return true;
         }
