@@ -14,6 +14,7 @@ use App\Form\CongeSearchFormulaireType;
 use App\Form\CongeValiderType;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
+use App\Repository\AdministrateurRepository;
 use App\Repository\CongeRepository;
 use App\Repository\EmployeRepository;
 use App\Repository\SuiviCongeRepository;
@@ -220,7 +221,6 @@ class CongeController extends AbstractController
 
     }
 
-    #[Route('/validerconge/{id}', name: 'validerconge')]
     public function validerconge(string $id, ManagerRegistry $doctrine, EntityManagerInterface $entityManager, EmployeRepository $repository)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -299,9 +299,32 @@ class CongeController extends AbstractController
             $entityManager->flush();
         }
     }
+    #[Route('/validerconge/{id}', name: 'validerconge')]
 
+    public function validercongeadmin(string $id, ManagerRegistry $doctrine, EntityManagerInterface $entityManager, AdministrateurRepository $repository)
+    {
+        $repositoryconge=$doctrine->getRepository(Conge::class);
+      $conge  =$repositoryconge->find($id);
+      $admin=$conge->getAdministrateur();
+      $nbjour=$conge->calculernbjour();
+        $moisdeconge = substr($conge->getDatedebut()->format('d/m/Y'), 3, 2);
+        $anneeconge = substr($conge->getDatedebut()->format('d/m/Y'), 6, 4);
 
-    #[Route('/validercongeform/{id}', name: 'validercongeform')]
+        $accepter=$this->accepterdemandedecongeadmin($admin->getId(),$moisdeconge,$anneeconge,$doctrine);
+          if( ($accepter) and ($nbjour<=30))
+    {
+        $conge->setState('valide');
+    }
+else
+        {
+            $conge->setState('invalide');
+        }
+        $entityManager->persist($conge);
+        $entityManager->flush();
+
+    }
+
+        #[Route('/validercongeform/{id}', name: 'validercongeform')]
 
     public function validercongerform(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine, EmployeRepository $repository): Response
     {
