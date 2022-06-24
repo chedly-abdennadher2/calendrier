@@ -4,17 +4,15 @@ namespace App\Controller;
 
 use App\DataTables\CongeAdminDataTable;
 use App\DataTables\CongeDataTable;
-use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\Employe;
 use App\Entity\SuiviConge;
-use App\Form\CongeadminformulaireType;
+use App\Entity\User;
 use App\Form\CongeformulaireType;
 use App\Form\CongeSearchFormulaireType;
 use App\Form\CongeValiderType;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
-use App\Repository\AdministrateurRepository;
 use App\Repository\CongeRepository;
 use App\Repository\EmployeRepository;
 use App\Repository\SuiviCongeRepository;
@@ -48,58 +46,44 @@ class CongeController extends AbstractController
             }
         }
 
-        if ($admin=='true')
-        { $form = $this->createForm(CongeadminformulaireType::class, $conge);
-        $rep = $doctrine->getRepository(Administrateur::class);
-        $admin = $rep->findOneBy(['login' => $user]);
-        $form->get('id_admin')->setData($admin->getId());
+        $form = $this->createForm(congeformulaireType::class, $conge);
+        $rep = $doctrine->getRepository(User::class);
+        $form->get('id_user')->setData($user->getId());
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $conge = $form->getData();
-            $id = $form->get('id_admin')->getData();
+            $id = $form->get('id_user')->getData();
             $conge->setState('no check');
-            $rep = $doctrine->getRepository(Administrateur::class);
-            $conge->setAdministrateur($rep->find($id));
+            $rep = $doctrine->getRepository(User::class);
+            $conge->setUser($rep->find($id));
+            $nbjour= $conge->calculernbjour();
+            $user->setNbjourpris($nbjour);
             $entityManager->persist($conge);
             $entityManager->flush();
-            return $this->redirectToRoute('consultercongedatatable');
-
-
-        }
-            return $this->renderForm('conge/ajouterconge.html.twig', [
-                'form' => $form,
-            ]);
-
-        }
-        else
-        {
-            $form = $this->createForm(congeformulaireType::class, $conge);
-            $rep = $doctrine->getRepository(Employe::class);
-            $employe = $rep->findOneBy(['login' => $user]);
-            $form->get('id_employe')->setData($employe->getId());
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $conge = $form->getData();
-                $id = $form->get('id_employe')->getData();
-                $conge->setState('no check');
-                $rep = $doctrine->getRepository(Employe::class);
-                $conge->setEmploye($rep->find($id));
-                $entityManager->persist($conge);
-                $entityManager->flush();
-                return $this->redirectToRoute('consultercongeempdatatable');
-
+            if ($admin=='true') {
+                return $this->redirectToRoute('consultercongedatatable');
 
             }
-            return $this->renderForm('conge/ajouterconge.html.twig', [
-                'form' => $form,
-            ]);
+
+            else
+            {
+
+                return $this->redirectToRoute('consultercongeempdatatable');
+
+            }
+
+        }
+        return $this->renderForm('conge/ajouterconge.html.twig', [
+            'form' => $form,
+        ]);
+
 
         }
 
 
 
 
-    }
+
 
 
     #[Route('/mettreajourconge/{id}', name: 'mettreajourconge')]
@@ -116,36 +100,36 @@ class CongeController extends AbstractController
                 $admin = 'true';
             }
         }
-        if ($admin=='true')
-        {
-            $form = $this->createForm(CongeAdminformulaireType::class, $conge);
-        $form->get('id_admin')->setData($conge->getAdministrateur()->getId());
+        $form = $this->createForm(CongeformulaireType::class, $conge);
+        $form->get('id_user')->setData($conge->getUser()->getId());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $conge = $form->getData();
+            $nbjour= $conge->calculernbjour();
+            $user->setNbjourpris($nbjour);
+
             $entityManager->persist($conge);
             $entityManager->flush();
-            return $this->redirectToRoute('consultercongedatatable');
+            if ($admin=='true') {
+                return $this->redirectToRoute('consultercongedatatable');
 
-        }}
-        else
-        {
-            $form = $this->createForm(CongeformulaireType::class, $conge);
-            $form->get('id_employe')->setData($conge->getEmploye()->getId());
+            }
 
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $conge = $form->getData();
-                $entityManager->persist($conge);
-                $entityManager->flush();
+            else
+            {
+
                 return $this->redirectToRoute('consultercongeempdatatable');
 
             }
-        }
+
+    }
         return $this->renderForm('conge/modifierconge.html.twig', [
             'form' => $form,
         ]);
+
+
+
 
     }
 
@@ -164,59 +148,46 @@ class CongeController extends AbstractController
 
         $form = $this->createForm(SuppressionType::class);
         $form->handleRequest($request);
-        if ($admin=='false') {
+
 
             if ($form->isSubmitted() && $form->isValid()) {
 
                 $rep = $doctrine->getRepository(Conge::class);
                 $conge = $rep->find($id);
-                $conge->calculernbjour();
-                $nbjour = $conge->getNbjour();
-                $emp = $conge->getEmploye();
-                $emp->nbjourprisreset();
+                $nbjour= $conge->calculernbjour();
+                $user = $conge->getUser();
+                $user->nbjourprisreset();
             if ($conge->getState() == 'valide') {
-                $emp->setNbjourpris($emp->getNbjourpris() - $nbjour);
-                if ($emp->getcontratplusrecent() != null) {
-                    $emp->getcontratplusrecent()->setQuotarestant($emp->getQuota() - $nbjour);
+                $user->setNbjourpris($user->getNbjourpris() - $nbjour);
+                if ($user->getcontratplusrecent() != null) {
+                    $user->getcontratplusrecent()->setQuotarestant($user->getQuota() - $nbjour);
                 }
             }
             $entityManager->remove($conge);
             $entityManager->flush();
-            $entityManager->persist($emp);
+            $entityManager->persist($user);
             $entityManager->flush();
 
-
-            return $this->redirectToRoute('consultercongeempdatatable');
-        }
-           else {
-            $id = $form->get('id')->setData($id);
-               return $this->renderForm('conge/supprimerconge.html.twig', [
-                   'form' => $form,
-               ]);
-
-            }
-        }
-
-       else
-            {
-                if ($form->isSubmitted() && $form->isValid()) {
-
-                    $rep = $doctrine->getRepository(Conge::class);
-                    $conge = $rep->find($id);
-                    $entityManager->remove($conge);
-                    $entityManager->flush();
+                if ($admin=='false') {
+                    return $this->redirectToRoute('consultercongeempdatatable');
                 }
                 else {
-                    $id = $form->get('id')->setData($id);
-                    return $this->renderForm('conge/supprimerconge.html.twig', [
-                        'form' => $form,
-                    ]);
-
-                }
                 return $this->redirectToRoute('consultercongedatatable');
 
-
             }
+
+
+        }
+
+            else {
+                $id = $form->get('id')->setData($id);
+                return $this->renderForm('conge/supprimerconge.html.twig', [
+                    'form' => $form,
+                ]);
+            }
+
+
+
 
 
     }
@@ -373,8 +344,8 @@ class CongeController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = $this->getUser();
-        $rep = $doctrine->getRepository(Employe::class);
-        $employes = $rep->findBy(['admin' => $user]);
+        $rep = $doctrine->getRepository(User::class);
+        $employes = $rep->findBy(['administrateur' => $user]);
 
         $isAjax = $request->isXmlHttpRequest();
 
@@ -413,9 +384,7 @@ class CongeController extends AbstractController
     public function consultercongeempdatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse, EntityManagerInterface $doctrine)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $rep = $doctrine->getRepository(Employe::class);
         $user = $this->getUser();
-        $emp = $rep->findOneBy(['login' => $user]);
 
         $isAjax = $request->isXmlHttpRequest();
 
@@ -434,9 +403,9 @@ class CongeController extends AbstractController
             $datatableResponse->setDatatable($datatable);
             $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
             $qb = $datatableQueryBuilder->getQb();
-            $id = $emp->getId();
-            $qb->andWhere('employe.id=:employe');
-            $qb->setParameter('employe', $id);
+            $id = $user->getId();
+            $qb->andWhere('user.id=:user_id');
+            $qb->setParameter('user_id', $id);
             return $datatableResponse->getResponse();
         }
 

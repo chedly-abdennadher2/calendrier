@@ -22,7 +22,7 @@ class CongeformulaireType extends AbstractType
             ->add('datefin')
             ->add('typeconge')
 
-            ->add ('id_employe',TextType::class,['mapped'=>false,'disabled'=>true])
+            ->add ('id_user',TextType::class,['mapped'=>false,'disabled'=>true])
             ->add ('envoyer',SubmitType::class )
 
         ;

@@ -138,47 +138,27 @@ private $row;
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-            ->add('employe.id', Column::class, array(
-                'title' => 'id employe',
+            ->add('user.id', Column::class, array(
+                'title' => 'id user',
                 'searchable' => true,
                 'orderable' => true,
                 'default_content'=>'null'
 
             ))
-            ->add('employe.nom', Column::class, array(
-                'title' => 'nom employe',
+            ->add('user.nom', Column::class, array(
+                'title' => 'nom user',
                 'searchable' => true,
                 'orderable' => true,
                 'default_content'=>'null'
 
             ))
-            ->add('employe.prenom', Column::class, array(
-                'title' => 'prenom employe',
+            ->add('user.prenom', Column::class, array(
+                'title' => 'user prenom',
                 'searchable' => true,
                 'orderable' => true,
                 'default_content'=>'null'
             ))
-             ->add('administrateur.id', Column::class, array(
-                 'title' => 'id admin en conge',
-                 'searchable' => true,
-                 'orderable' => true,
-                 'default_content'=>'null',
-                 'sent_in_response'=>false,
-                 
 
-             ))
-             ->add('administrateur.nom', Column::class, array(
-                 'title' => 'nom admin en conge',
-                 'searchable' => true,
-                 'orderable' => true,
-                 'default_content'=>'null'
-             ))
-             ->add('administrateur.prenom', Column::class, array(
-                 'title' => 'prenom admin en conge',
-                 'searchable' => true,
-                 'orderable' => true,
-                 'default_content'=>'null'
-             ))
 
             ->add(null, ActionColumn::class, array(
                 'title' => 'Actions',
@@ -231,11 +211,11 @@ private $row;
                              'class' => 'btn btn-primary btn-xs',
                              'role' => 'button',
                          ),
-                         'render_if' =>function ($row)
+/*                         'render_if' =>function ($row)
                          {
                              return ($row['administrateur']!=null) ;
                          },
-
+*/
                          'start_html' => '<div class="start_show_action">',
                          'end_html' => '</div>',
                      ),
@@ -264,11 +244,11 @@ private $row;
                              'class' => 'btn btn-primary btn-xs',
                              'role' => 'button',
                          ),
-                         'render_if' =>function ($row)
+  /*                       'render_if' =>function ($row)
                          {
                              return ($row['administrateur']!=null) ;
                          },
-
+*/
                          'start_html' => '<div class="start_show_action">',
                          'end_html' => '</div>',
                      ),

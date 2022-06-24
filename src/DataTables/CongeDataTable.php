@@ -131,19 +131,19 @@ class CongeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-            ->add('employe.id', Column::class, array(
+            ->add('user.id', Column::class, array(
                 'title' => 'id employe',
                 'searchable' => true,
                 'orderable' => true,
 
             ))
-            ->add('employe.nom', Column::class, array(
+            ->add('user.nom', Column::class, array(
                 'title' => 'nom employe',
                 'searchable' => true,
                 'orderable' => true,
 
             ))
-            ->add('employe.prenom', Column::class, array(
+            ->add('user.prenom', Column::class, array(
                 'title' => 'prenom employe',
                 'searchable' => true,
                 'orderable' => true,
