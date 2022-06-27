@@ -55,7 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'administrateur', targetEntity: self::class)]
     private $users;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'boolean',nullable:'true')]
+    private $isLeaving;
+
 
 
     public function getId(): ?int
@@ -338,6 +340,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->nbjourpris = 0;
         }
 
+    }
+
+    public function isIsLeaving(): ?bool
+    {
+        return $this->isLeaving;
+    }
+
+    public function setIsLeaving(bool $isLeaving): self
+    {
+        $this->isLeaving = $isLeaving;
+
+        return $this;
     }
 
 

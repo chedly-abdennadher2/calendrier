@@ -23,6 +23,9 @@ class CongeformulaireType extends AbstractType
             ->add('typeconge')
 
             ->add ('id_user',TextType::class,['mapped'=>false,'disabled'=>true])
+            ->add ('nom',TextType::class,['mapped'=>false,'disabled'=>true])
+            ->add ('prenom',TextType::class,['mapped'=>false,'disabled'=>true])
+
             ->add ('envoyer',SubmitType::class )
 
         ;

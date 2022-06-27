@@ -14,8 +14,8 @@ use App\Form\CongeValiderType;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
 use App\Repository\CongeRepository;
-use App\Repository\EmployeRepository;
 use App\Repository\SuiviCongeRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
@@ -73,6 +73,15 @@ class CongeController extends AbstractController
             }
 
         }
+        else
+            {
+                $conge->setUser($user);
+            $form->get('id_user')->setData($conge->getUser()->getId());
+            $form->get('nom')->setData($conge->getUser()->getNom());
+            $form->get('prenom')->setData($conge->getUser()->getPrenom());
+
+
+        }
         return $this->renderForm('conge/ajouterconge.html.twig', [
             'form' => $form,
         ]);
@@ -124,6 +133,15 @@ class CongeController extends AbstractController
             }
 
     }
+        else
+        {
+            $conge->setUser($user);
+            $form->get('id_user')->setData($conge->getUser()->getId());
+            $form->get('nom')->setData($conge->getUser()->getNom());
+            $form->get('prenom')->setData($conge->getUser()->getPrenom());
+
+
+        }
         return $this->renderForm('conge/modifierconge.html.twig', [
             'form' => $form,
         ]);
@@ -192,7 +210,7 @@ class CongeController extends AbstractController
 
     }
 
-    public function validerconge(ManagerRegistry $doctrine, EntityManagerInterface $entityManager,User $user, Conge $conge)
+    public function validerconge(string $choix, ManagerRegistry $doctrine, EntityManagerInterface $entityManager,User $user, Conge $conge)
     {
         $conge->calculernbjour();
         $nbjour = $conge->getNbjour();
@@ -201,7 +219,7 @@ class CongeController extends AbstractController
         $anneeconge = substr($conge->getDatedebut()->format('d/m/Y'), 6, 4);
 
         $dispo= $this->accepterdemandedeconge($user, $moisdeconge,$anneeconge, $doctrine);
-        if ($dispo==true) {
+        if (($dispo==true) and ($choix=='oui')) {
             $rep = $doctrine->getRepository(SuiviConge::class);
             if ($moisdeconge - 1 <= 0) {
                 $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $anneeconge - 1, 'mois' => 12, 'user' => $user, 'contrat' => $contrat]);
@@ -269,7 +287,7 @@ class CongeController extends AbstractController
 
         #[Route('/validercongeform/{id}', name: 'validercongeform')]
 
-    public function validercongerform(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine, EmployeRepository $repository): Response
+    public function validercongerform(string $id, Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $rep = $doctrine->getRepository(Conge::class);
@@ -280,12 +298,19 @@ class CongeController extends AbstractController
 
         $form = $this->createForm(CongeValiderType::class, $conge);
         $form->get('id')->setData($id);
+        $form->get('id_user')->setData($conge->getUser()->getId());
+        $form->get('nom')->setData($conge->getUser()->getNom());
+        $form->get('prenom')->setData($conge->getUser()->getPrenom());
+
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->validerconge($doctrine, $entityManager,$conge->getUser(),$conge);
+            $choix=$form->get('choix')->getData();
+            $this->validerconge($choix,$doctrine, $entityManager,$conge->getUser(),$conge);
             return $this->redirectToRoute('consultercongedatatable');
 
         }
+
         return $this->renderForm('conge/validerconge.html.twig', [
             'form' => $form,
             'conge' => $conge,
@@ -301,7 +326,7 @@ class CongeController extends AbstractController
     }
 
     #[Route('/trierconge/{critere}', name: 'trierconge')]
-    public function trier(Request $request, ManagerRegistry $doctrine, EmployeRepository $repository, PaginatorInterface $paginator, string $critere)
+    public function trier(Request $request, ManagerRegistry $doctrine, UserRepository $repository, PaginatorInterface $paginator, string $critere)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = $this->getUser();
@@ -418,7 +443,6 @@ class CongeController extends AbstractController
         $nbcongeresult=$nbconge[0][1];
         $repositoryemploye=$doctrine->getRepository(User::class);
         $nbemploye =$repositoryemploye->countBy();
-         dd($nbemploye);
         if ($nbcongeresult<$nbemploye)
         {
             return true;

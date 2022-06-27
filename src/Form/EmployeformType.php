@@ -52,6 +52,7 @@ class EmployeformType extends AbstractType
                     ]),
                 ],
             ])
+            ->add ('isLeaving')
             ->add ('envoyer',SubmitType::class )
             ->add ('annuler',ResetType::class )
 
