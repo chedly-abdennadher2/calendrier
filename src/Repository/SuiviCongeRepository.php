@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Contrat;
-use App\Entity\Employe;
 use App\Entity\SuiviConge;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
@@ -72,13 +72,13 @@ class SuiviCongeRepository extends ServiceEntityRepository
 
     }
 */
-    public function FindByMoisAnneerecent(Employe $emp,Contrat $contrat)
+    public function FindByMoisAnneerecent(User $emp,Contrat $contrat)
     {
         $entitymanager=$this->getEntityManager();
         $query=$entitymanager->createQuery('select s from App\Entity\SuiviConge s 
-        where s.employe=:employe and s.contrat =:contrat and s.annee =(select max(s2.annee) from App\Entity\SuiviConge s2 
-        where s2.employe=:employe and s2.contrat =:contrat ) and s.mois= (select max(s3.mois) from App\Entity\SuiviConge s3 
-        where s3.employe=:employe and s3.contrat =:contrat  ) ')
+        where s.user=:employe and s.contrat =:contrat and s.annee =(select max(s2.annee) from App\Entity\SuiviConge s2 
+        where s2.user=:employe and s2.contrat =:contrat ) and s.mois= (select max(s3.mois) from App\Entity\SuiviConge s3 
+        where s3.user=:employe and s3.contrat =:contrat  ) ')
             ->setParameter('employe',$emp)->setParameter('contrat',$contrat);
         return $query->getResult();
 

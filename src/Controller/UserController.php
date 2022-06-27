@@ -11,6 +11,7 @@ use App\Form\EmployeformType;
 use App\Form\EmployeSearchFormType;
 use App\Form\SuppressionType;
 use App\Repository\EmployeRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,12 +25,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use function Symfony\Bundle\FrameworkBundle\Controller\redirectToRoute;
 use function Symfony\Component\Finder\contains;
-use App\Entity\Employe;
 
 use Knp\Component\Pager\PaginatorInterface;
 use Sg\DatatablesBundle\Datatable\DatatableFactory;
 use Sg\DatatablesBundle\Response\DatatableResponse;
-class EmployeController extends AbstractController
+class UserController extends AbstractController
 {
 
     #[Route('/ajouteremploye', name: 'ajouteremploye')]
@@ -38,30 +38,30 @@ class EmployeController extends AbstractController
 
         // Call whatever methods you've added to your User class
         // For example, if you added a getFirstName() method, you can use that.
-    $emp =new User();
-    $form = $this->createForm(EmployeformType::class,$emp);
+        $emp =new User();
+        $form = $this->createForm(EmployeformType::class,$emp);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $emp= $form->getData();
-         $password=($form->get('password')->getData());
+            $password=($form->get('password')->getData());
             $emp->setPassword(
                 $userPasswordHasher->hashPassword(
                     $emp,
                     $password
                 )
             );
-         $emp->setRoles(['ROLE_USER']);
+            $emp->setRoles(['ROLE_USER']);
 
             $entityManager->persist($emp);
-        $entityManager->flush();
+            $entityManager->flush();
             return $this->redirectToRoute('/');
         }
-    return $this->renderForm('employe/ajouteremploye.html.twig', [
-     'form' => $form,
- ]);
+        return $this->renderForm('employe/ajouteremploye.html.twig', [
+            'form' => $form,
+        ]);
 
     }
     #[Route('/affecteradmin', name: 'affecteradmin')]
@@ -133,93 +133,88 @@ class EmployeController extends AbstractController
 
     }
 
-    
+
     #[Route('/mettreajouremploye/{id}', name: 'mettreajouremploye')]
 
-public function mettreajour(string $id, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
-{
-    $this->denyAccessUnlessGranted('ROLE_USER');
-
-    $rep=$doctrine->getRepository(User::class);
-    $emp=$rep->find($id);
-
-    $form = $this->createForm(EmployeformType::class,$emp);
-
-    $form->handleRequest($request);
-    if ($form->isSubmitted() && $form->isValid()) {
-        $emp= $form->getData();
-        $entityManager->persist($emp);
-        $entityManager->flush();
-       return $this->redirectToRoute('consulterempdatatable');
-    }
-    return $this->renderForm('employe/modifieremploye.html.twig', [
-        'form' => $form,
-    ]);
-}
-    #[Route('/supprimeremploye/{id}', name: 'supprimeremploye')]
-
-    public function supprimer (string $id, Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
-{
-    $this->denyAccessUnlessGranted('ROLE_USER');
-
-    $form = $this->createForm(SuppressionType::class);
-    $form->handleRequest($request);
-
-    if (($form->isSubmitted() and $form->isValid())) {
+    public function mettreajour(string $id, Request $request,EntityManagerInterface $entityManager,ManagerRegistry $doctrine) :Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
 
         $rep=$doctrine->getRepository(User::class);
         $emp=$rep->find($id);
-        $entityManager->remove($emp);
-        $entityManager->flush();
-        return $this->redirectToRoute('/');
 
-    }
-else {
-    $form->get('id')->setData($id);}
+        $form = $this->createForm(EmployeformType::class,$emp);
 
-    return $this->renderForm('employe/supprimeremploye.html.twig', [
-        'form' => $form,
-    ]);
-
-}
-
-
-
-
-/*
-    #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
-public function recherchersalairesup (string $salaire,EmployeRepository $repository)
-{
-    $employes=$repository->findAllGreaterThanSalaire($salaire);
-    return $employes;
-}
-    #[Route('/rechercherparnomprenom/{nom}/{prenom}', name: 'rechercherparnomprenom')]
-    public function rechercherparnomprenom (string $nom,string $prenom ,EmployeRepository $repository)
-    {
-    $employes=$repository->findBy(['nom'=>$nom,'prenom'=>$prenom]);
-    return $employes;
-    }
-    #[Route('/trieremploye/{critere}/{sens}', name: 'trieremploye')]
-    public function trier(Request $request, ManagerRegistry $doctrine,EmployeRepository $repository, PaginatorInterface $paginator,string $critere,string $sens)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $rep=$doctrine->getRepository(Employe::class);
-
-              $employes= $rep->findBy(array(),array($critere=>$sens));
-
-
-        $employespages = $paginator->paginate(
-            $employes, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            6 // Nombre de résultats par page
-        );
-
-        return $this->render('employe/consulteremploye.html.twig', [
-            'employes' => $employespages,
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $emp= $form->getData();
+            $entityManager->persist($emp);
+            $entityManager->flush();
+            return $this->redirectToRoute('consulterempdatatable');
+        }
+        return $this->renderForm('employe/modifieremploye.html.twig', [
+            'form' => $form,
         ]);
     }
+    #[Route('/supprimeremploye/{id}', name: 'supprimeremploye')]
 
-*/
+    public function supprimer (string $id, Request $request,ManagerRegistry $doctrine,EntityManagerInterface $entityManager)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $form = $this->createForm(SuppressionType::class);
+        $form->handleRequest($request);
+
+        if (($form->isSubmitted() and $form->isValid())) {
+
+            $rep=$doctrine->getRepository(User::class);
+            $emp=$rep->find($id);
+            $entityManager->remove($emp);
+            $entityManager->flush();
+            return $this->redirectToRoute('/');
+
+        }
+        else {
+            $form->get('id')->setData($id);}
+
+        return $this->renderForm('employe/supprimeremploye.html.twig', [
+            'form' => $form,
+        ]);
+
+    }
+
+
+
+
+
+        #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
+    public function recherchersalairesup (string $salaire,UserRepository $repository)
+    {
+        $employes=$repository->findAllGreaterThanSalaire($salaire);
+        return $employes;
+    }
+        #[Route('/rechercherparnomprenom/{nom}/{prenom}', name: 'rechercherparnomprenom')]
+        public function rechercherparnomprenom (string $nom,string $prenom ,UserRepository $repository)
+        {
+        $employes=$repository->findBy(['nom'=>$nom,'prenom'=>$prenom]);
+        return $employes;
+        }
+        #[Route('/trieremploye/{critere}/{sens}', name: 'trieremploye')]
+        public function trier(Request $request, ManagerRegistry $doctrine,UserRepository $repository, PaginatorInterface $paginator,string $critere,string $sens)
+        {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            $rep=$doctrine->getRepository(User::class);
+                  $employes= $rep->findBy(array(),array($critere=>$sens));
+            $employespages = $paginator->paginate(
+                $employes, // Requête contenant les données à paginer (ici nos articles)
+                $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+                6 // Nombre de résultats par page
+            );
+            return $this->render('employe/consulteremploye.html.twig', [
+                'employes' => $employespages,
+            ]);
+        }
+
 
     /**
      * Lists all Post entities.
@@ -246,7 +241,7 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         /**
          * @var DatatableInterface $datatable
          */
-    $datatable = $datatableFactory->create(EmployeAdminDataTable::class);
+        $datatable = $datatableFactory->create(EmployeAdminDataTable::class);
         $datatable->buildDatatable();
         if ($isAjax) {
             $responseService = $datatableResponse;
@@ -302,5 +297,5 @@ public function recherchersalairesup (string $salaire,EmployeRepository $reposit
         ));
     }
 
-    }
+}
 

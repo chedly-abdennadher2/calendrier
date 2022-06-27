@@ -16,9 +16,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'calcul_nbjour',
     description: 'calculer le nombre de jour pris par un employé dans un mois et annee donnée'
 )]
-class CalculNbjourCommand extends Command
+class CalculNbjourCommand
+//    extends Command
 {
-    private $entityManager;
+/*    private $entityManager;
     public function __construct(entityManagerInterface $entityManager)
     { $this->entityManager=$entityManager;
         parent::__construct();
@@ -301,5 +302,5 @@ class CalculNbjourCommand extends Command
     }
 
 
-
+*/
 }

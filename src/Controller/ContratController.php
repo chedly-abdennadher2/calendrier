@@ -4,14 +4,12 @@ namespace App\Controller;
 
 use App\DataTables\CongeDataTable;
 use App\DataTables\ContratAdminDataTable;
-use App\Entity\Administrateur;
 use App\Entity\Conge;
 use App\Entity\Contrat;
-use App\Entity\Employe;
+use App\Entity\User;
 use App\Form\ContratType;
 use App\Form\ContratUpdateType;
 use App\Repository\ContratRepository;
-use App\Repository\EmployeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Sg\DatatablesBundle\Datatable\DatatableFactory;
@@ -60,9 +58,7 @@ class ContratController extends AbstractController
     public function consultercontratempdatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse,EntityManagerInterface $doctrine)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $rep = $doctrine->getRepository(Employe::class);
         $user=$this->getUser();
-        $emp = $rep->findOneBy(['login'=>$user]);
 
         $isAjax = $request->isXmlHttpRequest();
 
@@ -81,8 +77,8 @@ class ContratController extends AbstractController
             $datatableResponse->setDatatable($datatable);
             $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
             $qb = $datatableQueryBuilder->getQb();
-            $id = $emp->getId();
-            $qb->andWhere('employe.id=:id');
+            $id = $user->getId();
+            $qb->andWhere('user.id=:id');
             $qb->setParameter('id', $id);
             return $datatableResponse->getResponse();
         }
@@ -99,21 +95,29 @@ class ContratController extends AbstractController
     {
 
         $user = $this->getUser();
-
-        $rep = $doctrine->getRepository(Employe::class);
-        $emp = $rep->findOneBy(['login' => $user]);
         $contrat = new Contrat();
         $form = $this->createForm(ContratType::class, $contrat);
-         if($emp!=null)
-         {$form->get('employe')->setData($emp->getId());}
+        $roles=$user->getRoles();
+        $admin = 'false';
+        foreach ($roles as $clef => $value) {
+            if ($value == 'ROLE_ADMIN') {
+                $admin = 'true';
+            }
+        }
+        if ($admin == 'false') {
+
+            if($user!=null)
+         {
+             $form->get('employe')->setData($user->getId());}}
+
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $id = $form->get('employe')->getData();
-            $rep = $doctrine->getRepository(Employe::class);
+            $rep = $doctrine->getRepository(User::class);
             $emp = $rep->find($id);
-            $contrat->setEmploye($emp);
+            $contrat->setUser($emp);
             $contrat->calculquotaparmoisaccorde();
             $emp->addContrat($contrat);
             $contratRepository->add($contrat, true);
@@ -156,15 +160,15 @@ class ContratController extends AbstractController
         $user = $this->getUser();
 
         $form = $this->createForm(ContratUpdateType::class, $contrat);
-        $form->get('employe')->setData($contrat->getEmploye()->getId());
+        $form->get('employe')->setData($contrat->getUser()->getId());
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $id = $form->get('employe')->getData();
-            $rep = $doctrine->getRepository(Employe::class);
+            $rep = $doctrine->getRepository(User::class);
             $emp = $rep->find($id);
-            $contrat->setEmploye($emp);
+            $contrat->setUser($emp);
             $contrat->calculquotaparmoisaccorde();
             $emp->calculerquota();
             $entityManager->persist($emp);

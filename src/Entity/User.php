@@ -240,7 +240,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->contrat->contains($contrat)) {
             $this->contrat[] = $contrat;
-            $contrat->setEmploye($this);
+            $contrat->setUser($this);
         }
 
         return $this;
@@ -256,47 +256,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
-    }
-
-    public function getcontratplusrecent()
-    {
-        $tab = $this->getContrat();
-        $max = 0;
-        foreach ($tab as $clef => $value) {
-            if ($value->getDatedebut() > $tab->get($max)->getDatedebut()) {
-                $max = $clef;
-            }
-        }
-        return $tab->get($max);
-    }
-
-    public function calculerquota()
-    {
-        $date = date('d-m-Y');
-        $jouractuel = substr($date, 0, 2);
-        $moisactuel = substr($date, 3, 2);
-        $anneeactuel = substr($date, 6, 4);
-        $datedebutrecent = $this->getcontratplusrecent()->getDatedebut();
-        $yeardebut = $datedebutrecent->format('Y');
-        $moisdebut = $datedebutrecent->format('m');
-        $jourdebut = $datedebutrecent->format('d');
-        $nbmois = ($anneeactuel - $yeardebut) * 12 + ($moisactuel - $moisdebut);
-        $nbmois = number_format((float)$nbmois, 2, '.', '');
-
-        $this->quota = $this->getcontratplusrecent()->getQuotaparmoisaccorde() * $nbmois;
-        echo $nbmois;
-
-        $this->getcontratplusrecent()->setQuotarestant($this->quota - $this->nbjourpris);
-    }
-
-    public function nbjourprisreset()
-    {
-        $date = date('d-m-Y');
-        $jour = substr($date, 0, 2);
-        if (intval($jour) == 1) {
-            $this->nbjourpris = 0;
-        }
-
     }
 
     public function getAdministrateur(): ?self
@@ -340,6 +299,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function getcontratplusrecent()
+    {
+        $tab = $this->getContrat();
+        $max = 0;
+        foreach ($tab as $clef => $value) {
+            if ($value->getDatedebut() > $tab->get($max)->getDatedebut()) {
+                $max = $clef;
+            }
+        }
+        return $tab->get($max);
+    }
+
+    public function calculerquota()
+    {
+        $date = date('d-m-Y');
+        $jouractuel = substr($date, 0, 2);
+        $moisactuel = substr($date, 3, 2);
+        $anneeactuel = substr($date, 6, 4);
+        $datedebutrecent = $this->getcontratplusrecent()->getDatedebut();
+        $yeardebut = $datedebutrecent->format('Y');
+        $moisdebut = $datedebutrecent->format('m');
+        $jourdebut = $datedebutrecent->format('d');
+        $nbmois = ($anneeactuel - $yeardebut) * 12 + ($moisactuel - $moisdebut);
+        $nbmois = number_format((float)$nbmois, 2, '.', '');
+
+        $this->quota = $this->getcontratplusrecent()->getQuotaparmoisaccorde() * $nbmois;
+        echo $nbmois;
+
+        $this->getcontratplusrecent()->setQuotarestant($this->quota - $this->nbjourpris);
+    }
+
+    public function nbjourprisreset()
+    {
+        $date = date('d-m-Y');
+        $jour = substr($date, 0, 2);
+        if (intval($jour) == 1) {
+            $this->nbjourpris = 0;
+        }
+
+    }
+
+
 
 
 }

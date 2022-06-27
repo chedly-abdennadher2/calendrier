@@ -110,9 +110,9 @@
         <td> {{ employe.prenom }} </td>
         <td> {{ employe.quota }} </td>
         <td> {{ employe.salaire }} </td>
-   {% if employe.admin!=NULL %}
-        <td>   {{ employe.admin.id }} </td>
-        <td>   {{ employe.admin.nom }} </td>
+   {% if employe.administrateur!=NULL %}
+        <td>   {{ employe.administrateur.id }} </td>
+        <td>   {{ employe.administrateur.nom }} </td>
        {% else %}
            <td>   pas d'admin </td>
            <td>  pas d'admin  </td>

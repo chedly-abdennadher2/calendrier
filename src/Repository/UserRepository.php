@@ -80,4 +80,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findAllGreaterThanSalaire(float $salaire):array
+    {
+        $entitymanager=$this->getEntityManager();
+        $query=$entitymanager->createQuery('select emp from App\Entity\User emp where emp.salaire>:salaire')->setParameter('salaire',$salaire);
+        return $query->getResult();
+
+    }
+    /*   public function compter():array
+       {
+           $entitymanager=$this->getEntityManager();
+           $query=$entitymanager->createQuery('select count(emp) from App\Entity\Employe emp');
+           return $query->getResult();
+
+       }
+   */
+    public function countBy(array $criteria=null)
+    {
+        $persister = $this->_em->getUnitOfWork()->getEntityPersister($this->_entityName);
+        if ($criteria!=null)
+            return $persister->count($criteria);
+        else
+        {
+            return $persister->count();
+
+        }
+    }
 }
