@@ -435,7 +435,15 @@ class CongeController extends AbstractController
     {
         $repositoryadmin = $doctrine->getRepository(User::class);
         $emp = $repositoryadmin->find($idadmin);
-        $repositoryconge=$doctrine->getRepository(Conge::class);
+        $roles = $user->getRoles();
+        $admin = 'false';
+        foreach ($roles as $clef => $value) {
+            if ($value == 'ROLE_ADMIN') {
+                $admin = 'true';
+            }
+        }
+        if ($admin==true)
+        {$repositoryconge=$doctrine->getRepository(Conge::class);
         $nbconge = $repositoryconge->compterCongeByMoisAnnee(intval($mois), intval($annee));
         $nbcongeresult=$nbconge[0][1];
         if ($nbcongeresult==0)
@@ -447,4 +455,5 @@ class CongeController extends AbstractController
             return false;
         }
     }
+}
 }

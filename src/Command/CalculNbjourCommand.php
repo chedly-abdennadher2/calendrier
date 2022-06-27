@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\Employe;
+use App\Entity\User;
 use App\Entity\SuiviConge;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -16,10 +16,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'calcul_nbjour',
     description: 'calculer le nombre de jour pris par un employé dans un mois et annee donnée'
 )]
-class CalculNbjourCommand
-//    extends Command
+class CalculNbjourCommand extends Command
 {
-/*    private $entityManager;
+    private $entityManager;
     public function __construct(entityManagerInterface $entityManager)
     { $this->entityManager=$entityManager;
         parent::__construct();
@@ -41,7 +40,7 @@ class CalculNbjourCommand
 
     {
 
-        $tabconge=$suiviconge->getEmploye()->getConge();
+        $tabconge=$suiviconge->getUser()->getConge();
 
         if ($suiviconge->getNbjourpris()==0)
 
@@ -87,7 +86,7 @@ class CalculNbjourCommand
         $io->success('calcul réalisé avec success voir base donnée.');
         $idemploye=$input->getArgument('idemploye');
         if ($idemploye){
-            $rep = $this->entityManager->getRepository(Employe::class);
+            $rep = $this->entityManager->getRepository(User::class);
 
             $emp = $rep->find($idemploye);
 
@@ -128,12 +127,12 @@ class CalculNbjourCommand
 
                             $rep = $this->entityManager->getRepository(SuiviConge::class);
 
-                            $suivicongetrouve = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration, 'employe' => $emp, 'contrat' => $value]);
+                            $suivicongetrouve = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration, 'user' => $emp, 'contrat' => $value]);
 
                             if ($suivicongetrouve == null) {
                                 $suivicongetrouve = new SuiviConge ();
 
-                                $suivicongetrouve->setEmploye($emp);
+                                $suivicongetrouve->setUser($emp);
 
                                 $suivicongetrouve->setContrat($value);
 
@@ -153,10 +152,10 @@ class CalculNbjourCommand
 
                                 if ($moisiteration-1<=0)
                                 {
-                                    $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => 12, 'employe' => $emp, 'contrat' => $value]);
+                                    $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => 12, 'user' => $emp, 'contrat' => $value]);
                                 }
                                 else
-                                    {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration-1, 'employe' => $emp, 'contrat' => $value]);}
+                                    {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration-1, 'user' => $emp, 'contrat' => $value]);}
 
                                 if ($suivicongetrouvemoisprecedent!=null){
                                 $nbjourrestantaddition=$suivicongetrouvemoisprecedent->getNbjourrestant();
@@ -190,7 +189,7 @@ class CalculNbjourCommand
 
 
         else {
-            $rep = $this->entityManager->getRepository(Employe::class);
+            $rep = $this->entityManager->getRepository(User::class);
 
             $emplist = $rep->findAll();
 
@@ -235,14 +234,14 @@ class CalculNbjourCommand
                             }
                             $rep = $this->entityManager->getRepository(SuiviConge::class);
 
-                            $suivicongetrouve = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration, 'employe' => $valueemp, 'contrat' => $value]);
+                            $suivicongetrouve = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration, 'user' => $valueemp, 'contrat' => $value]);
 
 
 
                             if ($suivicongetrouve == null) {
                                 $suivicongetrouve = new SuiviConge ();
 
-                                $suivicongetrouve->setEmploye($valueemp);
+                                $suivicongetrouve->setUser($valueemp);
 
                                 $suivicongetrouve->setContrat($value);
 
@@ -267,10 +266,10 @@ class CalculNbjourCommand
 
                             if ($moisiteration-1<=0)
                             {
-                                $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => 12, 'employe' => $valueemp, 'contrat' => $value]);
+                                $suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i-1, 'mois' => 12, 'user' => $valueemp, 'contrat' => $value]);
                             }
                             else
-                            {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration-1, 'employe' => $valueemp, 'contrat' => $value]);}
+                            {$suivicongetrouvemoisprecedent = $rep->findOneBy(['annee' => $i, 'mois' => $moisiteration-1, 'user' => $valueemp, 'contrat' => $value]);}
 
                             if ($suivicongetrouvemoisprecedent!=null){
                                 $nbjourrestantaddition=$suivicongetrouvemoisprecedent->getNbjourrestant();
@@ -302,5 +301,5 @@ class CalculNbjourCommand
     }
 
 
-*/
+
 }

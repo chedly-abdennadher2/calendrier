@@ -20,7 +20,7 @@ use Sg\DatatablesBundle\Datatable\Filter\SelectFilter;
 use Sg\DatatablesBundle\Datatable\Filter\TextFilter;
 use Sg\DatatablesBundle\Datatable\Style;
 
-class ContratAdminDataTable extends AbstractDatatable
+class ContratDataTable extends AbstractDatatable
 {
     /**
      * {@inheritdoc}

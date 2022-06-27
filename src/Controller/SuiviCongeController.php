@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-use App\DataTables\SuiviCongeAdminDataTable;
+use App\DataTables\SuiviCongeDataTable;
 use App\Entity\Contrat;
 use App\Entity\SuiviConge;
+use App\Entity\User;
 use App\Form\SaisirmoisanneeType;
 use App\Form\SuiviCongeType;
 use App\Repository\SuiviCongeRepository;
@@ -39,7 +40,7 @@ class SuiviCongeController extends AbstractController
         /**
          * @var DatatableInterface $datatable
          */
-        $datatable = $datatableFactory->create(SuiviCongeAdminDataTable::class);
+        $datatable = $datatableFactory->create(SuiviCongeDataTable::class);
         $datatable->buildDatatable();
         if ($isAjax) {
             $responseService = $datatableResponse;
@@ -58,9 +59,7 @@ class SuiviCongeController extends AbstractController
     public function consultersuivicongeempdatatable(Request $request, DatatableFactory $datatableFactory, DatatableResponse $datatableResponse,EntityManagerInterface $doctrine)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $rep = $doctrine->getRepository(Employe::class);
         $user=$this->getUser();
-        $emp = $rep->findOneBy(['login'=>$user]);
 
         $isAjax = $request->isXmlHttpRequest();
 
@@ -72,15 +71,15 @@ class SuiviCongeController extends AbstractController
         /**
          * @var DatatableInterface $datatable
          */
-        $datatable = $datatableFactory->create(SuiviCongeAdminDataTable::class);
+        $datatable = $datatableFactory->create(SuiviCongeDataTable::class);
         $datatable->buildDatatable();
 
         if ($isAjax) {
             $datatableResponse->setDatatable($datatable);
             $datatableQueryBuilder = $datatableResponse->getDatatableQueryBuilder();
             $qb = $datatableQueryBuilder->getQb();
-            $id = $emp->getId();
-            $qb->andWhere('employe.id=:employe');
+            $id = $user->getId();
+            $qb->andWhere('user.id=:employe');
             $qb->setParameter('employe', $id);
             return $datatableResponse->getResponse();
         }
@@ -103,12 +102,12 @@ class SuiviCongeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
           $idemp=$form->get('employeid')->getData();
           $idcontrat= $form->get('contratid')->getData();
-          $rep=$doctrine->getRepository(Employe::class);
+          $rep=$doctrine->getRepository(User::class);
           $emp=$rep->find($idemp);
-          $suiviConge->setEmploye($emp);
+          $suiviConge->setUser($emp);
           $rep=$doctrine->getRepository(Contrat::class);
           $contrat=$rep->find($idcontrat);
-          if ($contrat->getEmploye()->  getId()==$emp->getId()) {
+          if ($contrat->getUser()->getId()==$emp->getId()) {
               $suiviConge->setContrat($contrat);
               $yeardebut = $contrat->getDatedebut()->format('Y');
               $moisdebut = $contrat->getDatedebut()->format('m');
@@ -143,25 +142,24 @@ class SuiviCongeController extends AbstractController
             $idcontrat=$form->get('idcontrat')->getData();
             $rep=$doctrine->getRepository(Contrat::class);
             $contrat=$rep->find($idcontrat);
-            $rep = $doctrine->getRepository(Employe::class);
-            $user = $this->getUser();
-            $emp = $rep->findOneBy(['login' => $user]);
+            $rep = $doctrine->getRepository(User::class);
+            $emp = $this->getUser();
 
 
             if ($emp != null) {
                 $rep = $doctrine->getRepository(SuiviConge::class);
-                $suivi_conges = $rep->findBy(['employe' => $emp,'mois'=>$mois,'annee'=>$annee,'contrat'=>$contrat]);
+                $suivi_conges = $rep->findBy(['user' => $emp,'mois'=>$mois,'annee'=>$annee,'contrat'=>$contrat]);
 
                 if ($mois=='tout'){
-                    $suivi_conges = $rep->findBy(['employe' => $emp,'annee'=>$annee,'contrat'=>$contrat]);
+                    $suivi_conges = $rep->findBy(['user' => $emp,'annee'=>$annee,'contrat'=>$contrat]);
 
                 }
                 if  ($annee=='tout'){
-                    $suivi_conges = $rep->findBy(['employe' => $emp,'mois'=>$mois,'contrat'=>$contrat]);
+                    $suivi_conges = $rep->findBy(['user' => $emp,'mois'=>$mois,'contrat'=>$contrat]);
 
                 }
                 if (($mois=='tout') and ($annee=='tout')){
-                    $suivi_conges = $rep->findBy(['employe' => $emp,'contrat'=>$contrat]);
+                    $suivi_conges = $rep->findBy(['user' => $emp,'contrat'=>$contrat]);
                 }
                 return $this->render('suivi_conge/showmoisannee.html.twig', [
                     'suivi_conges' => $suivi_conges,
@@ -200,13 +198,13 @@ class SuiviCongeController extends AbstractController
             $idemp=$form->get('employeid')->getData();
 
             $idcontrat= $form->get('contratid')->getData();
-            $rep=$doctrine->getRepository(Employe::class);
+            $rep=$doctrine->getRepository(User::class);
             $emp=$rep->find($idemp);
-            $suiviConge->setEmploye($emp);
+            $suiviConge->setUser($emp);
             $rep=$doctrine->getRepository(Contrat::class);
             $contrat=$rep->find($idcontrat);
 
-            if ($contrat->getEmploye()->  getId()==$emp->getId()) {
+            if ($contrat->getUser()->  getId()==$emp->getId()) {
 
                 $suiviConge->setContrat($contrat);
                 $yeardebut = $contrat->getDatedebut()->format('Y');
@@ -221,8 +219,8 @@ class SuiviCongeController extends AbstractController
             return $this->redirectToRoute('consultersuivicongedatatable');
         }
         else {
-            $form->get('employeid')->setData($suiviConge->getEmploye()->getId());
-            $form->get('contratid')->setData($suiviConge->getContrat()->getId());
+            $form->get('employeid')->setData($suiviConge->getUser()->getId());
+            $form->get('contratid')->setData($suiviConge->getUser()->getId());
 
 
         }

@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\DataTables\CongeDataTable;
-use App\DataTables\ContratAdminDataTable;
+use App\DataTables\ContratDataTable;
 use App\Entity\Conge;
 use App\Entity\Contrat;
 use App\Entity\User;
@@ -39,7 +39,7 @@ class ContratController extends AbstractController
         /**
          * @var DatatableInterface $datatable
          */
-        $datatable = $datatableFactory->create(ContratAdminDataTable::class);
+        $datatable = $datatableFactory->create(ContratDataTable::class);
         $datatable->buildDatatable();
         if ($isAjax) {
             $responseService = $datatableResponse;
@@ -70,7 +70,7 @@ class ContratController extends AbstractController
         /**
          * @var DatatableInterface $datatable
          */
-        $datatable = $datatableFactory->create(ContratAdminDataTable::class);
+        $datatable = $datatableFactory->create(ContratDataTable::class);
         $datatable->buildDatatable();
 
         if ($isAjax) {
