@@ -1,9 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseadmin.html.twig' %}
 
 {% block title %}  valider conge {% endblock %}
 
 {% block body %}
-{% if conge.user.administrateur.id==  administrateur.id %}
+    {{ parent() }}
+    {% if conge.user.administrateur!=null %}
+    {% if conge.user.administrateur.id==  administrateur.id %}
     {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
     {{ form(form) }}
@@ -12,5 +14,10 @@
         {{ conge.user.prenom }}
     </h1>
 {% endif %}
+        {% else %}
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
+            {{ form(form) }}
+
+    {% endif %}
 {% endblock %}

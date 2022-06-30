@@ -4,7 +4,15 @@
 
 {% block body %}
     <h1>Edit Contrat</h1>
+    {% if admin=='true' %}
+        {{ include('baseadmin.html.twig') }}
+    {% else %}
+        {{ include('base.html.twig') }}
+    {% endif %}
 
+    {% if error is defined %}
+        <b>    <u>    {{ error }} </u> </b>
+    {% endif %}
     {{ include('contrat/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('consultercontratdatatable') }}">back to list</a>

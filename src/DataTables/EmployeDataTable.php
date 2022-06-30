@@ -5,7 +5,6 @@ namespace App\DataTables;
 
 use App\Entity\Conge;
 use App\Entity\Contrat;
-use App\Entity\Employe;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;

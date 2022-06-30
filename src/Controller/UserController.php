@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\EmployeAdminformType;
 use App\Form\EmployeformType;
 use App\Form\EmployeSearchFormType;
+use App\Form\EmployeupdateformType;
 use App\Form\SuppressionType;
 use App\Repository\EmployeRepository;
 use App\Repository\UserRepository;
@@ -143,7 +144,7 @@ class UserController extends AbstractController
         $rep=$doctrine->getRepository(User::class);
         $emp=$rep->find($id);
 
-        $form = $this->createForm(EmployeformType::class,$emp);
+        $form = $this->createForm(EmployeupdateformType::class,$emp);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -187,33 +188,33 @@ class UserController extends AbstractController
 
 
 
-        #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
+    #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
     public function recherchersalairesup (string $salaire,UserRepository $repository)
     {
         $employes=$repository->findAllGreaterThanSalaire($salaire);
         return $employes;
     }
-        #[Route('/rechercherparnomprenom/{nom}/{prenom}', name: 'rechercherparnomprenom')]
-        public function rechercherparnomprenom (string $nom,string $prenom ,UserRepository $repository)
-        {
+    #[Route('/rechercherparnomprenom/{nom}/{prenom}', name: 'rechercherparnomprenom')]
+    public function rechercherparnomprenom (string $nom,string $prenom ,UserRepository $repository)
+    {
         $employes=$repository->findBy(['nom'=>$nom,'prenom'=>$prenom]);
         return $employes;
-        }
-        #[Route('/trieremploye/{critere}/{sens}', name: 'trieremploye')]
-        public function trier(Request $request, ManagerRegistry $doctrine,UserRepository $repository, PaginatorInterface $paginator,string $critere,string $sens)
-        {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
-            $rep=$doctrine->getRepository(User::class);
-                  $employes= $rep->findBy(array(),array($critere=>$sens));
-            $employespages = $paginator->paginate(
-                $employes, // Requête contenant les données à paginer (ici nos articles)
-                $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-                6 // Nombre de résultats par page
-            );
-            return $this->render('employe/consulteremploye.html.twig', [
-                'employes' => $employespages,
-            ]);
-        }
+    }
+    #[Route('/trieremploye/{critere}/{sens}', name: 'trieremploye')]
+    public function trier(Request $request, ManagerRegistry $doctrine,UserRepository $repository, PaginatorInterface $paginator,string $critere,string $sens)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $rep=$doctrine->getRepository(User::class);
+        $employes= $rep->findBy(array(),array($critere=>$sens));
+        $employespages = $paginator->paginate(
+            $employes, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            6 // Nombre de résultats par page
+        );
+        return $this->render('employe/consulteremploye.html.twig', [
+            'employes' => $employespages,
+        ]);
+    }
 
 
     /**
@@ -263,7 +264,6 @@ class UserController extends AbstractController
     )
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $rep = $doctrine->getRepository(Employe::class);
         $user=$this->getUser();
         $isAjax = $request->isXmlHttpRequest();
 
@@ -276,8 +276,6 @@ class UserController extends AbstractController
          * @var DatatableInterface $datatable
          */
         $datatable = $datatableFactory->create(EmployeDataTable::class);
-        $rep = $doctrine->getRepository(User::class);
-
 
         $datatable->buildDatatable(['user'=>$user]);
         if ($isAjax) {
@@ -298,4 +296,4 @@ class UserController extends AbstractController
     }
 
 }
-
+?>

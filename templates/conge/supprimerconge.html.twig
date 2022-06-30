@@ -3,6 +3,12 @@
 {% block title %}  supprimer conge {% endblock %}
 
 {% block body %}
+    {% if admin=='true' %}
+        {{ include('baseadmin.html.twig') }}
+    {% else %}
+        {{ include('base.html.twig') }}
+    {% endif %}
+
     {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
     {{ form(form) }}

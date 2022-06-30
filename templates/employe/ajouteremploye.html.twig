@@ -3,6 +3,7 @@
 {% block title %} ajouter employe {% endblock %}
 
 {% block body %}
+{{ parent() }}
     {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
     {{ form(form) }}

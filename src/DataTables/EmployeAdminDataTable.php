@@ -5,7 +5,8 @@ namespace App\DataTables;
 
 use App\Entity\Conge;
 use App\Entity\Contrat;
-use App\Entity\Employe;
+
+use App\Entity\User;
 use Sg\DatatablesBundle\Datatable\AbstractDatatable;
 use Sg\DatatablesBundle\Datatable\Column\ActionColumn;
 use Sg\DatatablesBundle\Datatable\Column\BooleanColumn;
@@ -24,44 +25,35 @@ use Sg\DatatablesBundle\Datatable\Style;
 class EmployeAdminDataTable extends AbstractDatatable
 {
     private $contrats;
-     /* public function getLineFormatter()
-    {
-        $formatter = function($row) {
-            $row['datedebut']=null;
-            $row['datefin']=null;
-            $row['datearret']=null;
-
-            $row['id']=null;
-            $row['typedecontrat']=null;
-            $row['quotaparmoisaccorde']=null;
-            $row['quotarestant']=null;
-
-
-            foreach ($this->contrats as $clef2=>$value2)
-            {
-                $row['id']=$row['id'].$value2->getId();
-                $row['id']=$row['id']."<br>";
-
-                $row['datedebut']=$row['datedebut']. date_format($value2->getDatedebut(),'d/m/Y');
-                $row['datedebut']=$row['datedebut']."<br>";
-                $row['datefin']=$row['datefin']. date_format($value2->getDatefin(),'d/m/Y');
-                $row['datefin']=$row['datefin']."<br>";
-                $row['typedecontrat']=$row['typedecontrat'].$value2->getTypedecontrat();
-                $row['typedecontrat']=$row['typedecontrat']."<br>";
-                $row['quotaparmoisaccorde']=$row['quotaparmoisaccorde'].$value2->getQuotaparmoisaccorde();
-                $row['quotaparmoisaccorde']=$row['quotaparmoisaccorde']."<br>";
-                $row['quotarestant']=$row['quotarestant'].$value2->getQuotarestant();
-                $row['quotarestant']=$row['quotarestant']."<br>";
-
-            }
-
-
-
-            return $row;
-        };
-
-        return $formatter;
-    }
+    /* public function getLineFormatter()
+   {
+       $formatter = function($row) {
+           $row['datedebut']=null;
+           $row['datefin']=null;
+           $row['datearret']=null;
+           $row['id']=null;
+           $row['typedecontrat']=null;
+           $row['quotaparmoisaccorde']=null;
+           $row['quotarestant']=null;
+           foreach ($this->contrats as $clef2=>$value2)
+           {
+               $row['id']=$row['id'].$value2->getId();
+               $row['id']=$row['id']."<br>";
+               $row['datedebut']=$row['datedebut']. date_format($value2->getDatedebut(),'d/m/Y');
+               $row['datedebut']=$row['datedebut']."<br>";
+               $row['datefin']=$row['datefin']. date_format($value2->getDatefin(),'d/m/Y');
+               $row['datefin']=$row['datefin']."<br>";
+               $row['typedecontrat']=$row['typedecontrat'].$value2->getTypedecontrat();
+               $row['typedecontrat']=$row['typedecontrat']."<br>";
+               $row['quotaparmoisaccorde']=$row['quotaparmoisaccorde'].$value2->getQuotaparmoisaccorde();
+               $row['quotaparmoisaccorde']=$row['quotaparmoisaccorde']."<br>";
+               $row['quotarestant']=$row['quotarestant'].$value2->getQuotarestant();
+               $row['quotarestant']=$row['quotarestant']."<br>";
+           }
+           return $row;
+       };
+       return $formatter;
+   }
 */
     /**
      * {@inheritdoc}
@@ -87,7 +79,7 @@ class EmployeAdminDataTable extends AbstractDatatable
             'search_in_non_visible_columns' => true,
         ));
         $doctrine=$this->getEntityManager();
-        $employes = $this->em->getRepository(Employe::class)->findAll();
+        $employes = $this->em->getRepository(User::class)->findAll();
         $repository=$doctrine->getRepository(Contrat::class);
 
         $this->contrats=$repository->findAll();
@@ -162,7 +154,7 @@ class EmployeAdminDataTable extends AbstractDatatable
             ))
 
 
-         ;
+        ;
 
 
 
@@ -187,3 +179,4 @@ class EmployeAdminDataTable extends AbstractDatatable
     }
 
 }
+?>

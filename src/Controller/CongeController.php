@@ -52,6 +52,16 @@ class CongeController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $conge = $form->getData();
+            if ($conge->getDatedebut()>$conge->getDatefin())
+            {$error="vous avez tapé une date début superieur à la date de fin";
+                return $this->renderForm('conge/ajouterconge.html.twig', [
+                    'form' => $form,
+                    'error'=>$error,
+                    'admin'=>$admin
+                ]);
+
+            }
+
             $id = $form->get('id_user')->getData();
             $conge->setState('no check');
             $rep = $doctrine->getRepository(User::class);
@@ -84,6 +94,7 @@ class CongeController extends AbstractController
         }
         return $this->renderForm('conge/ajouterconge.html.twig', [
             'form' => $form,
+            'admin'=>$admin
         ]);
 
 
@@ -115,6 +126,15 @@ class CongeController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $conge = $form->getData();
+            if ($conge->getDatedebut()>$conge->getDatefin())
+            {$error="vous avez tapé une date début superieur à la date de fin";
+                return $this->renderForm('conge/modifierconge.html.twig', [
+                    'form' => $form,
+                    'error'=>$error,
+                    'admin'=>$admin
+                ]);
+
+            }
             $nbjour= $conge->calculernbjour();
             $user->setNbjourpris($nbjour);
 
@@ -144,6 +164,7 @@ class CongeController extends AbstractController
         }
         return $this->renderForm('conge/modifierconge.html.twig', [
             'form' => $form,
+            'admin'=>$admin
         ]);
 
 
@@ -201,6 +222,7 @@ class CongeController extends AbstractController
                 $id = $form->get('id')->setData($id);
                 return $this->renderForm('conge/supprimerconge.html.twig', [
                     'form' => $form,
+                    'admin'=>$admin
                 ]);
             }
 

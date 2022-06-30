@@ -3,6 +3,16 @@
 {% block title %}  modifier conge {% endblock %}
 
 {% block body %}
+    {% if admin=='true' %}
+        {{ include('baseadmin.html.twig') }}
+    {% else %}
+        {{ include('base.html.twig') }}
+    {% endif %}
+
+    {% if error is defined %}
+        <b>    <u>    {{ error }} </u> </b>
+    {% endif %}
+
     {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
     {{ form(form) }}

@@ -114,7 +114,19 @@ class ContratController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $id = $form->get('employe')->getData();
+            $contrat= $form->getData();
+            if ($contrat->getDatedebut()>$contrat->getDatefin()) {
+                $error = "vous avez tapé une date début superieur à la date de fin";
+                return $this->renderForm('contrat/new.html.twig', [
+                    'contrat' => $contrat,
+                    'form' => $form,
+                    'error'=>$error,
+                    'admin'=>$admin
+                ]);
+
+            }
+
+                $id = $form->get('employe')->getData();
             $rep = $doctrine->getRepository(User::class);
             $emp = $rep->find($id);
             $contrat->setUser($emp);
@@ -141,6 +153,8 @@ class ContratController extends AbstractController
         return $this->renderForm('contrat/new.html.twig', [
             'contrat' => $contrat,
             'form' => $form,
+            'admin'=>$admin
+
         ]);
     }
 
@@ -158,6 +172,13 @@ class ContratController extends AbstractController
     public function edit(Request $request, Contrat $contrat, ContratRepository $contratRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
+        $roles = $user->getRoles();
+        $admin = 'false';
+        foreach ($roles as $clef => $value) {
+            if ($value == 'ROLE_ADMIN') {
+                $admin = 'true';
+            }
+        }
 
         $form = $this->createForm(ContratUpdateType::class, $contrat);
         $form->get('employe')->setData($contrat->getUser()->getId());
@@ -165,6 +186,18 @@ class ContratController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $contrat=$form->getData();
+            if ($contrat->getDatedebut() >$contrat->getDatefin())
+            {
+                $error="vous avez tapé une date de debut supérieur à la date de fin";
+                return $this->renderForm('contrat/edit.html.twig', [
+                    'contrat' => $contrat,
+                    'form' => $form,
+                    'error'=>$error,
+                    'admin'=>$admin
+                ]);
+
+            }
             $id = $form->get('employe')->getData();
             $rep = $doctrine->getRepository(User::class);
             $emp = $rep->find($id);
@@ -174,13 +207,6 @@ class ContratController extends AbstractController
             $entityManager->persist($emp);
             $entityManager->flush();
             $contratRepository->add($contrat, true);
-            $roles = $user->getRoles();
-            $admin = 'false';
-            foreach ($roles as $clef => $value) {
-                if ($value == 'ROLE_ADMIN') {
-                    $admin = 'true';
-                }
-            }
             if ($admin == 'true') {
                 return $this->redirectToRoute('consultercontratdatatable');
             } else {
@@ -192,7 +218,9 @@ class ContratController extends AbstractController
         return $this->renderForm('contrat/edit.html.twig', [
             'contrat' => $contrat,
             'form' => $form,
+            'admin'=>$admin
         ]);
+
     }
 
 
