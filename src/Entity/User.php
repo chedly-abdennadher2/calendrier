@@ -58,6 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isLeaving;
 
+    //ce champ est mis à true lorsquue employe est absent
 
 
 

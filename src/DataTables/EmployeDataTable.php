@@ -178,7 +178,19 @@ class EmployeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-
+            ->add('isLeaving', Column::class, array(
+                'title' => 'isLeaving',
+                'searchable' => true,
+                'orderable' => false,
+                'filter' => array(NumberFilter::class, array(
+                    'classes' => 'test1 test2',
+                    'search_type' => 'eq',
+                    'cancel_button' => true,
+                    'type' => 'number',
+                    'show_label' => true,
+                    'datalist' => array('3', '50', '75')
+                )),
+            ))
             ->add(null, ActionColumn::class, array(
                 'title' => 'Actions',
                 'start_html' => '<div class="start_actions">',
