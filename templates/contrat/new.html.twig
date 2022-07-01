@@ -16,5 +16,12 @@
 
     {{ include('contrat/_form.html.twig') }}
 
-    <a href="{{ path('consultercontratdatatable') }}">back to list</a>
+    {% if admin=='true' %}
+        <a href="{{ path('consultercontratdatatable') }}">back to list</a>
+
+    {% else %}
+        <a href="{{ path('consultercontratempdatatable') }}">back to list</a>
+
+    {% endif %}
+
 {% endblock %}

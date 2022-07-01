@@ -15,7 +15,8 @@ class SuiviCongeType extends AbstractType
         $builder
             ->add('employeid',TextType::class,['mapped'=>false])
             ->add('contratid',TextType::class,['mapped'=>false])
-
+            ->add ('mois')
+            ->add('annee')
         ;
     }
 

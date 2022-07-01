@@ -55,8 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'administrateur', targetEntity: self::class)]
     private $users;
 
-    #[ORM\Column(type: 'boolean',nullable:'true')]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private $isLeaving;
+
 
 
 

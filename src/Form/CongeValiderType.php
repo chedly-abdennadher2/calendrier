@@ -8,6 +8,7 @@ use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -44,6 +45,7 @@ class CongeValiderType extends AbstractType
             ->add ('prenom',TextType::class,['mapped'=>false,'disabled'=>true])
 
             ->add ('valider',SubmitType::class )
+            ->add ('annuler',ResetType::class )
 
         ;
     }

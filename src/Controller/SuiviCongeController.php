@@ -100,6 +100,7 @@ class SuiviCongeController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $suiviConge=$form->getData();
           $idemp=$form->get('employeid')->getData();
           $idcontrat= $form->get('contratid')->getData();
           $rep=$doctrine->getRepository(User::class);
@@ -109,16 +110,14 @@ class SuiviCongeController extends AbstractController
           $contrat=$rep->find($idcontrat);
           if ($contrat->getUser()->getId()==$emp->getId()) {
               $suiviConge->setContrat($contrat);
-              $yeardebut = $contrat->getDatedebut()->format('Y');
-              $moisdebut = $contrat->getDatedebut()->format('m');
-              $suiviConge->setAnnee($yeardebut);
-              $suiviConge->setMois($moisdebut);
               $suiviConge->setQuota($contrat->getQuotaparmoisaccorde());
               $suiviConge->setNbjourpris(0);
               $suiviConge->setNbjourrestant($suiviConge->getQuota());
 
               $suiviCongeRepository->add($suiviConge, true);
           }
+
+
             return $this->redirectToRoute('consultersuivicongedatatable');
         }
 
@@ -195,6 +194,7 @@ class SuiviCongeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $suiviConge=$form->getData();
             $idemp=$form->get('employeid')->getData();
 
             $idcontrat= $form->get('contratid')->getData();
@@ -207,10 +207,6 @@ class SuiviCongeController extends AbstractController
             if ($contrat->getUser()->  getId()==$emp->getId()) {
 
                 $suiviConge->setContrat($contrat);
-                $yeardebut = $contrat->getDatedebut()->format('Y');
-                $moisdebut = $contrat->getDatedebut()->format('m');
-                $suiviConge->setAnnee($yeardebut);
-                $suiviConge->setMois($moisdebut);
                 $suiviConge->setQuota($contrat->getQuotaparmoisaccorde());
                 $suiviConge->setNbjourpris(0);
                 $suiviConge->setNbjourrestant($suiviConge->getQuota());

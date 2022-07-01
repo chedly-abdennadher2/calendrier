@@ -152,7 +152,19 @@ class EmployeAdminDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-
+            ->add('nomutilisateur', Column::class, array(
+                'title' => 'nomutilisateur',
+                'searchable' => true,
+                'orderable' => true,
+                'filter' => array(NumberFilter::class, array(
+                    'classes' => 'test1 test2',
+                    'search_type' => 'eq',
+                    'cancel_button' => true,
+                    'type' => 'number',
+                    'show_label' => true,
+                    'datalist' => array('3', '50', '75')
+                )),
+            ))
 
         ;
 

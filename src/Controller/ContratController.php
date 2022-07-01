@@ -163,8 +163,17 @@ class ContratController extends AbstractController
     #[Route('/{id}', name: 'app_contrat_show', methods: ['GET'])]
     public function show(Contrat $contrat): Response
     {
+        $user = $this->getUser();
+        $roles = $user->getRoles();
+        $admin = 'false';
+        foreach ($roles as $clef => $value) {
+            if ($value == 'ROLE_ADMIN') {
+                $admin = 'true';
+            }
+        }
         return $this->render('contrat/show.html.twig', [
             'contrat' => $contrat,
+            'admin'=>$admin
         ]);
     }
 
@@ -248,23 +257,5 @@ class ContratController extends AbstractController
         }
     }
 
-    #[Route('/triercontrat/{critere}', name: 'triercontrat')]
-    public function trier(Request $request, ManagerRegistry $doctrine, EmployeRepository $repository, PaginatorInterface $paginator, string $critere)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $rep = $doctrine->getRepository(Contrat::class);
-        $contrats = $rep->findBy(array(), array($critere => 'ASC'));
-
-        $contratpages = $paginator->paginate(
-            $contrats, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            6 // Nombre de résultats par page
-        );
-
-        return $this->render('contrat/index.html.twig', [
-            'contrats' => $contratpages,
-
-        ]);
-    }
 
 }

@@ -27,14 +27,7 @@ class EmployeformType extends AbstractType
             ->add('quota')
 
             ->add('nomutilisateur')
-            ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],
-            ])
+
             ->add('password', PasswordType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
@@ -49,6 +42,14 @@ class EmployeformType extends AbstractType
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
+                    ]),
+                ],
+            ])
+            ->add('agreeTerms', CheckboxType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'You should agree to our terms.',
                     ]),
                 ],
             ])

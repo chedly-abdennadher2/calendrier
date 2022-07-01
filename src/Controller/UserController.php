@@ -8,7 +8,6 @@ use App\Entity\Conge;
 use App\Entity\User;
 use App\Form\EmployeAdminformType;
 use App\Form\EmployeformType;
-use App\Form\EmployeSearchFormType;
 use App\Form\EmployeupdateformType;
 use App\Form\SuppressionType;
 use App\Repository\EmployeRepository;
@@ -188,33 +187,9 @@ class UserController extends AbstractController
 
 
 
-    #[Route('/recherchersalairesup/{salaire}', name: 'recherchersalairesup')]
-    public function recherchersalairesup (string $salaire,UserRepository $repository)
-    {
-        $employes=$repository->findAllGreaterThanSalaire($salaire);
-        return $employes;
-    }
-    #[Route('/rechercherparnomprenom/{nom}/{prenom}', name: 'rechercherparnomprenom')]
-    public function rechercherparnomprenom (string $nom,string $prenom ,UserRepository $repository)
-    {
-        $employes=$repository->findBy(['nom'=>$nom,'prenom'=>$prenom]);
-        return $employes;
-    }
-    #[Route('/trieremploye/{critere}/{sens}', name: 'trieremploye')]
-    public function trier(Request $request, ManagerRegistry $doctrine,UserRepository $repository, PaginatorInterface $paginator,string $critere,string $sens)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $rep=$doctrine->getRepository(User::class);
-        $employes= $rep->findBy(array(),array($critere=>$sens));
-        $employespages = $paginator->paginate(
-            $employes, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            6 // Nombre de résultats par page
-        );
-        return $this->render('employe/consulteremploye.html.twig', [
-            'employes' => $employespages,
-        ]);
-    }
+
+
+
 
 
     /**
@@ -295,5 +270,17 @@ class UserController extends AbstractController
         ));
     }
 
+    public function deveniradmin (string $id,ManagerRegistry $doctrine,UserRepository $repository)
+    {
+        $rep=$doctrine->getRepository(User::class);
+        $user=$rep->find($id);
+        $rep=$doctrine->getRepository(User::class);
+        $user=$rep->findOneBy(["nomutilisateur"=>$user->getNomutilisateur()]);
+        if ($user !=null)
+        {    $user->setRoles(['ROLE_ADMIN']);
+            $repository->add($user,true);
+        }
+
+    }
 }
 ?>

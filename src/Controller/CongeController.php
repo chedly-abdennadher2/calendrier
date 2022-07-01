@@ -9,7 +9,6 @@ use App\Entity\Employe;
 use App\Entity\SuiviConge;
 use App\Entity\User;
 use App\Form\CongeformulaireType;
-use App\Form\CongeSearchFormulaireType;
 use App\Form\CongeValiderType;
 use App\Form\EmployeformType;
 use App\Form\SuppressionType;
@@ -341,37 +340,7 @@ class CongeController extends AbstractController
 
     }
 
-    public function recherchercongeparmoisetannee(string $mois, string $annee, CongeRepository $repository)
-    {
-        $conges = $repository->FindAllByMoisAnnee($mois, $annee);
-        return $conges;
-    }
 
-    #[Route('/trierconge/{critere}', name: 'trierconge')]
-    public function trier(Request $request, ManagerRegistry $doctrine, UserRepository $repository, PaginatorInterface $paginator, string $critere)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user = $this->getUser();
-        $rep = $doctrine->getRepository(Administrateur::class);
-        $administrateur = $rep->findOneBy(['login' => $user]);
-        $rep = $doctrine->getRepository(Conge::class);
-        $conges = $rep->findBy(array(), array($critere => 'ASC'));
-        foreach ($conges as $key => $value) {
-            $value->calculernbjour();
-        }
-
-        $congespages = $paginator->paginate(
-            $conges, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            6 // Nombre de résultats par page
-        );
-
-        return $this->render('conge/consulterconge.html.twig', [
-            'conges' => $congespages,
-            'admin' => $administrateur,
-
-        ]);
-    }
 
     /**
      * Lists all Post entities.

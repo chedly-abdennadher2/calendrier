@@ -25,7 +25,6 @@ use Sg\DatatablesBundle\Datatable\Style;
 
 class EmployeDataTable extends AbstractDatatable
 {
-    private $contrats;
 /*    public function getLineFormatter()
     {
         $formatter = function($row) {
@@ -78,7 +77,6 @@ class EmployeDataTable extends AbstractDatatable
         $doctrine=$this->getEntityManager();
         $repository=$doctrine->getRepository(Contrat::class);
 
-        $this->contrats=$repository->findBy(['user'=>$options['user']]);
 
         $this->ajax->set(array(
             // send some extra example data
@@ -167,7 +165,19 @@ class EmployeDataTable extends AbstractDatatable
                     'datalist' => array('3', '50', '75')
                 )),
             ))
-
+            ->add('nomutilisateur', Column::class, array(
+                'title' => 'nomutilisateur',
+                'searchable' => true,
+                'orderable' => true,
+                'filter' => array(NumberFilter::class, array(
+                    'classes' => 'test1 test2',
+                    'search_type' => 'eq',
+                    'cancel_button' => true,
+                    'type' => 'number',
+                    'show_label' => true,
+                    'datalist' => array('3', '50', '75')
+                )),
+            ))
 
             ->add(null, ActionColumn::class, array(
                 'title' => 'Actions',

@@ -6,6 +6,7 @@ use App\Entity\Conge;
 
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -27,6 +28,7 @@ class CongeformulaireType extends AbstractType
             ->add ('prenom',TextType::class,['mapped'=>false,'disabled'=>true])
 
             ->add ('envoyer',SubmitType::class )
+            ->add ('annuler',ResetType::class )
 
         ;
     }
