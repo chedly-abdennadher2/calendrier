@@ -13,6 +13,8 @@
     <h1> vous n'avez pas le droit de toucher les conges de {{ conge.user.nom }}
         {{ conge.user.prenom }}
     </h1>
+  <a href="{{path('consultercongedatatable')}}"> back to list </a>
+
 {% endif %}
         {% else %}
             {% form_theme form 'bootstrap_4_layout.html.twig' %}

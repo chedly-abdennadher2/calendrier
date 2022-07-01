@@ -18,7 +18,10 @@ class ContratType extends AbstractType
             ->add('typedecontrat')
             ->add('statut')
 
-            ->add('employe',TextType::class,array('mapped'=>false))
+            ->add('employe_id',TextType::class,array('mapped'=>false,'disabled'=>true))
+            ->add('employe_nom',TextType::class,array('mapped'=>false,'disabled'=>true))
+            ->add('employe_prenom',TextType::class,array('mapped'=>false,'disabled'=>true))
+
         ;
     }
 

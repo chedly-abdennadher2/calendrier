@@ -104,11 +104,13 @@ class ContratController extends AbstractController
                 $admin = 'true';
             }
         }
-        if ($admin == 'false') {
 
             if($user!=null)
-         {
-             $form->get('employe')->setData($user->getId());}}
+            {$form->get('employe_id')->setData($user->getId());
+             $form->get('employe_nom')->setData($user->getNom());
+             $form->get('employe_prenom')->setData($user->getPrenom());
+
+         }
 
 
         $form->handleRequest($request);
@@ -126,7 +128,7 @@ class ContratController extends AbstractController
 
             }
 
-                $id = $form->get('employe')->getData();
+                $id = $form->get('employe_id')->getData();
             $rep = $doctrine->getRepository(User::class);
             $emp = $rep->find($id);
             $contrat->setUser($emp);
@@ -189,8 +191,10 @@ class ContratController extends AbstractController
             }
         }
 
-        $form = $this->createForm(ContratUpdateType::class, $contrat);
-        $form->get('employe')->setData($contrat->getUser()->getId());
+        $form = $this->createForm(ContratType::class, $contrat);
+        $form->get('employe_id')->setData($contrat->getUser()->getId());
+        $form->get('employe_nom')->setData($contrat->getUser()->getNom());
+        $form->get('employe_prenom')->setData($contrat->getUser()->getPrenom());
 
         $form->handleRequest($request);
 
@@ -207,7 +211,7 @@ class ContratController extends AbstractController
                 ]);
 
             }
-            $id = $form->get('employe')->getData();
+            $id = $form->get('employe_id')->getData();
             $rep = $doctrine->getRepository(User::class);
             $emp = $rep->find($id);
             $contrat->setUser($emp);

@@ -134,6 +134,7 @@ class CongeController extends AbstractController
                 ]);
 
             }
+            $conge->setState('no check');
             $nbjour= $conge->calculernbjour();
             $user->setNbjourpris($nbjour);
 

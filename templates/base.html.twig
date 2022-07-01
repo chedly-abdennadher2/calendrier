@@ -57,11 +57,8 @@
                         </li>
 
 
-                        <li class="nav-item">
 
-                        <a href ="{{ path ('ajouteremploye') }}" class="nav-link"
-                        > ajouter employe</a>
-                        </li>
+
                         <li class="nav-item">
                             <a href ="{{ path ('consultercongeempdatatable') }}" class="nav-link "
                             > consulter conge</a>
@@ -77,6 +74,18 @@
                         </li>
 
                         {% endif %}
+                        {% endif %}
+                        {% if app.user is defined %}
+
+                            {% if app.user is null %}
+
+                                <li class="nav-item">
+
+                                    <a href ="{{ path ('ajouteremploye') }}" class="nav-link"
+                                    > ajouter employe en s'inscrivant </a>
+                                </li>
+
+                            {% endif %}
                         {% endif %}
 
                         {% if app.user is defined %}
