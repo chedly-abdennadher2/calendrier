@@ -111,7 +111,7 @@ class CongeController extends AbstractController
     {
         $rep = $doctrine->getRepository(Conge::class);
         $conge = $rep->find($id);
-        $user = $this->getUser();
+        $user = $conge->getUser();
         $roles = $user->getRoles();
         $admin = 'false';
         foreach ($roles as $clef => $value) {
