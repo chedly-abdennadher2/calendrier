@@ -12,6 +12,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use function Symfony\Config\Framework\Workflows\type;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 class CongeformulaireType extends AbstractType
 {
 
@@ -23,7 +25,7 @@ class CongeformulaireType extends AbstractType
             ->add('datefin')
             ->add('typeconge')
 
-            ->add ('id_user',TextType::class,['mapped'=>false,'disabled'=>true])
+            ->add ('id_user',TextType::class,['mapped'=>false,'disabled'=>true ])
             ->add ('nom',TextType::class,['mapped'=>false,'disabled'=>true])
             ->add ('prenom',TextType::class,['mapped'=>false,'disabled'=>true])
 

@@ -14,6 +14,7 @@ use Sg\DatatablesBundle\Datatable\Column\MultiselectColumn;
 use Sg\DatatablesBundle\Datatable\Column\VirtualColumn;
 use Sg\DatatablesBundle\Datatable\Editable\SelectEditable;
 use Sg\DatatablesBundle\Datatable\Editable\TextEditable;
+use Sg\DatatablesBundle\Datatable\Extension\RowGroup;
 use Sg\DatatablesBundle\Datatable\Filter\DateRangeFilter;
 use Sg\DatatablesBundle\Datatable\Filter\NumberFilter;
 use Sg\DatatablesBundle\Datatable\Filter\SelectFilter;

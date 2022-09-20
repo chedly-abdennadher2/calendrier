@@ -5,12 +5,15 @@ namespace App\Controller;
 use App\DataTables\EmployeAdminDataTable;
 use App\DataTables\EmployeDataTable;
 use App\Entity\Conge;
+use App\Entity\Contrat;
+use App\Entity\SuiviConge;
 use App\Entity\User;
 use App\Form\EmployeAdminformType;
 use App\Form\EmployeformType;
 use App\Form\EmployeupdateformType;
 use App\Form\SuppressionType;
 use App\Repository\EmployeRepository;
+use App\Repository\SuiviCongeRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
@@ -169,6 +172,27 @@ class UserController extends AbstractController
 
             $rep=$doctrine->getRepository(User::class);
             $emp=$rep->find($id);
+            $rep=$doctrine->getRepository(Contrat::class);
+            $contrats=$rep->findBy(['user'=>$emp]);
+          foreach ($contrats as $clef=>$value)
+          {
+              $entityManager->remove($value);
+          }
+            $rep=$doctrine->getRepository(Conge::class);
+
+            $conges=$rep->findBy(['user'=>$emp]);
+            foreach ($conges as $clef=>$value)
+            {
+                $entityManager->remove($value);
+            }
+            $rep=$doctrine->getRepository(SuiviConge::class);
+
+            $suiviconges=$rep->findBy(['user'=>$emp]);
+            foreach ($suiviconges as $clef=>$value)
+            {
+                $entityManager->remove($value);
+            }
+
             $entityManager->remove($emp);
             $entityManager->flush();
             return $this->redirectToRoute('/');

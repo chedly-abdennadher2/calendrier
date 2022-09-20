@@ -2,6 +2,6 @@
 {% block body %}
     {{ parent() }}
     {{ sg_datatables_render(datatable) }}
-    <a href="{{ path('app_contrat_new') }}">Create new contrat</a>
+    <a href="{{ path('app_contrat_new') }}" class="btn btn-primary btn-xs" >Create new contrat</a>
 
 {% endblock %}

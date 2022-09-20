@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Form\ContratType;
 use App\Form\ContratUpdateType;
 use App\Repository\ContratRepository;
+use App\Repository\SuiviCongeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Sg\DatatablesBundle\Datatable\DatatableFactory;
@@ -238,9 +239,13 @@ class ContratController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_contrat_delete', methods: ['POST'])]
-    public function delete(Request $request, Contrat $contrat, ContratRepository $contratRepository): Response
+    public function delete(Request $request, Contrat $contrat, ContratRepository $contratRepository, SuiviCongeRepository $suiviCongeRepository): Response
     {
         $user = $this->getUser();
+        $suiviconges=   $suiviCongeRepository->findBy(['contrat'=>$contrat]);
+        foreach ($suiviconges as $clef=>$value)
+        {$suiviCongeRepository->remove($value,true);
+        }
 
         if ($this->isCsrfTokenValid('delete' . $contrat->getId(), $request->request->get('_token'))) {
             $contratRepository->remove($contrat, true);
